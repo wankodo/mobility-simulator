@@ -390,7 +390,14 @@
       .pp-decline-note.show{ display:block; }
       .pp-close-btn:focus-visible, .pp-decline-btn:focus-visible, .pp-link:focus-visible{ outline:2px solid var(--amber); outline-offset:2px; }
     </style>
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3970535652265626" crossorigin="anonymous"></script>
+  <meta name="description" content="高速道路の通行料金を無料で試算。全231路線・1,862か所のIC・出入口から入口と出口を選ぶだけで、ETC割引・深夜割引・休日割引を自動判定して計算します。首都高など別体系にも対応。" />
+<link rel="canonical" href="https://wankodo.github.io/mobility-simulator/highway.html" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="移動シミュレーター" />
+<meta property="og:title" content="移動シミュレーター｜高速料金シミュレーター" />
+<meta property="og:description" content="高速道路の通行料金を無料で試算。全231路線・1,862か所のIC・出入口から入口と出口を選ぶだけで、ETC割引・深夜割引・休日割引を自動判定して計算します。首都高など別体系にも対応。" />
+<meta property="og:url" content="https://wankodo.github.io/mobility-simulator/highway.html" />
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3970535652265626" crossorigin="anonymous"></script>
 </head>
   <body>
 <nav style="display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;background:#12283f;color:#fff;padding:10px 16px;font-family:system-ui,-apple-system,sans-serif;font-size:14px;"><a href="index.html" style="color:#fff;font-weight:800;text-decoration:none;">移動シミュレーター</a><a href="timescar.html" style="color:#cfe2f3;text-decoration:none;">タイムズカー</a><a href="highway.html" style="color:#cfe2f3;text-decoration:none;">高速道路</a><a href="train.html" style="color:#cfe2f3;text-decoration:none;">電車・新幹線</a></nav>
@@ -2415,8 +2422,9 @@
         });
       }
       function fillIcSelect(sel, roadId, keep){
-        var cur = keep || sel.value;
+        var cur = (keep !== undefined && keep !== null) ? keep : sel.value;
         sel.innerHTML="";
+        var ph=document.createElement("option"); ph.value=""; ph.textContent="ICを選択してください"; sel.appendChild(ph);
         var list;
         if(roadId){
           var line = ALL_LINES.filter(function(l){ return l.id===roadId; })[0];
@@ -2433,10 +2441,10 @@
           sel.appendChild(o);
         });
         if(cur && seen[cur]) sel.value=cur;
+        else sel.value="";
       }
       fillRoadSelect(inRoad); fillRoadSelect(outRoad);
       fillIcSelect(inIc,""); fillIcSelect(outIc,"");
-      inIc.value="前橋IC"; outIc.value="練馬IC";
 
       var hourSel=$("hourSelect");
       for(var h=0;h<24;h++){
@@ -2728,10 +2736,38 @@
         return { night:isNight, holiday:holidayOk, reason:reason };
       }
 
+      function showUnselectedState(a, b){
+        if(a && !b) $("routeLine").textContent = a + " → 出口ICを選んでください";
+        else if(!a && b) $("routeLine").textContent = "入口ICを選んでください → " + b;
+        else $("routeLine").textContent = "入口と出口のICを選んでください";
+        $("priceNormal").textContent = "—";
+        if($("etcCheck").checked){
+          $("etcBox").style.display = "";
+          $("discountTag").textContent = "ETC割引";
+          $("priceEtc").textContent = "—";
+          $("saveLine").textContent = "";
+        } else {
+          $("etcBox").style.display = "none";
+        }
+        $("statDist").textContent = "—";
+        $("statTime").textContent = "—";
+        $("statRoads").textContent = "—";
+        $("breakdownBody").innerHTML = "";
+        $("discountNote").textContent = "入口と出口の両方のICを選ぶと、料金が計算されます。";
+        $("routeDetail").textContent = "";
+        $("stickyRoute").textContent = (a || b) ? ((a || "入口未選択") + " → " + (b || "出口未選択")) : "—";
+        $("stickyMeta").textContent = "入口と出口のICを選んでください";
+        $("stickyNormal").textContent = "—";
+        $("stickyMainPrice").innerHTML = "—";
+        $("stickyMainCap").textContent = "ETC料金";
+        $("stickyNormalBox").style.display = $("etcCheck").checked ? "" : "none";
+        var rt = $("mapRoute");
+        if(rt) rt.style.display = "none";
+      }
       function calculate(){
         var err=$("errorBox"); err.style.display="none";
         var a=inIc.value, b=outIc.value;
-        if(!a || !b){ return; }
+        if(!a || !b){ showUnselectedState(a, b); return; }
         updateExitMapLinks();
         if(a===b){
           err.textContent="入口と出口に同じICが選ばれています。別のICを選んでください。";
