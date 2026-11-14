@@ -73,6 +73,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
   gap: 18px;
   width: auto;
   max-width: none;
@@ -597,4 +598,256 @@ a.card .ic {
     animation-duration: .01ms !important;
     animation-iteration-count: 1 !important;
   }
+}
+
+/* ================================================================
+   テーマ切替：熊八モード（デフォルト）／ Andyモード（近未来HUD風）
+   Andyモードは色変数の差し替え＋面の上書きで実現する。
+   赤はエラー表示だけに残し、通常の強調はシアンに寄せる。
+   ================================================================ */
+
+.ido-theme-switch {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid rgba(255, 255, 255, .18);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .07);
+}
+
+.ido-theme-switch button {
+  border: 0;
+  border-radius: 999px;
+  padding: 6px 13px;
+  background: transparent;
+  box-shadow: none;
+  color: #cfe2f3;
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 800;
+  line-height: 1.25;
+  cursor: pointer;
+}
+
+.ido-theme-switch button[aria-pressed="true"] {
+  background: linear-gradient(180deg, var(--ido-amber-2), var(--ido-amber));
+  color: #14273c;
+}
+
+html[data-theme="andy"] .ido-theme-switch button[aria-pressed="true"] {
+  background: linear-gradient(180deg, #8ff2ff, #46d9ec);
+  color: #03222e;
+  box-shadow: 0 0 16px rgba(70, 217, 236, .55);
+}
+
+/* ---------- Andyモード：変数の差し替え ---------- */
+
+:root[data-theme="andy"] {
+  color-scheme: dark;
+
+  --ido-navy-950: #02070d;
+  --ido-navy-900: #04101c;
+  --ido-navy-800: #071a2b;
+  --ido-navy-700: #0b2a42;
+  --ido-amber: #46d9ec;
+  --ido-amber-2: #8ff2ff;
+  --ido-sky: #46d9ec;
+  --ido-ink: #d8f1f6;
+  --ido-muted: #84a7b8;
+  --ido-line: rgba(110, 205, 230, .32);
+  --ido-bg: #04090f;
+  --ido-card: rgba(8, 22, 34, .88);
+  --ido-shadow: 0 0 0 1px rgba(110, 205, 230, .05), 0 18px 38px -18px rgba(0, 0, 0, .85);
+  --ido-radius: 10px;
+
+  --navy: #04101c;
+  --navy2: #02070d;
+  --navy-2: #071a2b;
+  --amber: #46d9ec;
+  --ink: #d8f1f6;
+  --mut: #84a7b8;
+  --muted: #84a7b8;
+  --sub: #84a7b8;
+  --ink2: #84a7b8;
+  --ink-soft: #84a7b8;
+  --bg: #04090f;
+  --paper: #04090f;
+  --card: rgba(8, 22, 34, .88);
+  --panel: rgba(8, 22, 34, .88);
+  --surface: rgba(8, 22, 34, .92);
+  --surface-2: rgba(13, 34, 52, .92);
+  --line: rgba(110, 205, 230, .32);
+  --chip: rgba(70, 217, 236, .14);
+  --accent: #46d9ec;
+  --green: #46d9ec;
+  --green-deep: #04101c;
+  --green-soft: rgba(70, 217, 236, .12);
+  --fuel: #46d9ec;
+  --fuel2: #8ff2ff;
+  --teal: #46d9ec;
+  --good: #3ddc97;
+  --good-bg: rgba(61, 220, 151, .14);
+  --red: #ff5252;
+  --seg-on: linear-gradient(180deg, #8ff2ff, #46d9ec);
+}
+
+/* ---------- Andyモード：地と面 ---------- */
+
+html[data-theme="andy"] body {
+  background:
+    radial-gradient(900px 480px at 85% -120px, rgba(70, 217, 236, .13), rgba(70, 217, 236, 0) 60%),
+    radial-gradient(700px 500px at -10% 110%, rgba(255, 154, 61, .05), rgba(255, 154, 61, 0) 60%),
+    repeating-linear-gradient(0deg, rgba(140, 230, 255, .022) 0 1px, transparent 1px 4px),
+    linear-gradient(rgba(110, 205, 230, .045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(110, 205, 230, .045) 1px, transparent 1px),
+    linear-gradient(180deg, #030a12, #04090f);
+  background-size: auto, auto, auto, 52px 52px, 52px 52px, auto;
+}
+
+html[data-theme="andy"] :is(section.panel, .panel, section.card, section.box, .form-card, .result-card, .clockbar, a.card) {
+  background-color: rgba(8, 22, 34, .88);
+  border-color: rgba(110, 205, 230, .32);
+}
+
+html[data-theme="andy"] h1,
+html[data-theme="andy"] h2 {
+  letter-spacing: .05em;
+}
+
+html[data-theme="andy"] :is(.amt, .total, .mb-total, .fare-total, .sticky-main .val, .result-big .amt, .clock) {
+  font-family: ui-monospace, "SF Mono", Consolas, "Roboto Mono", monospace;
+}
+
+html[data-theme="andy"] .clock {
+  text-shadow: 0 0 12px rgba(70, 217, 236, .65);
+}
+
+html[data-theme="andy"] .result-big .amt {
+  text-shadow: 0 0 18px rgba(70, 217, 236, .45);
+}
+
+/* ---------- Andyモード：ナビ・カード ---------- */
+
+html[data-theme="andy"] a.card::before {
+  background: linear-gradient(90deg, #46d9ec, #8ff2ff);
+}
+
+html[data-theme="andy"] a.card .go {
+  background: rgba(70, 217, 236, .16);
+  color: #8ff2ff;
+}
+
+html[data-theme="andy"] .ido-toolnav a {
+  background: rgba(8, 22, 34, .82);
+  color: #aee9f5;
+  border-color: rgba(110, 205, 230, .35);
+}
+
+html[data-theme="andy"] .ido-toolnav a[aria-current="page"] {
+  background: linear-gradient(120deg, rgba(70, 217, 236, .28), rgba(70, 217, 236, .12));
+  border-color: #46d9ec;
+  color: #d9fbff;
+  box-shadow: 0 0 14px rgba(70, 217, 236, .35);
+}
+
+html[data-theme="andy"] .ido-lead {
+  background: linear-gradient(145deg, rgba(8, 22, 34, .94), rgba(5, 15, 25, .94));
+  border-color: rgba(110, 205, 230, .32);
+}
+
+html[data-theme="andy"] .ido-lead h1 {
+  color: #d8f1f6;
+}
+
+html[data-theme="andy"] .ido-lead p,
+html[data-theme="andy"] .ido-lead .notes {
+  color: #84a7b8;
+}
+
+html[data-theme="andy"] .ido-lead summary {
+  color: #8ff2ff;
+}
+
+html[data-theme="andy"] .ido-lead .meta span {
+  background: rgba(70, 217, 236, .10);
+  border-color: rgba(110, 205, 230, .35);
+  color: #aee9f5;
+}
+
+html[data-theme="andy"] .lead h1 .sign {
+  background: linear-gradient(180deg, #8ff2ff, #46d9ec);
+  color: #03222e;
+  outline-color: rgba(143, 242, 255, .7);
+  box-shadow: 0 0 16px rgba(70, 217, 236, .45);
+}
+
+/* ---------- Andyモード：入力・選択状態 ---------- */
+
+html[data-theme="andy"] input:not([type="checkbox"]):not([type="radio"]),
+html[data-theme="andy"] select,
+html[data-theme="andy"] textarea {
+  background-color: rgba(5, 14, 23, .88) !important;
+  color: #d8f1f6;
+  border-color: rgba(110, 205, 230, .38);
+}
+
+html[data-theme="andy"] .seg {
+  background: rgba(70, 217, 236, .13);
+}
+
+html[data-theme="andy"] .seg button.on,
+html[data-theme="andy"] .cattab.on,
+html[data-theme="andy"] .btn-main,
+html[data-theme="andy"] .seg input:checked + .seg-face,
+html[data-theme="andy"] .chip input:checked + span {
+  color: #03222e;
+}
+
+html[data-theme="andy"] .totalBox {
+  background: linear-gradient(145deg, rgba(255, 154, 61, .13), rgba(255, 154, 61, .05));
+  border-color: rgba(255, 154, 61, .42);
+}
+
+/* ---------- Andyモード：モーダル・カゴ・エラー ---------- */
+
+html[data-theme="andy"] .pp-dialog {
+  background: #081625;
+  color: #d8f1f6;
+  border: 1px solid rgba(110, 205, 230, .35);
+}
+
+html[data-theme="andy"] #ido-basket-widget {
+  background: #04101c !important;
+  border: 1px solid rgba(110, 205, 230, .42);
+}
+
+html[data-theme="andy"] #ido-basket-add {
+  background: #46d9ec !important;
+  color: #03222e !important;
+}
+
+/* 赤はエラーだけ */
+html[data-theme="andy"] .geomsg.err,
+html[data-theme="andy"] .err {
+  color: #ff6b6b;
+}
+
+/* ---------- Andyモード：絵文字を単色ピクトグラムに差し替え ---------- */
+
+.ido-pic {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ido-pic svg {
+  width: 1.12em;
+  height: 1.12em;
+  flex: none;
+}
+
+html[data-theme="andy"] a.card .ic {
+  background: rgba(70, 217, 236, .13);
 }
