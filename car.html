@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<meta name="description" content="車での移動にかかる料金を試算するツール集です。カーシェア、高速道路、ガソリン代、駐車場、タクシーの5本を用意しています。" />
+<meta name="description" content="車での移動にかかる料金を試算するツール集です。カーシェア、高速道路、ガソリン代、EV電気代、駐車場、タクシーの6本を用意しています。" />
 <title>移動シミュレーター｜車系ツール</title>
 <style>
   :root { --navy:#12283f; --navy2:#0b1c2c; --amber:#f2a81d; --ink:#1c2733; --mut:#5b6b7c; --bg:#edf1f5; --card:#fff; }
@@ -33,6 +33,7 @@
   a.card.car { --acc:linear-gradient(90deg,#ffb020,#f28c13); --tint:#fdf1de; }
   a.card.highway { --acc:linear-gradient(90deg,#3f9be0,#2f6fd0); --tint:#e4f0fb; }
   a.card.gas { --acc:linear-gradient(90deg,#f97316,#ea580c); --tint:#fdeee3; }
+    a.card.ev { --acc:linear-gradient(90deg,#06b6d4,#0e7490); --tint:#e2f4f8; }
   a.card.park { --acc:linear-gradient(90deg,#2e9e8f,#2e7d74); --tint:#e2f2ef; }
   a.card.taxi { --acc:linear-gradient(90deg,#eab308,#ca8a04); --tint:#fdf6dd; }
   a.card.pass { --acc:linear-gradient(90deg,#12b981,#0d8a63); --tint:#e3f7ef; }
@@ -60,7 +61,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="移動シミュレーター" />
 <meta property="og:title" content="移動シミュレーター｜車系ツール" />
-<meta property="og:description" content="車での移動にかかる料金を試算するツール集です。カーシェア、高速道路、ガソリン代、駐車場、タクシーの5本を用意しています。" />
+<meta property="og:description" content="車での移動にかかる料金を試算するツール集です。カーシェア、高速道路、ガソリン代、EV電気代、駐車場、タクシーの6本を用意しています。" />
 <meta property="og:url" content="https://wankodo.github.io/mobility-simulator/car.html" />
 <meta property="og:image" content="https://wankodo.github.io/mobility-simulator/ogp.png" />
 <meta name="twitter:card" content="summary_large_image" />
@@ -72,6 +73,7 @@
   var PIC = {
     "🚗": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11l1.5-4.5A2 2 0 0 1 8.4 5h7.2a2 2 0 0 1 1.9 1.5L19 11"/><path d="M3 11h18v6h-2.6"/><path d="M3 17h2.6"/><circle cx="7.5" cy="17" r="1.8"/><circle cx="16.5" cy="17" r="1.8"/><path d="M9.3 17h5.4"/></svg>',
     "🚕": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9.6" y="2.6" width="4.8" height="2.2" rx="0.6"/><path d="M5 12l1.5-4.2A2 2 0 0 1 8.4 6.4h7.2a2 2 0 0 1 1.9 1.4L19 12"/><path d="M3 12h18v5.5h-2.6"/><path d="M3 17.5h2.6"/><circle cx="7.5" cy="17.5" r="1.8"/><circle cx="16.5" cy="17.5" r="1.8"/><path d="M9.3 17.5h5.4"/></svg>',
+    "⚡": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2.5L4.8 13.5h6L9.7 21.5l8.4-11h-6.1l1-8z"/></svg>',
     "⛽": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v16"/><path d="M3 21h14"/><rect x="7.2" y="5.8" width="5.6" height="4.2" rx="0.6"/><path d="M15 10l2.1 2.1a2 2 0 0 1 .6 1.4V18a1.9 1.9 0 0 0 3.8 0v-6.8a2 2 0 0 0-.6-1.4L18.6 7.5"/></svg>',
     "🅿": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2.5"/><path d="M9.5 16.8V7.2h3.4a2.9 2.9 0 0 1 0 5.8H9.5"/></svg>',
     "🛣": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21L10 3"/><path d="M19 21L14 3"/><path d="M12 18.6v-2.2"/><path d="M12 13.6v-2.2"/><path d="M12 8.6V6.4"/></svg>',
@@ -180,7 +182,7 @@
 <header class="site">
   <p class="brand">移動シミュレーター</p>
   <h1>🚗 車系ツール</h1>
-  <p class="lead">車での移動にかかる料金を試算するツール集です。カーシェア、高速道路、ガソリン代、駐車場、タクシーの5本を用意しています。</p>
+  <p class="lead">車での移動にかかる料金を試算するツール集です。カーシェア、高速道路、ガソリン代、EV電気代、駐車場、タクシーの6本を用意しています。</p>
 </header>
 <main>
   <a class="backlink" href="index.html">← トップへ戻る</a>
@@ -201,6 +203,12 @@
       <span class="ic">⛽</span>
       <h2>ガソリン代計算シミュレーター</h2>
       <p>走行距離と燃費、ガソリンの単価から、ガソリン代の目安を試算します。往復・使用量・1人あたりの割り勘、通勤の月額・年額までその場で計算します。</p>
+      <span class="go">開く →</span>
+    </a>
+    <a class="card ev" href="ev.html">
+      <span class="ic">⚡</span>
+      <h2>EV電気代計算シミュレーター</h2>
+      <p>走行距離と電費、電気の単価から、EVの電気代の目安を試算します。往復・使用電力量・割り勘・月額／年額に加えて、ガソリン車との差額もその場で計算します。</p>
       <span class="go">開く →</span>
     </a>
     <a class="card park" href="parking.html">

@@ -1,0 +1,514 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="description" content="EV電気代計算シミュレーター。走行距離・電費・電気の単価を入れるだけで、往復の電気代、使用電力量、1人あたり、通勤の月額・年額、ガソリン車との差額まで無料で試算できます。" />
+<title>移動シミュレーター｜EV電気代計算シミュレーター</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg" />
+<style>
+  :root { --navy:#12283f; --navy2:#0b1c2c; --amber:#f2a81d; --fuel:#0e7490; --fuel2:#06b6d4; --ink:#1c2733; --mut:#5b6b7c; --bg:#edf1f5; --card:#fff; --line:#e1e8ef; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:system-ui,-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif; color:var(--ink);
+         background:linear-gradient(180deg,#e8eef4 0%,#f2f5f8 320px,#edf1f5 100%); }
+  nav.top { display:flex; flex-wrap:wrap; gap:8px 18px; align-items:center; color:#fff; padding:12px 16px;
+    background:linear-gradient(120deg,var(--navy2),var(--navy) 55%,#1d3d5c); box-shadow:0 2px 14px rgba(11,28,44,.35);
+    font-size:14px; position:relative; z-index:5; }
+  nav.top a { color:#cfe2f3; text-decoration:none; transition:opacity .15s ease; }
+  nav.top a:hover { opacity:.72; }
+  nav.top a.brand { color:#fff; font-weight:800; }
+  nav.top a.here { color:#fff; font-weight:800; border-bottom:2px solid var(--fuel2); padding-bottom:2px; }
+  main { max-width:960px; margin:0 auto; padding:24px 16px 40px; }
+  .title-panel { position:relative; overflow:hidden; color:#fff; border-radius:20px; padding:24px 22px; margin-bottom:18px;
+    background:linear-gradient(120deg,#03222b,#0c4a5e 60%,#0e7490); box-shadow:0 10px 26px -12px rgba(8,80,100,.55); }
+  .title-panel::after { content:""; position:absolute; inset:auto 0 0 0; height:6px;
+    background:linear-gradient(90deg,var(--fuel2),var(--amber)); }
+  .title-panel .badge { display:inline-block; background:var(--amber); color:#231a00; font-weight:800; font-size:12px;
+    padding:3px 10px; border-radius:999px; letter-spacing:.08em; margin-bottom:10px; }
+  .title-panel h1 { margin:0; font-size:clamp(24px,5.6vw,34px); font-weight:900; }
+  .title-panel p { margin:10px 0 4px; color:#d9f6f1; line-height:1.8; font-size:14px; max-width:720px; }
+  section.panel { background:var(--card); border-radius:20px; padding:22px; margin-bottom:18px;
+    border:1px solid var(--line); box-shadow:0 3px 14px rgba(18,40,63,.06), 0 14px 30px -20px rgba(18,40,63,.25); }
+  section.panel h2 { margin:0 0 14px; font-size:17px; font-weight:800; display:flex; align-items:center; gap:10px; }
+  section.panel h2::before { content:""; width:9px; height:20px; border-radius:3px; background:linear-gradient(180deg,var(--fuel2),var(--fuel)); flex:none; }
+  .field { margin-bottom:18px; }
+  .field:last-child { margin-bottom:0; }
+  .field label.lab { display:block; font-weight:700; font-size:14px; margin-bottom:8px; }
+  .field .hint { color:var(--mut); font-size:12px; margin-top:6px; line-height:1.7; }
+  .seg { position:relative; display:flex; background:#e7ecf2; border-radius:12px; padding:4px; gap:0; }
+  .seg .plate { position:absolute; top:4px; bottom:4px; border-radius:9px;
+    background:linear-gradient(180deg,var(--fuel2),var(--fuel));
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.38), inset 0 -3px 0 rgba(0,0,0,.20), 0 6px 14px -6px rgba(15,30,45,.40);
+    transition:left .28s cubic-bezier(.4,0,.2,1), width .28s cubic-bezier(.4,0,.2,1); }
+  .seg button { position:relative; z-index:1; flex:1; border:0; background:transparent; color:var(--ink);
+    font:inherit; font-weight:700; font-size:14px; padding:10px 6px; border-radius:9px; cursor:pointer; }
+  .seg button.on { color:#fff; }
+  .numrow { display:flex; align-items:center; gap:10px; }
+  .numrow input[type="number"] { flex:1; min-width:0; font:inherit; font-size:18px; font-weight:700; padding:12px 14px;
+    border:1.5px solid var(--line); border-radius:12px; background:#fbfcfe; color:var(--ink); }
+  .numrow input[type="number"]:focus { outline:3px solid rgba(249,115,22,.35); border-color:var(--fuel2); }
+  .numrow .unit { font-weight:700; color:var(--mut); font-size:14px; flex:none; }
+  .result-big { text-align:center; padding:10px 0 4px; }
+  .result-big .cap { color:var(--mut); font-size:13px; font-weight:700; letter-spacing:.06em; }
+  .result-big .amt { font-size:clamp(38px,9vw,54px); font-weight:900; color:var(--fuel); line-height:1.15;
+    text-shadow:0 2px 12px rgba(234,88,12,.18); }
+  .result-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin-top:14px; }
+  .result-grid .cell { background:#fdf4ec; border:1px solid #f7ddc8; border-radius:14px; padding:12px 14px; }
+  .result-grid .cell .k { color:var(--mut); font-size:12px; font-weight:700; }
+  .result-grid .cell .v { font-size:19px; font-weight:800; margin-top:3px; }
+  .note { color:var(--mut); font-size:13px; line-height:1.85; }
+  .note li { margin-bottom:4px; }
+  details.pp { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:16px 20px; margin-bottom:18px; }
+  details.pp summary { font-weight:800; cursor:pointer; }
+  details.pp p { color:var(--mut); font-size:13px; line-height:1.85; }
+  footer { max-width:960px; margin:0 auto; padding:0 16px 110px; color:var(--mut); font-size:13px; line-height:1.8; }
+  .stickybar { position:fixed; left:0; right:0; bottom:0; z-index:50; color:#fff;
+    background:linear-gradient(120deg,#3a1503,#7c2d12 60%,#9a3412); border-top:3px solid var(--amber);
+    padding:10px 16px calc(10px + env(safe-area-inset-bottom)); display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+    box-shadow:0 -6px 20px rgba(58,21,3,.35); }
+  .stickybar .lab { font-size:12px; font-weight:700; color:#ffd9b0; }
+  .stickybar .amt { font-size:24px; font-weight:900; color:var(--amber); text-shadow:0 0 14px rgba(242,168,29,.45); }
+  .stickybar .sub { font-size:12px; color:#ffe8d6; }
+</style>
+<link rel="canonical" href="https://wankodo.github.io/mobility-simulator/gasoline.html" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="移動シミュレーター" />
+<meta property="og:title" content="移動シミュレーター｜ガソリン代計算シミュレーター" />
+<meta property="og:description" content="走行距離・燃費・ガソリン単価から、往復のガソリン代・使用量・1人あたり・通勤の月額年額まで無料で試算できます。" />
+<meta property="og:url" content="https://wankodo.github.io/mobility-simulator/gasoline.html" />
+<meta property="og:image" content="https://wankodo.github.io/mobility-simulator/ogp.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://wankodo.github.io/mobility-simulator/ogp.png" />
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3970535652265626" crossorigin="anonymous"></script>
+<style id="design-polish-3">
+  button, .seg button{
+    transition: box-shadow .12s ease, transform .05s ease, filter .15s ease;
+  }
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "@id": "https://wankodo.github.io/mobility-simulator/gasoline.html#app",
+  "url": "https://wankodo.github.io/mobility-simulator/gasoline.html",
+  "name": "ガソリン代計算シミュレーター",
+  "description": "走行距離・燃費・ガソリン単価から、往復のガソリン代・使用量・1人あたり・通勤の月額年額まで無料で試算できます。",
+  "applicationCategory": "TravelApplication",
+  "operatingSystem": "Webブラウザ",
+  "inLanguage": "ja",
+  "isFree": true,
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "JPY" },
+  "isPartOf": { "@id": "https://wankodo.github.io/mobility-simulator/#website" }
+}
+</script>
+<link rel="stylesheet" href="site-unified.css?v=14" />
+<script>
+(function () {
+  var PIC = {
+    "🚗": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11l1.5-4.5A2 2 0 0 1 8.4 5h7.2a2 2 0 0 1 1.9 1.5L19 11"/><path d="M3 11h18v6h-2.6"/><path d="M3 17h2.6"/><circle cx="7.5" cy="17" r="1.8"/><circle cx="16.5" cy="17" r="1.8"/><path d="M9.3 17h5.4"/></svg>',
+    "🚕": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9.6" y="2.6" width="4.8" height="2.2" rx="0.6"/><path d="M5 12l1.5-4.2A2 2 0 0 1 8.4 6.4h7.2a2 2 0 0 1 1.9 1.4L19 12"/><path d="M3 12h18v5.5h-2.6"/><path d="M3 17.5h2.6"/><circle cx="7.5" cy="17.5" r="1.8"/><circle cx="16.5" cy="17.5" r="1.8"/><path d="M9.3 17.5h5.4"/></svg>',
+    "⚡": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2.5L4.8 13.5h6L9.7 21.5l8.4-11h-6.1l1-8z"/></svg>',
+    "⛽": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v16"/><path d="M3 21h14"/><rect x="7.2" y="5.8" width="5.6" height="4.2" rx="0.6"/><path d="M15 10l2.1 2.1a2 2 0 0 1 .6 1.4V18a1.9 1.9 0 0 0 3.8 0v-6.8a2 2 0 0 0-.6-1.4L18.6 7.5"/></svg>',
+    "🅿": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2.5"/><path d="M9.5 16.8V7.2h3.4a2.9 2.9 0 0 1 0 5.8H9.5"/></svg>',
+    "🛣": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21L10 3"/><path d="M19 21L14 3"/><path d="M12 18.6v-2.2"/><path d="M12 13.6v-2.2"/><path d="M12 8.6V6.4"/></svg>',
+    "🚃": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3.5" width="14" height="13" rx="2.5"/><path d="M5 10.3h14"/><path d="M9 13.9h.01M15 13.9h.01" stroke-width="2.6"/><path d="M8.5 20.5l2-4"/><path d="M15.5 20.5l-2-4"/><path d="M7 20.5h10"/></svg>',
+    "🎫": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8.6a2.4 2.4 0 0 0 0 2.8V15a1.6 1.6 0 0 0 1.6 1.6h12.8A1.6 1.6 0 0 0 20 15v-3.6a2.4 2.4 0 0 1 0-2.8V7A1.6 1.6 0 0 0 18.4 5.4H5.6A1.6 1.6 0 0 0 4 7z"/><path d="M13.8 6.2v1.7M13.8 10.2v1.7M13.8 14.2v1.6"/></svg>',
+    "🧰": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="9" width="18" height="10" rx="1.6"/><path d="M9 9V7a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/><path d="M3 13.6h18"/><rect x="10.3" y="12.3" width="3.4" height="2.6" rx="0.5"/></svg>',
+    "🧺": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.6 10.2h14.8l-1.5 7.9a2 2 0 0 1-2 1.6H8.1a2 2 0 0 1-2-1.6z"/><path d="M8.6 10.2L12 4.6l3.4 5.6"/><path d="M3 10.2h18"/><path d="M9.2 13.8v2.4M12 13.8v2.4M14.8 13.8v2.4"/></svg>',
+    "📍": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-6.6-5.5-6.6-10.3a6.6 6.6 0 0 1 13.2 0C18.6 15.5 12 21 12 21z"/><circle cx="12" cy="10.4" r="2.3"/></svg>',
+    "🐾": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="12" cy="15.8" rx="4.4" ry="3.6"/><circle cx="5.8" cy="10.8" r="1.8"/><circle cx="9.3" cy="7.8" r="1.9"/><circle cx="14.7" cy="7.8" r="1.9"/><circle cx="18.2" cy="10.8" r="1.8"/></svg>'
+  };
+  var KEYS = Object.keys(PIC);
+  function makePic(ch) {
+    var s = document.createElement("span");
+    s.className = "ido-pic";
+    s.dataset.emoji = ch;
+    s.innerHTML = PIC[ch];
+    return s;
+  }
+  function swapIn(root) {
+    if (!root || root.nodeType !== 1) return;
+    var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+      acceptNode: function (n) {
+        if (!n.nodeValue) return NodeFilter.FILTER_REJECT;
+        var p = n.parentElement;
+        if (!p) return NodeFilter.FILTER_REJECT;
+        var tag = p.tagName;
+        if (tag === "SCRIPT" || tag === "STYLE" || tag === "TEXTAREA") return NodeFilter.FILTER_REJECT;
+        if (p.closest(".ido-pic")) return NodeFilter.FILTER_REJECT;
+        for (var i = 0; i < KEYS.length; i++) if (n.nodeValue.indexOf(KEYS[i]) >= 0) return NodeFilter.FILTER_ACCEPT;
+        return NodeFilter.FILTER_REJECT;
+      }
+    });
+    var nodes = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+    nodes.forEach(function (n) {
+      var text = n.nodeValue;
+      var frag = document.createDocumentFragment();
+      var buf = "";
+      for (var i = 0; i < text.length; i++) {
+        var matched = null;
+        for (var k = 0; k < KEYS.length; k++) {
+          if (text.startsWith(KEYS[k], i)) { matched = KEYS[k]; break; }
+        }
+        if (matched) {
+          if (buf) { frag.appendChild(document.createTextNode(buf)); buf = ""; }
+          frag.appendChild(makePic(matched));
+          i += matched.length - 1;
+          if (text.charCodeAt(i + 1) === 0xFE0F) i++;
+        } else {
+          buf += text[i];
+        }
+      }
+      if (buf) frag.appendChild(document.createTextNode(buf));
+      if (n.parentNode) n.parentNode.replaceChild(frag, n);
+    });
+  }
+  function swapOut(root) {
+    root.querySelectorAll(".ido-pic").forEach(function (s) {
+      s.replaceWith(document.createTextNode(s.dataset.emoji || ""));
+    });
+  }
+  var mo = null;
+  function applyIcons() {
+    if (!document.body) return;
+    var isAndy = (document.documentElement.dataset.theme || "kuma") === "andy";
+    if (mo) { mo.disconnect(); mo = null; }
+    if (isAndy) {
+      swapIn(document.body);
+      mo = new MutationObserver(function (muts) {
+        muts.forEach(function (m) {
+          m.addedNodes.forEach(function (nd) { if (nd.nodeType === 1) swapIn(nd); });
+        });
+      });
+      mo.observe(document.body, { childList: true, subtree: true });
+    } else {
+      swapOut(document.body);
+    }
+  }
+  try {
+    var t = localStorage.getItem("ido_theme_v1");
+    if (t === "andy" || t === "kuma") document.documentElement.dataset.theme = t;
+  } catch (e) {}
+  document.addEventListener("DOMContentLoaded", function () {
+    var btns = document.querySelectorAll("[data-ido-theme]");
+    function sync() {
+      var cur = document.documentElement.dataset.theme || "kuma";
+      btns.forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.idoTheme === cur)); });
+    }
+    btns.forEach(function (b) {
+      b.addEventListener("click", function () {
+        document.documentElement.dataset.theme = b.dataset.idoTheme;
+        try { localStorage.setItem("ido_theme_v1", b.dataset.idoTheme); } catch (e) {}
+        sync();
+        applyIcons();
+      });
+    });
+    sync();
+    applyIcons();
+  });
+})();
+</script>
+</head>
+<body>
+<header class="ido-sitebar"><a class="ido-brand" href="index.html" aria-label="移動シミュレーター トップへ"><span class="ido-brand-mark" aria-hidden="true">移</span><span class="ido-brand-text"><small>MOBILITY SIMULATOR</small></span></a><div class="ido-category-nav" role="navigation" aria-label="カテゴリ"><a href="index.html">トップ</a><a href="car.html" class="is-current" aria-current="page">車系</a><a href="rail.html">電車系</a><a href="useful.html">便利系</a></div><div class="ido-theme-switch" role="group" aria-label="表示モード切替"><button type="button" data-ido-theme="kuma" aria-pressed="true">熊八モード</button><button type="button" data-ido-theme="andy" aria-pressed="false">Andyモード</button></div></header>
+
+<main>
+<div class="ido-toolnav" role="navigation" aria-label="車系ツール"><span class="ido-toolnav-label">車系ツール</span><a href="car.html">車系トップ</a><a href="timescar.html">🚗 タイムズカー</a><a href="highway.html">🛣️ 高速料金</a><a href="gasoline.html">⛽ ガソリン代</a><a href="ev.html" aria-current="page">⚡ EV電気代</a><a href="parking.html">🅿️ 駐車場</a><a href="taxi.html">🚕 タクシー</a></div>
+
+  <div class="title-panel ido-hero">
+    <span class="badge">EV電気代</span>
+    <h1>⚡ EV電気代計算シミュレーター</h1>
+    <p>走行距離と電費、電気の単価を入れるだけで、EVの電気代の目安がその場で出ます。往復・割り勘・通勤の月額／年額に加えて、ガソリン車との差額まで対応。計算はブラウザの中だけで完結し、入力が送信されることはありません。</p>
+  </div>
+
+  <section class="panel">
+    <h2>条件を入れる</h2>
+    <div class="field">
+      <label class="lab">片道／往復</label>
+      <div class="seg" id="segTrip"><span class="plate"></span>
+        <button type="button" data-v="oneway">片道</button>
+        <button type="button" data-v="round" class="on">往復</button>
+      </div>
+    </div>
+    <div class="field">
+      <label class="lab" for="dist">走行距離（片道）</label>
+      <div class="numrow"><input type="number" id="dist" inputmode="decimal" min="0" step="0.1" value="20" /><span class="unit">km</span></div>
+      <p class="hint">目的地までの距離（道のり）を調べる：<a href="https://www.google.com/maps/dir/" target="_blank" rel="noopener noreferrer">Googleマップ</a> ／ <a href="https://maps.apple.com/?dirflg=d" target="_blank" rel="noopener noreferrer">Appleマップ</a> ／ <a href="https://map.yahoo.co.jp/" target="_blank" rel="noopener noreferrer">Yahoo!マップ</a> ／ <a href="https://www.navitime.co.jp/drive/" target="_blank" rel="noopener noreferrer">NAVITIME</a> ／ <a href="https://mapfan.com/" target="_blank" rel="noopener noreferrer">MapFan</a><br />ルート検索で表示された片道の距離を、上に入力してください。</p>
+    </div>
+    <div class="field">
+      <label class="lab" for="carSel">車種から選ぶ（任意）</label>
+      <div class="numrow"><select id="carSel" style="flex:1;min-width:0;font:inherit;font-size:15px;font-weight:700;padding:12px 10px;border:1.5px solid var(--line);border-radius:12px;background:#fbfcfe;color:var(--ink);">
+        <option value="">車種を選ぶと電費の目安が入ります</option>
+        <option data-fill="6.7">Model 3 RWD（テスラ）実電費の目安 約6.7km/kWh／カタログ 8.4km/kWh</option>
+        <option data-fill="6.5">サクラ（日産）実電費の目安 約6.5km/kWh／カタログ 8.1km/kWh</option>
+        <option data-fill="6.5">eKクロスEV（三菱）実電費の目安 約6.5km/kWh／カタログ 8.1km/kWh</option>
+        <option data-fill="6.2">Model Y RWD（テスラ）実電費の目安 約6.2km/kWh／カタログ 7.7km/kWh</option>
+        <option data-fill="5.2">リーフ 40kWh（日産）実電費の目安 約5.2km/kWh／カタログ 6.5km/kWh</option>
+        <option data-fill="5.0">リーフ e+ 60kWh（日産）実電費の目安 約5.0km/kWh／カタログ 6.2km/kWh</option>
+        <option data-fill="4.8">アリア B6（日産）実電費の目安 約4.8km/kWh／カタログ 6.0km/kWh</option>
+        </select></div>
+      <p class="hint">カタログ電費は、WLTCモードの交流電力量消費率（Wh/km）を km/kWh に換算したメーカー公表値です。実電費の目安はカタログ値の8割で計算した参考値で、選ぶとそちらが入ります。実際の電費は季節や走り方で変わります。</p>
+    </div>
+    <div class="field">
+      <label class="lab" for="fuelEff">電費</label>
+      <div class="numrow"><input type="number" id="fuelEff" inputmode="decimal" min="0.1" step="0.1" value="6.5" /><span class="unit">km/kWh</span></div>
+      <p class="hint">車の電費表示やカタログ値が目安です。実電費は季節（特に冬の暖房）・高速走行・エアコンで変わります。</p>
+    </div>
+    <div class="field">
+      <label class="lab">充電方法（単価の初期値）</label>
+      <div class="seg" id="segCharge"><span class="plate"></span>
+        <button type="button" data-v="home" class="on">自宅（標準）</button>
+        <button type="button" data-v="night">自宅（夜間・お得）</button>
+      </div>
+      <div class="numrow" style="margin-top:10px;"><input type="number" id="price" inputmode="decimal" min="0" step="0.1" value="31" /><span class="unit">円/kWh</span></div>
+      <p class="hint">自宅（標準）の31円/kWhは、全国家庭用電気料金の目安単価です。夜間が安くなるプランの目安として25円/kWhを置いています。公共の急速充電は「30分あたり」の時間制料金が多く単価に換算しにくいため、使う場合は契約内容に合わせて単価を入力してください。実際の単価はご契約のプランに合わせて変えてください。</p>
+    </div>
+    <div class="field">
+      <label class="lab" for="people">割り勘する人数</label>
+      <div class="numrow"><input type="number" id="people" inputmode="numeric" min="1" step="1" value="1" /><span class="unit">人</span></div>
+    </div>
+    <div class="field">
+      <label class="lab" for="perWeek">週に何回走るか（月額・年額の計算用）</label>
+      <div class="numrow"><input type="number" id="perWeek" inputmode="numeric" min="0" step="1" value="5" /><span class="unit">回／週</span></div>
+      <p class="hint">通勤なら週5回が目安です。月額＝1回分×週の回数×52週÷12か月、年額＝1回分×週の回数×52週で計算します。</p>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>試算結果</h2>
+    <div class="result-big">
+      <div class="cap">電気代（<span id="tripLabel">往復</span>）</div>
+      <div class="amt" id="evTotal">¥—</div>
+    </div>
+    <div class="result-grid">
+      <div class="cell"><div class="k">使う電気の量</div><div class="v" id="resKwh">—</div></div>
+      <div class="cell"><div class="k">1kmあたり</div><div class="v" id="resPerKm">—</div></div>
+      <div class="cell"><div class="k">1人あたり（割り勘）</div><div class="v" id="resPerPerson">—</div></div>
+      <div class="cell"><div class="k">月額の目安</div><div class="v" id="resMonthly">—</div></div>
+      <div class="cell"><div class="k">年額の目安</div><div class="v" id="resYearly">—</div></div>
+      <div class="cell"><div class="k">総走行距離</div><div class="v" id="resDist">—</div></div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>ガソリン車と比べると</h2>
+    <div class="field">
+      <label class="lab" for="cmpEff">比べるガソリン車の燃費</label>
+      <div class="numrow"><input type="number" id="cmpEff" inputmode="decimal" min="0.1" step="0.1" value="15" /><span class="unit">km/L</span></div>
+    </div>
+    <div class="field">
+      <label class="lab" for="cmpPrice">ガソリンの単価</label>
+      <div class="numrow"><input type="number" id="cmpPrice" inputmode="decimal" min="0" step="0.1" value="170.2" /><span class="unit">円/L</span></div>
+      <p class="hint">初期値はレギュラーの全国平均（資源エネルギー庁の石油製品価格調査・2026年10月5日調査）です。</p>
+    </div>
+    <div class="result-grid">
+      <div class="cell"><div class="k">ガソリン車なら</div><div class="v" id="cmpGas">—</div></div>
+      <div class="cell"><div class="k">1回あたりの差額</div><div class="v" id="cmpDiff">—</div></div>
+      <div class="cell"><div class="k">月額の差額</div><div class="v" id="cmpDiffMonth">—</div></div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>計算のしかたと注意</h2>
+    <ul class="note">
+      <li>電気代 ＝ 走行距離（km）÷ 電費（km/kWh）× 単価（円/kWh）で計算しています。往復は片道の距離を2倍にします。</li>
+      <li>高速道路の通行料金は含みません。高速を使う場合は<a href="highway.html">高速料金シミュレーター</a>と合わせてご覧ください。両方とも「行程カゴ」に入れると、<a href="index.html">トップページ</a>で合計と割り勘が出せます。</li>
+      <li>金額は目安です。実際の電費は季節（特に冬の暖房）・高速走行・エアコンで変わります。カタログ電費は充電ロスを含む交流電力量消費率が基準です。</li>
+    </ul>
+  </section>
+
+    <p class="pp-footer"><button type="button" class="pp-link" data-pp-open>プライバシーポリシー</button></p>
+</main>
+<footer class="ido-site-footer ido-footer-with-bar">
+  <p>本ページは非公式の個人ツールです。電気料金は契約プランや時期により変動します。正確な単価はご契約の内容をご確認ください。</p>
+  <p>制作：andy（わんこ堂）× 熊八 🐾（Muse Spark）</p>
+</footer>
+
+<div class="stickybar">
+  <span class="lab">EV電気代</span>
+  <span class="amt" id="stickyPrice">¥—</span>
+  <span class="sub" id="stickyRoute">—</span>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  var RATES = { home: 31, night: 25 };
+  var state = { trip: "round", charge: "home" };
+
+  function yen(n) { return "¥" + Math.round(n).toLocaleString("ja-JP"); }
+  function num(id) {
+    var v = parseFloat(document.getElementById(id).value);
+    return isNaN(v) ? 0 : v;
+  }
+
+  function setupSeg(id, key, onPick) {
+    var seg = document.getElementById(id);
+    var plate = seg.querySelector(".plate");
+    var btns = Array.prototype.slice.call(seg.querySelectorAll("button"));
+    function move() {
+      var on = seg.querySelector("button.on");
+      if (!on) return;
+      plate.style.left = on.offsetLeft + "px";
+      plate.style.width = on.offsetWidth + "px";
+    }
+    btns.forEach(function (b) {
+      b.addEventListener("click", function () {
+        btns.forEach(function (x) { x.classList.remove("on"); });
+        b.classList.add("on");
+        state[key] = b.getAttribute("data-v");
+        move();
+        if (onPick) onPick(state[key]);
+        calc();
+      });
+    });
+    window.addEventListener("resize", move);
+    move();
+    return move;
+  }
+
+  var moveTrip = setupSeg("segTrip", "trip", null);
+  var moveCharge = setupSeg("segCharge", "charge", function (v) {
+    document.getElementById("price").value = RATES[v];
+  });
+
+  function calc() {
+    var dist = num("dist");
+    var eff = num("fuelEff");
+    var price = num("price");
+    var people = Math.max(1, Math.floor(num("people")) || 1);
+    var perWeek = num("perWeek");
+    var totalDist = state.trip === "round" ? dist * 2 : dist;
+    var kwh = eff > 0 ? totalDist / eff : 0;
+    var cost = kwh * price;
+    document.getElementById("tripLabel").textContent = state.trip === "round" ? "往復" : "片道";
+    document.getElementById("evTotal").textContent = yen(cost);
+    document.getElementById("resKwh").textContent = kwh.toFixed(2) + " kWh";
+    document.getElementById("resPerKm").textContent = totalDist > 0 ? yen(cost / totalDist) : "—";
+    document.getElementById("resPerPerson").textContent = yen(Math.ceil(cost / people));
+    document.getElementById("resMonthly").textContent = yen(cost * perWeek * 52 / 12);
+    document.getElementById("resYearly").textContent = yen(cost * perWeek * 52);
+    document.getElementById("resDist").textContent = totalDist.toLocaleString("ja-JP") + " km";
+    document.getElementById("stickyPrice").textContent = yen(cost);
+    document.getElementById("stickyRoute").textContent =
+      (state.trip === "round" ? "往復" : "片道") + " " + totalDist.toLocaleString("ja-JP") + "km／電費 " + eff + "km/kWh／" + price + "円/kWh";
+    var gEff = num("cmpEff");
+    var gPrice = num("cmpPrice");
+    var gCost = gEff > 0 ? totalDist / gEff * gPrice : 0;
+    var diff = gCost - cost;
+    document.getElementById("cmpGas").textContent = yen(gCost);
+    document.getElementById("cmpDiff").textContent = diff >= 0 ? yen(diff) + " お得" : yen(-diff) + " 高い";
+    var diffM = diff * perWeek * 52 / 12;
+    document.getElementById("cmpDiffMonth").textContent = diffM >= 0 ? yen(diffM) + " お得" : yen(-diffM) + " 高い";
+  }
+
+  ["dist", "fuelEff", "price", "people", "perWeek", "cmpEff", "cmpPrice"].forEach(function (id) {
+    document.getElementById(id).addEventListener("input", calc);
+  });
+  document.getElementById("carSel").addEventListener("change", function () {
+    var opt = this.options[this.selectedIndex];
+    var fill = opt ? opt.getAttribute("data-fill") : null;
+    if (fill) {
+      document.getElementById("fuelEff").value = fill;
+      calc();
+    }
+  });
+  window.addEventListener("load", function () { moveTrip(); moveCharge(); calc(); });
+  calc();
+})();
+</script>
+<script>window.IDO_BASKET={kind:"ev"};</script>
+<script>
+/* ===== 移動シミュレーター 行程カゴ（共通部品） ===== */
+(function () {
+  "use strict";
+  var KEY = "ido_itinerary_v1";
+  var CFG = window.IDO_BASKET || { kind: "portal" };
+  function load() {
+    try {
+      var raw = localStorage.getItem(KEY);
+      var arr = raw ? JSON.parse(raw) : [];
+      return Array.isArray(arr) ? arr : [];
+    } catch (e) { return []; }
+  }
+  function save(items) {
+    try { localStorage.setItem(KEY, JSON.stringify(items)); } catch (e) {}
+  }
+  function yen(n) { return "¥" + Math.round(n).toLocaleString("ja-JP"); }
+  function parseAmt(text) {
+    if (!text) return null;
+    var digits = String(text).replace(/[^0-9]/g, "");
+    if (!digits) return null;
+    var v = parseInt(digits, 10);
+    return isNaN(v) ? null : v;
+  }
+  function elText(id) {
+    var el = document.getElementById(id);
+    return el ? el.textContent.trim() : "";
+  }
+  function extract() {
+    if (CFG.kind === "ev") {
+      var a = parseAmt(elText("evTotal"));
+      if (a === null) return null;
+      var route = elText("stickyRoute");
+      return { kind: "ev", label: "EV電気代 " + (route && route !== "—" ? route : ""), amount: a, unit: "台分" };
+    }
+    return null;
+  }
+  function total(items) {
+    return items.reduce(function (s, it) { return s + it.amount * (it.qty || 1); }, 0);
+  }
+  if (CFG.kind !== "portal") {
+    var box = document.createElement("div");
+    box.id = "ido-basket-widget";
+    box.style.cssText = "position:fixed;right:12px;bottom:92px;z-index:9999;background:#12283f;color:#fff;border-radius:12px;padding:10px 12px;box-shadow:0 6px 20px rgba(0,0,0,.3);font-family:system-ui,-apple-system,sans-serif;font-size:13px;max-width:78vw;";
+    box.innerHTML =
+      '<div id="ido-basket-status" style="margin-bottom:8px;color:#cfe2f3;">行程カゴ：0件／¥0</div>' +
+      '<button id="ido-basket-add" type="button" style="background:#f2a81d;color:#12283f;border:0;border-radius:8px;padding:8px 12px;font-weight:800;cursor:pointer;">＋ 行程に追加</button> ' +
+      '<a href="index.html" style="color:#fff;text-decoration:underline;">カゴを見る</a>';
+    document.body.appendChild(box);
+    var status = document.getElementById("ido-basket-status");
+    function refresh() {
+      var items = load();
+      status.textContent = "行程カゴ：" + items.length + "件／" + yen(total(items));
+    }
+    refresh();
+    window.addEventListener("storage", function (e) { if (e.key === KEY) refresh(); });
+    document.getElementById("ido-basket-add").addEventListener("click", function () {
+      var got = extract();
+      if (!got) {
+        alert("まだ料金が出ていません。先に条件を選んで料金を表示してから追加してください。");
+        return;
+      }
+      var items = load();
+      got.id = Date.now();
+      got.qty = 1;
+      items.push(got);
+      save(items);
+      refresh();
+      status.textContent = "追加しました：" + got.label + " " + yen(got.amount);
+    });
+  }
+})();
+</script>
+<div class="pp-overlay" data-pp-overlay>
+  <div class="pp-dialog privacy-policy" role="dialog" aria-modal="true" aria-labelledby="ppTitle">
+    <div class="pp-scroll">
+      <h2 id="ppTitle">プライバシーポリシー</h2>
+      <p>このページの計算はすべてお使いのブラウザの中で完結します。入力した距離・電費・単価などの内容がサーバーに送信・保存されることはありません。行程カゴの中身は、お使いのブラウザの localStorage にのみ保存されます。</p>
+      <p>このサイトでは、広告配信のために Google AdSense を利用する場合があります。Google を含む第三者配信事業者は、Cookie を使用して、ユーザーがそのウェブサイトや他のウェブサイトに過去にアクセスした際の情報に基づいて広告を配信することがあります。パーソナライズ広告は <a href="https://adssettings.google.com/" target="_blank" rel="noopener noreferrer">Google の広告設定</a>から無効にできます。</p>
+      <p>表示される金額は公開資料と計算式に基づく試算であり、実際の料金を保証するものではありません。</p>
+    </div>
+    <div class="pp-actions">
+      <div class="pp-btn-row">
+        <button type="button" class="pp-close-btn" data-pp-close>閉じる</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="policy-snippet.js"></script>
+</body>
+</html>
