@@ -32,6 +32,13 @@
   a.card.train { --acc:linear-gradient(90deg,#12b981,#0d8a63); --tint:#e3f7ef; }
   a.card.car { --acc:linear-gradient(90deg,#ffb020,#f28c13); --tint:#fdf1de; }
   a.card.highway { --acc:linear-gradient(90deg,#3f9be0,#2f6fd0); --tint:#e4f0fb; }
+  a.card.gas { --acc:linear-gradient(90deg,#f97316,#ea580c); --tint:#fdeee3; }
+  a.card.park { --acc:linear-gradient(90deg,#2e9e8f,#2e7d74); --tint:#e2f2ef; }
+  a.card.taxi { --acc:linear-gradient(90deg,#eab308,#ca8a04); --tint:#fdf6dd; }
+  a.card.pass { --acc:linear-gradient(90deg,#12b981,#0d8a63); --tint:#e3f7ef; }
+  a.card.catcar { --acc:linear-gradient(90deg,#ffb020,#f28c13); --tint:#fdf1de; }
+  a.card.catrail { --acc:linear-gradient(90deg,#12b981,#0d8a63); --tint:#e3f7ef; }
+  a.card.catuseful { --acc:linear-gradient(90deg,#3f9be0,#2f6fd0); --tint:#e4f0fb; }
   a.card .ic { display:flex; align-items:center; justify-content:center; width:56px; height:56px; border-radius:16px;
                background:var(--tint,#eef2f6); font-size:30px; margin-bottom:14px; }
   a.card h2 { margin:0 0 8px; font-size:20px; font-weight:800; letter-spacing:.01em; }
@@ -107,29 +114,29 @@
 <body>
 <header class="site">
   <h1>移動シミュレーター</h1>
-  <p class="lead">お出かけや旅行の前に、移動にかかる料金をまとめて試算できる無料のツール集です。カーシェア（タイムズカー）、高速道路、電車・新幹線の3つのシミュレーターを用意しています。いずれも登録不要で、計算はお使いのブラウザの中だけで完結します。</p>
+  <p class="lead">お出かけや旅行の前に、移動にかかる料金をまとめて試算できる無料のツール集です。車系・電車系・便利系のカテゴリに分けてシミュレーターを用意しています。いずれも登録不要で、計算はお使いのブラウザの中だけで完結します。</p>
 </header>
 <main>
   <div class="cards">
-    <a class="card train" href="train.html">
-      <span class="ic">🚃</span>
-      <h2>電車・新幹線シミュレーター</h2>
-      <p>電車・新幹線の運賃と発車時刻を調べます。全452路線を収録し、在来線・有料特急・新幹線の運賃試算、駅の時刻表、発車までのカウントダウン表示に対応しています。ケーブルカーやロープウェイも一部収録しています。</p>
-      <span class="go">開く →</span>
-    </a>
-    <a class="card car" href="timescar.html">
+    <a class="card catcar" href="car.html">
       <span class="ic">🚗</span>
-      <h2>タイムズカー料金シミュレーター</h2>
-      <p>タイムズカーの利用料金を試算します。時間料金・最大時間料金・ナイトパックを自動で比べて、いちばん安い組み合わせで計算します。車両クラス、安心補償、給油・洗車、ステージ割引、チケットにも対応しています。</p>
+      <h2>車系ツール</h2>
+      <p>車での移動にかかる料金のツール集です。タイムズカー、高速道路、ガソリン代、駐車場、タクシーの5本を用意しています。</p>
       <span class="go">開く →</span>
     </a>
-    <a class="card highway" href="highway.html">
-      <span class="ic">🛣️</span>
-      <h2>高速料金シミュレーター</h2>
-      <p>高速道路の通行料金を試算します。全231路線・1,862か所のIC・出入口から入口と出口を選ぶと、路線網から距離を出して料金を計算します。ETC割引・深夜割引・休日割引の自動判定、首都高などの別体系にも対応しています。</p>
+    <a class="card catrail" href="rail.html">
+      <span class="ic">🚃</span>
+      <h2>電車系ツール</h2>
+      <p>電車での移動のツール集です。電車・新幹線シミュレーターと定期代お得度チェックの2本を用意しています。</p>
       <span class="go">開く →</span>
     </a>
-</div>
+    <a class="card catuseful" href="useful.html">
+      <span class="ic">🧰</span>
+      <h2>便利系ツール</h2>
+      <p>移動の計画に役立つ小さい計算ツールの置き場です。ドライブ所要時間の計算などを用意しています。</p>
+      <span class="go">開く →</span>
+    </a>
+  </div>
 
   <section class="box">
     <h2>🧺 行程カゴ（全部の合計）</h2>

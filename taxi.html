@@ -1,0 +1,394 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>移動シミュレーター｜タクシー料金計算シミュレーター</title>
+<meta name="description" content="タクシー運賃を地区別の運賃表（初乗り・加算）から試算できる無料ツール。全国79地区のプリセット、深夜割増・低速時間の換算・迎車料金・割り勘対応。行程カゴ対応。" />
+<link rel="canonical" href="https://wankodo.github.io/mobility-simulator/taxi.html" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="移動シミュレーター" />
+<meta property="og:title" content="移動シミュレーター｜タクシー料金計算シミュレーター" />
+<meta property="og:description" content="地区別の運賃表からタクシー料金を試算。深夜割増・低速時間・迎車料金・割り勘対応。" />
+<meta property="og:url" content="https://wankodo.github.io/mobility-simulator/taxi.html" />
+<meta property="og:image" content="https://wankodo.github.io/mobility-simulator/ogp.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<link rel="icon" type="image/svg+xml" href="favicon.svg" />
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3970535652265626" crossorigin="anonymous"></script>
+<script type="application/ld+json">
+{"@context": "https://schema.org", "@type": "WebApplication", "name": "タクシー料金計算シミュレーター", "url": "https://wankodo.github.io/mobility-simulator/taxi.html", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Web", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "JPY"}, "description": "地区別の運賃表（初乗り・加算）からタクシー料金を試算できる無料ツール。深夜割増・低速時間の換算・迎車料金対応。", "inLanguage": "ja", "isPartOf": {"@type": "WebSite", "name": "移動シミュレーター", "url": "https://wankodo.github.io/mobility-simulator/"}}
+</script>
+<style>
+:root{
+  --paper:#f7f5ef; --card:#fffdf8; --ink:#263238; --sub:#68707c; --line:#e5ddcb;
+  --navy:#1f4d5a; --teal:#2e7d74; --accent:#b3541e; --accent2:#e07b39;
+  --ok:#2e7d32;
+  --shadow:0 10px 26px rgba(60,50,20,.14);
+  --radius:18px;
+}
+*{box-sizing:border-box;}
+html{-webkit-text-size-adjust:100%;}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans","Noto Sans JP","Yu Gothic UI","Yu Gothic",Meiryo,system-ui,sans-serif;
+  line-height:1.75;font-size:15.5px;padding-bottom:118px;}
+a{color:var(--navy);}
+header{border-top:6px solid var(--navy);padding:22px 4vw 6px;text-align:center;}
+.eyebrow{font-size:15px;font-weight:800;letter-spacing:.24em;color:var(--navy);margin:0 0 2px;}
+h1{font-size:29px;margin:0 0 4px;font-weight:800;letter-spacing:.06em;color:#33291a;}
+.lead{color:#4c4433;max-width:720px;margin:6px auto 4px;font-size:15px;}
+nav.gnav{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding:14px 4vw 2px;}
+nav.gnav a{text-decoration:none;color:var(--navy);background:#fff;border:1.5px solid var(--line);
+  padding:8px 15px;border-radius:999px;font-weight:700;font-size:14px;box-shadow:0 3px 8px rgba(60,50,20,.07);}
+nav.gnav a.on{background:var(--navy);color:#fff;border-color:var(--navy);}
+main{max-width:860px;margin:0 auto;padding:10px 4vw 30px;}
+.card{background:var(--card);border:1.5px solid var(--line);border-radius:var(--radius);
+  box-shadow:var(--shadow);padding:20px 18px 22px;margin:18px 0 22px;}
+.card h2{margin:0 0 4px;font-size:20px;color:#33291a;}
+.card .sub{color:var(--sub);font-size:13.5px;margin:0 0 12px;}
+fieldset{border:0;margin:0 0 16px;padding:0;}
+legend,.lab{display:block;font-weight:800;font-size:14.5px;margin:0 0 7px;color:#4a3f27;}
+.hint{font-size:12.5px;color:var(--sub);margin:6px 0 0;}
+.numrow{display:flex;align-items:center;gap:8px;}
+.numrow input[type="number"]{flex:1;min-width:0;font:inherit;font-size:17px;font-weight:700;
+  padding:11px 12px;border:1.5px solid var(--line);border-radius:12px;background:#fbfcfe;color:var(--ink);}
+.unit{font-weight:700;color:var(--sub);font-size:14px;white-space:nowrap;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px 16px;}
+@media (max-width:560px){.grid2{grid-template-columns:1fr;}}
+select.sel{flex:1;min-width:0;font:inherit;font-size:15px;font-weight:700;padding:11px 10px;border:1.5px solid var(--line);border-radius:12px;background:#fbfcfe;color:var(--ink);}
+.totalBox{background:#fdf6ec;border:1.5px solid #ead9bd;border-radius:14px;padding:14px 16px;margin:4px 0 10px;}
+.totalBox .t{font-size:13px;font-weight:800;color:#8a6d3b;letter-spacing:.08em;}
+.totalBox .v{font-size:34px;font-weight:800;color:#33291a;line-height:1.25;}
+table.rows{width:100%;border-collapse:collapse;font-size:14.5px;}
+table.rows th,table.rows td{padding:7px 4px;border-bottom:1px dashed var(--line);text-align:left;vertical-align:top;}
+table.rows th{color:var(--sub);font-weight:700;white-space:nowrap;width:42%;}
+table.rows td{font-weight:700;}
+.exam{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}
+.exam button{font:inherit;font-size:13px;font-weight:700;color:var(--navy);background:#fff;border:1.5px solid var(--line);border-radius:999px;padding:6px 13px;cursor:pointer;}
+#map{height:430px;border-radius:14px;border:1.5px solid var(--line);z-index:0;background:#e8e4da;}
+.maptools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 10px;}
+.maptools input[type="text"]{flex:1;min-width:160px;font:inherit;font-size:15px;padding:10px 12px;border:1.5px solid var(--line);border-radius:12px;background:#fbfcfe;}
+.maptools button{font:inherit;font-size:14px;font-weight:800;color:#fff;background:var(--teal);border:0;border-radius:12px;padding:11px 16px;cursor:pointer;}
+.maptools button.ghost{background:#fff;color:var(--navy);border:1.5px solid var(--line);}
+details.policy{margin-top:26px;border-top:1px dashed var(--line);padding-top:12px;}
+details.policy summary{cursor:pointer;font-weight:800;color:var(--navy);font-size:14.5px;}
+details.policy .body{font-size:13.5px;color:#4c4433;}
+footer{text-align:center;color:var(--sub);font-size:12.5px;padding:10px 4vw 26px;}
+.basketbar{position:fixed;left:0;right:0;bottom:0;z-index:60;background:rgba(255,253,248,.97);
+  border-top:1.5px solid var(--line);box-shadow:0 -6px 18px rgba(60,50,20,.12);
+  padding:10px 4vw calc(10px + env(safe-area-inset-bottom));display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap;}
+.basketbar .binfo{font-size:13px;color:var(--sub);font-weight:700;}
+.basketbar .binfo b{color:var(--ink);font-size:16px;}
+.basketbar button{font:inherit;font-size:15px;font-weight:800;color:#fff;background:var(--accent);border:0;border-radius:999px;padding:11px 22px;cursor:pointer;box-shadow:0 4px 10px rgba(179,84,30,.35);}
+.basketbar button:active{transform:scale(.98);}
+</style>
+</head>
+<body>
+<header>
+  <p class="eyebrow">移動シミュレーター</p>
+  <h1>🚕 タクシー料金計算シミュレーター</h1>
+  <p class="lead">地区ごとのタクシー運賃表（初乗り・加算）から、料金の目安を試算できます。深夜割増、渋滞などで時速10km以下になった時間の換算、迎車料金にも対応しています。</p>
+</header>
+<nav class="gnav">
+  <a href="index.html">トップ</a>
+  <a href="train.html">🚃 電車・新幹線</a>
+  <a href="timescar.html">🚗 タイムズカー</a>
+  <a href="highway.html">🛣️ 高速料金</a>
+  <a href="gasoline.html">⛽ ガソリン代</a>
+  <a href="parking.html">🅿️ 駐車場</a>
+  <a href="taxi.html" class="on">🚕 タクシー</a>
+</nav>
+<main>
+  <section class="card">
+    <h2>タクシー料金の計算</h2>
+    <p class="sub">運賃は普通車・上限運賃（運輸局が公示した運賃の幅の上限）で計算します。事業者ごとに実際の運賃は少し違うことがあります。</p>
+    <div class="field">
+      <label class="lab" for="areaSel">プリセット（地区）</label>
+      <div class="numrow"><select class="sel" id="areaSel"></select></div>
+      <p class="hint" id="areaInfo"></p>
+    </div>
+    <details class="policy" id="customBox" style="display:none;margin:0 0 16px;border:0;padding:0;">
+      <summary>運賃表を自分で設定する</summary>
+      <div class="body" style="margin-top:10px;">
+        <div class="grid2">
+          <div class="field"><label class="lab" for="cBase">初乗り料金（円）</label><div class="numrow"><input type="number" id="cBase" value="500" step="10" /></div></div>
+          <div class="field"><label class="lab" for="cBaseM">初乗り距離（m）</label><div class="numrow"><input type="number" id="cBaseM" value="1000" step="10" /></div></div>
+          <div class="field"><label class="lab" for="cAdd">加算料金（円）</label><div class="numrow"><input type="number" id="cAdd" value="100" step="10" /></div></div>
+          <div class="field"><label class="lab" for="cAddM">加算距離（m）</label><div class="numrow"><input type="number" id="cAddM" value="232" step="1" /></div></div>
+        </div>
+      </div>
+    </details>
+    <div class="field">
+      <label class="lab" for="distKm">走行距離</label>
+      <div class="numrow"><input type="number" id="distKm" inputmode="decimal" min="0" step="0.1" value="5" /><span class="unit">km</span></div>
+      <p class="hint">目的地までの距離（道のり）を調べる：<a href="https://www.google.com/maps/dir/" target="_blank" rel="noopener noreferrer">Googleマップ</a> ／ <a href="https://maps.apple.com/?dirflg=d" target="_blank" rel="noopener noreferrer">Appleマップ</a> ／ <a href="https://map.yahoo.co.jp/" target="_blank" rel="noopener noreferrer">Yahoo!マップ</a> ／ <a href="https://www.navitime.co.jp/drive/" target="_blank" rel="noopener noreferrer">NAVITIME</a> ／ <a href="https://mapfan.com/" target="_blank" rel="noopener noreferrer">MapFan</a></p>
+    </div>
+    <div class="grid2">
+      <div class="field">
+        <label class="lab" for="lowMin">時速10km以下だった時間</label>
+        <div class="numrow"><select class="sel" id="lowMin"></select><span class="unit">分</span></div>
+        <p class="hint">信号待ち・渋滞でほとんど進まなかった時間の合計が分かれば入れてください（時間距離併用制の換算用）。</p>
+      </div>
+      <div class="field">
+        <label class="lab" for="timeSec">時間距離併用の換算</label>
+        <div class="numrow"><select class="sel" id="timeSec">
+          <option value="60">60秒ごとに加算1回分</option>
+          <option value="75">75秒ごとに加算1回分</option>
+          <option value="85">85秒ごとに加算1回分</option>
+          <option value="90" selected>90秒ごとに加算1回分</option>
+          <option value="95">95秒ごとに加算1回分</option>
+          <option value="105">105秒ごとに加算1回分</option>
+          <option value="120">120秒ごとに加算1回分</option>
+        </select></div>
+        <p class="hint">秒数は地区で違います。特別区・武三地区は85秒（確認済み）。それ以外の地区は目安として90秒を初期値にしています。</p>
+      </div>
+      <div class="field">
+        <label class="lab" for="nightSel">時間帯</label>
+        <div class="numrow"><select class="sel" id="nightSel">
+          <option value="0">昼間</option>
+          <option value="1">深夜・早朝（22時〜翌5時／2割増）</option>
+        </select></div>
+      </div>
+      <div class="field">
+        <label class="lab" for="pickupSel">迎車料金</label>
+        <div class="numrow"><select class="sel" id="pickupSel">
+          <option value="0">なし（流し・乗り場）</option>
+          <option value="100">100円</option>
+          <option value="200">200円</option>
+          <option value="300">300円</option>
+          <option value="400">400円</option>
+          <option value="500">500円</option>
+        </select></div>
+        <p class="hint">電話やアプリで呼んだ場合に事業者が定める料金です（配車アプリの手数料は別です）。</p>
+      </div>
+      <div class="field">
+        <label class="lab" for="tollYen">有料道路代（任意）</label>
+        <div class="numrow"><input type="number" id="tollYen" inputmode="numeric" min="0" step="10" value="0" /><span class="unit">円</span></div>
+        <p class="hint">高速道路などを使った場合の実費です。<a href="highway.html">高速料金シミュレーター</a>で調べられます。</p>
+      </div>
+      <div class="field">
+        <label class="lab" for="people">割り勘の人数</label>
+        <div class="numrow"><select class="sel" id="people">
+          <option value="1">1人</option>
+          <option value="2">2人</option>
+          <option value="3">3人</option>
+          <option value="4">4人</option>
+        </select></div>
+      </div>
+    </div>
+    <div style="height:14px"></div>
+    <div class="totalBox">
+      <div class="t">支払総額（目安）</div>
+      <div class="v" id="totalYen">¥2,300</div>
+    </div>
+    <table class="rows">
+      <tr><th>メーター運賃</th><td id="rMeter">¥2,300</td></tr>
+      <tr><th>初乗り</th><td id="rBase">¥500</td></tr>
+      <tr><th>距離の加算</th><td id="rDist">18回 × ¥100 ＝ ¥1,800</td></tr>
+      <tr><th>低速時間の換算</th><td id="rLow">0分（距離換算 0m）</td></tr>
+      <tr><th>深夜割増の増分</th><td id="rNight">なし</td></tr>
+      <tr><th>迎車料金</th><td id="rPickup">¥0</td></tr>
+      <tr><th>有料道路代</th><td id="rToll">¥0</td></tr>
+      <tr><th>1人あたり</th><td id="rPer">¥2,300</td></tr>
+    </table>
+    <details class="policy">
+      <summary>計算のしかたと注意</summary>
+      <div class="body">
+        <p>運賃（メーター）＝初乗り料金＋｛（走行距離＋低速時間の換算距離−初乗り距離）÷加算距離（切り上げ）｝×加算料金。低速時間は、選んだ秒数ごとに加算距離1回分として距離に換算します。</p>
+        <p>深夜・早朝（22時〜翌5時）の割増は、実際のメーターでは距離の刻みを2割短くする方式ですが、このページでは走行距離を6/5倍して昼間と同じ式に当てはめる目安計算にしています。</p>
+        <p>運賃表は各地方運輸局が公示した自動認可運賃（普通車・上限運賃）をもとに、2026年11月時点で適用中の値を収録しました。同じ地区でも事業者が届け出た運賃は幅の中で違うことがあります。定額運賃・事前確定運賃、遠距離割引、障がい者割引（1割引）、冬期割増、配車アプリの手数料は計算に入れていません。高知地区は2026年11月30日から新しい運賃が適用されるため、その値で収録しています。</p>
+      </div>
+    </details>
+  </section>
+
+  <details class="policy">
+    <summary>プライバシーポリシー</summary>
+    <div class="body">
+      <p>当サイト「移動シミュレーター」は、個人を特定する情報を収集しません。</p>
+      <p><strong>入力データについて：</strong>入力した内容は、お使いの端末のブラウザの中だけで処理され、サーバーへ送信されることはありません。「行程カゴ」の内容は、お使いのブラウザの localStorage にのみ保存されます。</p>
+      <p><strong>広告について：</strong>当サイトは、第三者配信の広告サービス（Google AdSense）を利用する場合があります。広告配信事業者は、ユーザーの興味に応じた広告を表示するため Cookie を使用することがあります。パーソナライズ広告は、Google の「広告設定」から無効にできます。</p>
+      <p><strong>アクセス解析について：</strong>当サイトはアクセス解析ツールを使用していません。</p>
+      <p><strong>免責事項：</strong>計算結果は目安であり、実際の運賃は各事業者の公式情報をご確認ください。当サイトの利用によって生じた損害について、運営者は責任を負いません。</p>
+      <p><strong>お問い合わせ：</strong>当サイトは個人運営のツールサイトです。</p>
+      <p>制定日：2026年11月15日</p>
+    </div>
+  </details>
+</main>
+<footer>
+  <p>このページは個人が作成した非公式の計算ツールです。タクシー事業者や運輸局の公式ページではありません。実際の運賃はメーターと事業者の運賃表でご確認ください。</p>
+  <p>制作：andy（わんこ堂）× 熊八 🐾（Muse Spark）</p>
+</footer>
+<div class="basketbar">
+  <span class="binfo">いまの試算 <b id="barAmount">¥2,300</b></span>
+  <button type="button" id="basketAdd">＋ 行程カゴに入れる</button>
+  <span class="binfo" id="basketMsg"></span>
+</div>
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var yen = function (n) { return "¥" + Math.round(n).toLocaleString("ja-JP"); };
+  // [地区名, 初乗り料金, 初乗り距離m, 加算料金, 加算距離m, 時間距離併用の秒数(0=未確認)]
+  // 出典：各地方運輸局が公示した自動認可運賃（普通車・上限運賃）。2026年11月時点で適用中の値。
+  var AREAS = [
+    ["特別区・武三地区（東京都）", 500, 1000, 100, 232, 85],
+    ["多摩地区（東京都）", 500, 1000, 100, 211, 0],
+    ["京浜地区（神奈川県）", 500, 1000, 100, 214, 0],
+    ["埼玉南部地区（埼玉県）", 500, 1027, 100, 213, 0],
+    ["千葉地区（千葉県）", 500, 1060, 100, 221, 0],
+    ["群馬地区A（旧群馬県A地区・前橋市など）", 600, 1237, 100, 239, 0],
+    ["群馬地区B（旧群馬県B地区・沼田・渋川方面）", 600, 1100, 100, 189, 0],
+    ["大阪地区（大阪府）", 600, 1200, 100, 231, 0],
+    ["名古屋地区（愛知県）", 500, 910, 100, 232, 0],
+    ["京都市域地区（京都府）", 500, 900, 100, 255, 0],
+    ["神戸市域地区（兵庫県）", 700, 1300, 100, 225, 0],
+    ["福岡市域ブロック（福岡県）", 600, 1100, 100, 287, 0],
+    ["札幌・小樽地区（北海道）", 600, 1050, 100, 272, 0],
+    ["仙台地区（宮城県）", 700, 1300, 100, 275, 0],
+    ["広島市域地区（広島県）", 800, 1450, 100, 300, 0],
+    ["沖縄県本島地区（沖縄県）", 650, 1650, 100, 350, 0],
+    ["茨城地区（茨城県）", 500, 1000, 100, 231, 0],
+    ["栃木地区（栃木県）", 500, 900, 100, 221, 0],
+    ["埼玉北部地区（埼玉県）", 500, 941, 100, 233, 0],
+    ["東京島しょ地区（東京都）", 790, 2000, 80, 214, 0],
+    ["相模・鎌倉地区（神奈川県）", 500, 1000, 100, 223, 0],
+    ["小田原地区（神奈川県）", 600, 1170, 100, 229, 0],
+    ["山梨地区A（旧山梨県A地区）", 600, 1100, 100, 231, 0],
+    ["山梨地区B（旧山梨県B地区）", 600, 1200, 100, 229, 0],
+    ["千歳・空知・後志地区（北海道）", 740, 1400, 100, 293, 0],
+    ["旭川地区（北海道）", 750, 1310, 100, 281, 0],
+    ["函館A地区（北海道）", 700, 1350, 100, 267, 0],
+    ["函館B地区（北海道）", 700, 1400, 100, 276, 0],
+    ["室蘭地区（北海道）", 700, 1300, 100, 275, 0],
+    ["釧路地区（北海道）", 800, 1400, 100, 259, 0],
+    ["帯広地区（北海道）", 760, 1400, 80, 226, 0],
+    ["北見地区（北海道）", 750, 1400, 100, 293, 0],
+    ["青森地区（青森県）", 700, 900, 100, 256, 0],
+    ["岩手地区A（旧岩手県A地区）", 700, 1000, 100, 266, 0],
+    ["岩手地区B（旧岩手県B地区）", 700, 1000, 100, 271, 0],
+    ["宮城地区（宮城県・仙台市以外）", 800, 1200, 100, 254, 0],
+    ["秋田地区（秋田県）", 600, 1000, 100, 206, 0],
+    ["山形地区（山形県）", 700, 1200, 100, 240, 0],
+    ["福島地区（福島県）", 700, 1000, 100, 260, 0],
+    ["新潟地区A（旧新潟県A地区）", 700, 1010, 100, 274, 0],
+    ["新潟地区B（旧新潟県B地区）", 700, 1080, 100, 226, 0],
+    ["富山地区（富山県）", 600, 930, 100, 195, 0],
+    ["石川地区（石川県）", 700, 1220, 100, 226, 0],
+    ["長野地区（長野県）", 700, 1060, 100, 200, 0],
+    ["福井地区（福井県）", 650, 1060, 100, 233, 0],
+    ["岐阜地区（旧岐阜地区）", 660, 1030, 100, 227, 0],
+    ["岐阜地区（旧飛騨地区）", 650, 1030, 100, 203, 0],
+    ["静岡地区（静岡県）", 700, 1170, 100, 285, 0],
+    ["伊豆地区（静岡県）", 700, 1150, 100, 248, 0],
+    ["泉地区（静岡県・熱海市泉）", 600, 1170, 100, 229, 0],
+    ["尾張・三河地区（愛知県）", 650, 1050, 100, 228, 0],
+    ["三重地区（三重県）", 700, 1180, 100, 231, 0],
+    ["紀宝地区（三重県）", 650, 1200, 100, 250, 0],
+    ["滋賀地区（滋賀県）", 500, 900, 100, 218, 0],
+    ["京都北部地区（京都府）", 600, 1200, 100, 210, 0],
+    ["兵庫地区（兵庫県・神戸市域以外）", 700, 1200, 100, 225, 0],
+    ["奈良地区（奈良県）", 750, 1300, 100, 246, 0],
+    ["和歌山地区（和歌山県）", 650, 1200, 100, 250, 0],
+    ["鳥取地区（鳥取県）", 740, 1500, 90, 279, 0],
+    ["島根県本土地区", 800, 1310, 100, 229, 0],
+    ["島根県隠岐地区", 780, 1500, 100, 260, 0],
+    ["岡山地区（岡山県）", 700, 1100, 100, 250, 0],
+    ["広島地区（広島県・広島市域以外）", 800, 1420, 100, 288, 0],
+    ["山口地区（山口県）", 800, 1420, 100, 275, 0],
+    ["徳島地区（徳島県）", 750, 1500, 100, 310, 0],
+    ["香川地区（香川県）", 800, 1500, 100, 275, 0],
+    ["小豆島地区（香川県）", 650, 1500, 100, 257, 0],
+    ["愛媛地区（愛媛県）", 600, 1000, 100, 315, 0],
+    ["高知地区（高知県・2026年11月30日から適用）", 650, 1000, 100, 298, 0],
+    ["北九州市域ブロック（福岡県）", 860, 1600, 80, 253, 0],
+    ["福岡ブロック（福岡県・市域以外）", 780, 1500, 80, 255, 0],
+    ["佐賀ブロック（佐賀県）", 900, 1500, 100, 276, 0],
+    ["長崎本土ブロック（長崎県）", 770, 1000, 100, 263, 0],
+    ["長崎離島ブロック（長崎県）", 680, 1300, 100, 309, 0],
+    ["熊本ブロック（熊本県）", 700, 1300, 100, 347, 0],
+    ["大分ブロック（大分県）", 650, 1000, 100, 299, 0],
+    ["宮崎ブロック（宮崎県）", 600, 1000, 100, 285, 0],
+    ["鹿児島ブロック（鹿児島県）", 770, 1300, 50, 145, 0],
+    ["奄美ブロック（鹿児島県）", 600, 1300, 100, 370, 0]
+  ];
+  var areaSel = $("areaSel");
+  AREAS.forEach(function (a, i) {
+    var o = document.createElement("option");
+    o.value = String(i);
+    o.textContent = a[0] + "（初乗り " + (a[2] / 1000).toFixed(2).replace(/0$/, "") + "km " + a[1] + "円／" + a[4] + "mごと " + a[3] + "円）";
+    areaSel.appendChild(o);
+  });
+  var oc = document.createElement("option");
+  oc.value = "custom";
+  oc.textContent = "カスタム（運賃表を自分で設定）";
+  areaSel.appendChild(oc);
+  (function () {
+    var html = "";
+    for (var v = 0; v <= 60; v += 5) html += '<option value="' + v + '"' + (v === 0 ? " selected" : "") + ">" + v + "</option>";
+    $("lowMin").innerHTML = html;
+  })();
+  function num(id) {
+    var v = parseFloat($(id).value);
+    return isFinite(v) && v > 0 ? v : 0;
+  }
+  window.IDO_BASKET = { kind: "taxi", label: "", amount: 0 };
+  function table() {
+    if (areaSel.value === "custom") {
+      return { name: "カスタム", base: num("cBase") || 500, baseM: num("cBaseM") || 1000, add: num("cAdd") || 100, addM: num("cAddM") || 232 };
+    }
+    var a = AREAS[parseInt(areaSel.value, 10) || 0];
+    return { name: a[0], base: a[1], baseM: a[2], add: a[3], addM: a[4], sec: a[5] };
+  }
+  function meterFor(t, effM) {
+    if (effM <= 0) return t.base;
+    var units = effM <= t.baseM ? 0 : Math.ceil((effM - t.baseM) / t.addM);
+    return { fare: t.base + units * t.add, units: units };
+  }
+  function calc() {
+    var t = table();
+    var distM = num("distKm") * 1000;
+    var lowMin = parseInt($("lowMin").value, 10) || 0;
+    var sec = parseInt($("timeSec").value, 10) || 90;
+    var lowEqM = lowMin > 0 ? (lowMin * 60 / sec) * t.addM : 0;
+    var night = $("nightSel").value === "1";
+    var dayRes = meterFor(t, distM + lowEqM);
+    var nightRes = meterFor(t, (distM + lowEqM) * 1.2);
+    var res = night ? nightRes : dayRes;
+    var pickup = parseInt($("pickupSel").value, 10) || 0;
+    var toll = num("tollYen");
+    var total = res.fare + pickup + toll;
+    var people = parseInt($("people").value, 10) || 1;
+    $("totalYen").textContent = yen(total);
+    $("rMeter").textContent = yen(res.fare);
+    $("rBase").textContent = yen(t.base) + "（" + (t.baseM / 1000) + "kmまで）";
+    $("rDist").textContent = res.units + "回 × " + yen(t.add) + " ＝ " + yen(res.units * t.add);
+    $("rLow").textContent = lowMin + "分（距離換算 約" + Math.round(lowEqM).toLocaleString("ja-JP") + "m）";
+    $("rNight").textContent = night ? "+" + yen(nightRes.fare - dayRes.fare) + "（距離を6/5倍で計算）" : "なし";
+    $("rPickup").textContent = yen(pickup);
+    $("rToll").textContent = yen(toll);
+    $("rPer").textContent = yen(Math.ceil(total / people)) + "（" + people + "人）";
+    $("barAmount").textContent = yen(total);
+    if (areaSel.value === "custom") {
+      $("areaInfo").textContent = "カスタム運賃表で計算しています。";
+    } else {
+      $("areaInfo").textContent = "初乗り " + (t.baseM / 1000) + "kmまで " + yen(t.base) + "／以後 " + t.addM + "mごとに " + yen(t.add) + "（普通車・上限運賃）";
+    }
+    window.IDO_BASKET.amount = total;
+    window.IDO_BASKET.label = "タクシー " + t.name.replace(/（.*?）/, "") + " 約" + num("distKm") + "km";
+  }
+  areaSel.addEventListener("change", function () {
+    var t = table();
+    $("customBox").style.display = areaSel.value === "custom" ? "block" : "none";
+    if (t.sec) $("timeSec").value = String(t.sec);
+    calc();
+  });
+  ["distKm", "tollYen", "cBase", "cBaseM", "cAdd", "cAddM"].forEach(function (id) {
+    $(id).addEventListener("input", calc);
+  });
+  ["lowMin", "timeSec", "nightSel", "pickupSel", "people"].forEach(function (id) {
+    $(id).addEventListener("change", calc);
+  });
+  calc();
+})();
+</script>
+<script src="basket-snippet.js"></script>
+</body>
+</html>

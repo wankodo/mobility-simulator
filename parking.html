@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>移動シミュレーター｜駐車場料金計算シミュレーター</title>
+<meta name="description" content="駐車場の料金体系（基本料金・無料時間・最大料金）を入れるだけで、駐車料金を試算できる無料ツール。周辺の駐車場を地図で探せる試作機能つき。行程カゴ対応。" />
+<link rel="canonical" href="https://wankodo.github.io/mobility-simulator/parking.html" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="移動シミュレーター" />
+<meta property="og:title" content="移動シミュレーター｜駐車場料金計算シミュレーター" />
+<meta property="og:description" content="基本料金・無料時間・最大料金から駐車料金を試算。周辺の駐車場を地図で探せる試作機能つき。" />
+<meta property="og:url" content="https://wankodo.github.io/mobility-simulator/parking.html" />
+<meta property="og:image" content="https://wankodo.github.io/mobility-simulator/ogp.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<link rel="icon" type="image/svg+xml" href="favicon.svg" />
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3970535652265626" crossorigin="anonymous"></script>
+<script type="application/ld+json">
+{"@context": "https://schema.org", "@type": "WebApplication", "name": "駐車場料金計算シミュレーター", "url": "https://wankodo.github.io/mobility-simulator/parking.html", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Web", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "JPY"}, "description": "基本料金・無料時間・最大料金から駐車料金を試算できる無料ツール。周辺の駐車場を地図で探せる試作機能つき。", "inLanguage": "ja", "isPartOf": {"@type": "WebSite", "name": "移動シミュレーター", "url": "https://wankodo.github.io/mobility-simulator/"}}
+</script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+:root{
+  --paper:#f7f5ef; --card:#fffdf8; --ink:#263238; --sub:#68707c; --line:#e5ddcb;
+  --navy:#1f4d5a; --teal:#2e7d74; --accent:#b3541e; --accent2:#e07b39;
+  --ok:#2e7d32;
+  --shadow:0 10px 26px rgba(60,50,20,.14);
+  --radius:18px;
+}
+*{box-sizing:border-box;}
+html{-webkit-text-size-adjust:100%;}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans","Noto Sans JP","Yu Gothic UI","Yu Gothic",Meiryo,system-ui,sans-serif;
+  line-height:1.75;font-size:15.5px;padding-bottom:118px;}
+a{color:var(--navy);}
+header{border-top:6px solid var(--navy);padding:22px 4vw 6px;text-align:center;}
+.eyebrow{font-size:15px;font-weight:800;letter-spacing:.24em;color:var(--navy);margin:0 0 2px;}
+h1{font-size:29px;margin:0 0 4px;font-weight:800;letter-spacing:.06em;color:#33291a;}
+.lead{color:#4c4433;max-width:720px;margin:6px auto 4px;font-size:15px;}
+nav.gnav{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding:14px 4vw 2px;}
+nav.gnav a{text-decoration:none;color:var(--navy);background:#fff;border:1.5px solid var(--line);
+  padding:8px 15px;border-radius:999px;font-weight:700;font-size:14px;box-shadow:0 3px 8px rgba(60,50,20,.07);}
+nav.gnav a.on{background:var(--navy);color:#fff;border-color:var(--navy);}
+main{max-width:860px;margin:0 auto;padding:10px 4vw 30px;}
+.card{background:var(--card);border:1.5px solid var(--line);border-radius:var(--radius);
+  box-shadow:var(--shadow);padding:20px 18px 22px;margin:18px 0 22px;}
+.card h2{margin:0 0 4px;font-size:20px;color:#33291a;}
+.card .sub{color:var(--sub);font-size:13.5px;margin:0 0 12px;}
+fieldset{border:0;margin:0 0 16px;padding:0;}
+legend,.lab{display:block;font-weight:800;font-size:14.5px;margin:0 0 7px;color:#4a3f27;}
+.hint{font-size:12.5px;color:var(--sub);margin:6px 0 0;}
+.numrow{display:flex;align-items:center;gap:8px;}
+.numrow input[type="number"]{flex:1;min-width:0;font:inherit;font-size:17px;font-weight:700;
+  padding:11px 12px;border:1.5px solid var(--line);border-radius:12px;background:#fbfcfe;color:var(--ink);}
+.unit{font-weight:700;color:var(--sub);font-size:14px;white-space:nowrap;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px 16px;}
+@media (max-width:560px){.grid2{grid-template-columns:1fr;}}
+select.sel{flex:1;min-width:0;font:inherit;font-size:15px;font-weight:700;padding:11px 10px;border:1.5px solid var(--line);border-radius:12px;background:#fbfcfe;color:var(--ink);}
+.totalBox{background:#fdf6ec;border:1.5px solid #ead9bd;border-radius:14px;padding:14px 16px;margin:4px 0 10px;}
+.totalBox .t{font-size:13px;font-weight:800;color:#8a6d3b;letter-spacing:.08em;}
+.totalBox .v{font-size:34px;font-weight:800;color:#33291a;line-height:1.25;}
+table.rows{width:100%;border-collapse:collapse;font-size:14.5px;}
+table.rows th,table.rows td{padding:7px 4px;border-bottom:1px dashed var(--line);text-align:left;vertical-align:top;}
+table.rows th{color:var(--sub);font-weight:700;white-space:nowrap;width:42%;}
+table.rows td{font-weight:700;}
+.exam{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}
+.exam button{font:inherit;font-size:13px;font-weight:700;color:var(--navy);background:#fff;border:1.5px solid var(--line);border-radius:999px;padding:6px 13px;cursor:pointer;}
+#map{height:430px;border-radius:14px;border:1.5px solid var(--line);z-index:0;background:#e8e4da;}
+.maptools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 10px;}
+.maptools input[type="text"]{flex:1;min-width:160px;font:inherit;font-size:15px;padding:10px 12px;border:1.5px solid var(--line);border-radius:12px;background:#fbfcfe;}
+.maptools button{font:inherit;font-size:14px;font-weight:800;color:#fff;background:var(--teal);border:0;border-radius:12px;padding:11px 16px;cursor:pointer;}
+.maptools button.ghost{background:#fff;color:var(--navy);border:1.5px solid var(--line);}
+details.policy{margin-top:26px;border-top:1px dashed var(--line);padding-top:12px;}
+details.policy summary{cursor:pointer;font-weight:800;color:var(--navy);font-size:14.5px;}
+details.policy .body{font-size:13.5px;color:#4c4433;}
+footer{text-align:center;color:var(--sub);font-size:12.5px;padding:10px 4vw 26px;}
+.basketbar{position:fixed;left:0;right:0;bottom:0;z-index:60;background:rgba(255,253,248,.97);
+  border-top:1.5px solid var(--line);box-shadow:0 -6px 18px rgba(60,50,20,.12);
+  padding:10px 4vw calc(10px + env(safe-area-inset-bottom));display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap;}
+.basketbar .binfo{font-size:13px;color:var(--sub);font-weight:700;}
+.basketbar .binfo b{color:var(--ink);font-size:16px;}
+.basketbar button{font:inherit;font-size:15px;font-weight:800;color:#fff;background:var(--accent);border:0;border-radius:999px;padding:11px 22px;cursor:pointer;box-shadow:0 4px 10px rgba(179,84,30,.35);}
+.basketbar button:active{transform:scale(.98);}
+</style>
+</head>
+<body>
+<header>
+  <p class="eyebrow">移動シミュレーター</p>
+  <h1>🅿️ 駐車場料金計算シミュレーター</h1>
+  <p class="lead">駐車場の料金体系（基本料金・無料時間・最大料金）を入れるだけで、駐車料金を試算できます。周辺の駐車場を地図で探せる試作機能もつけました。</p>
+</header>
+<nav class="gnav">
+  <a href="index.html">トップ</a>
+  <a href="train.html">🚃 電車・新幹線</a>
+  <a href="timescar.html">🚗 タイムズカー</a>
+  <a href="highway.html">🛣️ 高速料金</a>
+  <a href="gasoline.html">⛽ ガソリン代</a>
+  <a href="parking.html" class="on">🅿️ 駐車場</a>
+</nav>
+<main>
+  <section class="card">
+    <h2>駐車料金の計算</h2>
+    <p class="sub">看板や料金検索で分かった料金体系を入力してください。</p>
+    <div class="field">
+      <label class="lab" for="presetSel">プリセット（よくある料金パターン）</label>
+      <div class="numrow"><select class="sel" id="presetSel">
+        <option value="">選ぶと料金体系がまとめて入ります</option>
+        <option data-p="200" data-u="30" data-f="0" data-c="1000" data-m="day">200円/30分・24時間最大1,000円（地方都市・郊外の定番）</option>
+        <option data-p="100" data-u="30" data-f="0" data-c="800" data-m="day">100円/30分・24時間最大800円（郊外）</option>
+        <option data-p="200" data-u="30" data-f="0" data-c="1500" data-m="day">200円/30分・24時間最大1,500円（駅前）</option>
+        <option data-p="300" data-u="30" data-f="0" data-c="" data-m="none">300円/30分・最大なし（都心）</option>
+        <option data-p="100" data-u="20" data-f="0" data-c="" data-m="none">100円/20分・最大なし（都心）</option>
+        <option data-p="200" data-u="30" data-f="0" data-c="" data-m="none">200円/30分・最大なし</option>
+        <option data-p="100" data-u="30" data-f="0" data-c="" data-m="none">100円/30分・最大なし</option>
+        <option data-p="200" data-u="60" data-f="0" data-c="600" data-m="day">200円/60分・24時間最大600円（郊外の大型店）</option>
+        <option data-p="300" data-u="60" data-f="0" data-c="1000" data-m="day">300円/60分・24時間最大1,000円</option>
+        <option data-p="400" data-u="30" data-f="0" data-c="" data-m="none">400円/30分・最大なし（都心中心部）</option>
+        <option data-p="200" data-u="20" data-f="0" data-c="2000" data-m="day">200円/20分・24時間最大2,000円</option>
+        <option data-p="150" data-u="30" data-f="0" data-c="900" data-m="day">150円/30分・24時間最大900円</option>
+        <option data-p="100" data-u="15" data-f="0" data-c="" data-m="none">100円/15分・最大なし</option>
+        <option data-p="500" data-u="60" data-f="0" data-c="2500" data-m="day">500円/60分・24時間最大2,500円</option>
+        <option data-p="100" data-u="60" data-f="0" data-c="500" data-m="day">100円/60分・24時間最大500円（地方・郊外）</option>
+        <option data-p="300" data-u="30" data-f="0" data-c="3000" data-m="day">300円/30分・24時間最大3,000円（都心・最大あり）</option>
+        <option data-p="200" data-u="40" data-f="0" data-c="1200" data-m="day">200円/40分・24時間最大1,200円</option>
+        <option data-p="200" data-u="30" data-f="60" data-c="1000" data-m="day">最初の60分無料＋200円/30分・24時間最大1,000円（商業施設）</option>
+        <option data-p="100" data-u="30" data-f="30" data-c="800" data-m="day">最初の30分無料＋100円/30分・24時間最大800円（スーパー・病院）</option>
+        <option data-p="250" data-u="30" data-f="0" data-c="2000" data-m="day">250円/30分・24時間最大2,000円</option>
+      </select></div>
+      <p class="hint">並びは、よく見かける料金体系の順の目安です。</p>
+    </div>
+    <div class="grid2">
+      <div class="field">
+        <label class="lab" for="unitPrice">基本料金</label>
+        <div class="numrow"><select class="sel" id="unitPrice"></select><span class="unit">円</span></div>
+      </div>
+      <div class="field">
+        <label class="lab" for="unitMin">基本料金の単位</label>
+        <div class="numrow"><select class="sel" id="unitMin"></select><span class="unit">分ごと</span></div>
+      </div>
+      <div class="field">
+        <label class="lab" for="freeMin">無料時間</label>
+        <div class="numrow"><select class="sel" id="freeMin"></select><span class="unit">分</span></div>
+        <p class="hint">最初の○分無料、買い物での無料サービスなど。</p>
+      </div>
+      <div class="field">
+        <label class="lab" for="capYen">最大料金（任意）</label>
+        <div class="numrow"><select class="sel" id="capYen"></select><span class="unit">円</span></div>
+        <p class="hint">最大料金がない駐車場では「なし」を選んでください。</p>
+      </div>
+    </div>
+    <div class="field">
+      <label class="lab" for="capMode">最大料金の適用方法</label>
+      <div class="numrow"><select class="sel" id="capMode">
+        <option value="day">24時間ごとに最大料金</option>
+        <option value="once">駐車中ずっと最大料金（1回のみ）</option>
+        <option value="none">最大料金なし</option>
+      </select></div>
+      <p class="hint">「入庫後24時間まで最大○円」が一般的です。当日（0時）区切りの駐車場では実際の額と少しずれることがあります。</p>
+    </div>
+    <div class="grid2">
+      <div class="field">
+        <label class="lab" for="parkHours">駐車時間（時間）</label>
+        <div class="numrow"><select class="sel" id="parkHours"></select><span class="unit">時間</span></div>
+      </div>
+      <div class="field">
+        <label class="lab" for="parkMins">駐車時間（分）</label>
+        <div class="numrow"><select class="sel" id="parkMins"></select><span class="unit">分</span></div>
+      </div>
+    </div>
+    <div style="height:14px"></div>
+    <div class="totalBox">
+      <div class="t">駐車料金</div>
+      <div class="v" id="totalYen">¥1,200</div>
+    </div>
+    <table class="rows">
+      <tr><th>駐車時間</th><td id="rTime">3時間0分</td></tr>
+      <tr><th>課金される時間</th><td id="rBillable">180分</td></tr>
+      <tr><th>基本料金だけの場合</th><td id="rBase">¥1,200</td></tr>
+      <tr><th>最大料金の適用</th><td id="rCap">なし</td></tr>
+    </table>
+    <details class="policy">
+      <summary>計算のしかたと注意</summary>
+      <div class="body">
+        <p>課金時間＝駐車時間−無料時間。基本料金は単位時間で切り上げて計算します。最大料金が「24時間ごと」の場合は、24時間のかたまりごとに最大料金を当てはめて合計します。</p>
+        <p>実際の駐車場には、特定日（土日祝・イベント日）は最大料金なし、夜間だけ別料金、当日0時区切りの最大料金など、この計算では再現できない体系もあります。あくまで目安としてご利用ください。</p>
+      </div>
+    </details>
+  </section>
+
+  <section class="card">
+    <h2>周辺の駐車場マップ（試作）</h2>
+    <p class="sub">オープンな地図データ「OpenStreetMap」に登録されている駐車場を表示します。試作版のため、表示できるのは検索した場所の周辺だけです。登録されていない駐車場は出ませんし、料金情報が付いている駐車場は一部だけです。</p>
+    <div class="maptools">
+      <input type="text" id="placeQ" placeholder="場所を検索（例：前橋駅、新宿駅）" />
+      <button type="button" id="placeGo">検索</button>
+      <button type="button" id="geoBtn" class="ghost">現在地</button>
+      <select class="sel" id="radiusSel" style="flex:0 0 auto;">
+        <option value="500">半径500m</option>
+        <option value="1000" selected>半径1km</option>
+        <option value="2000">半径2km</option>
+      </select>
+    </div>
+    <div id="map"></div>
+    <p class="hint" id="mapStatus">地図を動かすと、その周辺の駐車場を読み込みます。</p>
+    <p class="hint">地図データ：© OpenStreetMap contributors。この試作部分は地図と駐車場データを読み込むため通信が発生します（上の計算ツールは端末の中だけで計算します）。ピンを押すと、料金情報がある場合は表示し、無い場合は料金を検索できるリンクを出します。</p>
+  </section>
+
+  <details class="policy">
+    <summary>プライバシーポリシー</summary>
+    <div class="body">
+      <p>当サイト「移動シミュレーター」は、個人を特定する情報を収集しません。</p>
+      <p><strong>入力データについて：</strong>計算ツールに入力した内容は、お使いの端末のブラウザの中だけで処理され、サーバーへ送信されることはありません。「行程カゴ」の内容は、お使いのブラウザの localStorage にのみ保存されます。地図試作で「現在地」を使った場合、位置情報は周辺の駐車場データを読み込むためにだけ使い、保存はしません。</p>
+      <p><strong>広告について：</strong>当サイトは、第三者配信の広告サービス（Google AdSense）を利用する場合があります。広告配信事業者は、ユーザーの興味に応じた広告を表示するため Cookie を使用することがあります。パーソナライズ広告は、Google の「広告設定」から無効にできます。</p>
+      <p><strong>アクセス解析について：</strong>当サイトはアクセス解析ツールを使用していません。</p>
+      <p><strong>免責事項：</strong>計算結果は目安であり、実際の料金は各事業者の公式情報をご確認ください。当サイトの利用によって生じた損害について、運営者は責任を負いません。</p>
+      <p><strong>お問い合わせ：</strong>当サイトは個人運営のツールサイトです。</p>
+      <p>制定日：2026年11月15日</p>
+    </div>
+  </details>
+</main>
+<footer>
+  <p>このページは個人が作成した非公式の計算ツールです。駐車場事業者の公式ページではありません。実際の料金は各駐車場の公式情報をご確認ください。</p>
+  <p>制作：andy（わんこ堂）× 熊八 🐾（Muse Spark）</p>
+</footer>
+<div class="basketbar">
+  <span class="binfo">いまの試算 <b id="barAmount">¥1,200</b></span>
+  <button type="button" id="basketAdd">＋ 行程カゴに入れる</button>
+  <span class="binfo" id="basketMsg"></span>
+</div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var yen = function (n) { return "¥" + Math.round(n).toLocaleString("ja-JP"); };
+  function num(id) {
+    var v = parseFloat($(id).value);
+    return isFinite(v) && v > 0 ? v : 0;
+  }
+  window.IDO_BASKET = { kind: "parking", label: "", amount: 0 };
+  function calc() {
+    var price = num("unitPrice");
+    var unitMin = Math.max(1, num("unitMin") || 30);
+    var free = num("freeMin");
+    var capRaw = $("capYen").value.trim();
+    var cap = capRaw === "" ? 0 : (parseFloat(capRaw) || 0);
+    var mode = $("capMode").value;
+    var totalMin = Math.floor(num("parkHours")) * 60 + Math.floor(num("parkMins"));
+    var billable = Math.max(0, totalMin - free);
+    function feeFor(mins) { return mins <= 0 ? 0 : Math.ceil(mins / unitMin) * price; }
+    var base = feeFor(billable);
+    var fee = base, capNote = "なし";
+    if (cap > 0 && mode !== "none" && billable > 0) {
+      if (mode === "once") {
+        fee = Math.min(base, cap);
+        capNote = fee < base ? "最大料金 " + yen(cap) + " を適用" : "最大料金以下でした";
+      } else {
+        var full = Math.floor(billable / 1440);
+        var rem = billable % 1440;
+        fee = full * Math.min(feeFor(1440), cap) + (rem > 0 ? Math.min(feeFor(rem), cap) : 0);
+        capNote = fee < base ? "24時間ごとの最大料金 " + yen(cap) + " を適用" : "最大料金以下でした";
+      }
+    } else if (cap > 0 && mode === "none") {
+      capNote = "「最大料金なし」が選択されています";
+    }
+    $("totalYen").textContent = yen(fee);
+    $("rTime").textContent = Math.floor(totalMin / 60) + "時間" + (totalMin % 60) + "分";
+    $("rBillable").textContent = billable.toLocaleString("ja-JP") + "分（" + Math.ceil(billable / unitMin) + "単位）";
+    $("rBase").textContent = yen(base);
+    $("rCap").textContent = capNote;
+    $("barAmount").textContent = yen(fee);
+    window.IDO_BASKET.amount = fee;
+    window.IDO_BASKET.label = "駐車場料金 " + Math.floor(totalMin / 60) + "時間" + (totalMin % 60) + "分";
+  }
+  function fillOptions(id, from, to, step, def, prefix, suffix) {
+    var sel = $(id);
+    var html = "";
+    for (var v = from; v <= to; v += step) {
+      html += '<option value="' + v + '"' + (v === def ? " selected" : "") + ">" + (prefix || "") + v.toLocaleString("ja-JP") + (suffix || "") + "</option>";
+    }
+    sel.innerHTML = html;
+  }
+  fillOptions("unitPrice", 50, 1000, 50, 200);
+  fillOptions("unitMin", 5, 60, 5, 30);
+  fillOptions("freeMin", 0, 180, 5, 0);
+  fillOptions("parkHours", 0, 48, 1, 3);
+  fillOptions("parkMins", 0, 55, 5, 0);
+  (function () {
+    var html = '<option value="">なし</option>';
+    for (var v = 300; v <= 3000; v += 50) {
+      html += '<option value="' + v + '"' + (v === 1500 ? " selected" : "") + ">" + v.toLocaleString("ja-JP") + "</option>";
+    }
+    $("capYen").innerHTML = html;
+  })();
+  ["unitPrice", "unitMin", "freeMin", "capYen", "parkHours", "parkMins"].forEach(function (id) {
+    $(id).addEventListener("change", calc);
+    $(id).addEventListener("input", calc);
+  });
+  $("capMode").addEventListener("change", calc);
+  $("presetSel").addEventListener("change", function () {
+    var opt = this.options[this.selectedIndex];
+    if (!opt || !opt.getAttribute("data-p")) return;
+    $("unitPrice").value = opt.getAttribute("data-p");
+    $("unitMin").value = opt.getAttribute("data-u");
+    $("freeMin").value = opt.getAttribute("data-f");
+    $("capYen").value = opt.getAttribute("data-c");
+    $("capMode").value = opt.getAttribute("data-m");
+    calc();
+  });
+  calc();
+
+  // ===== 周辺の駐車場マップ（試作 / OpenStreetMap） =====
+  var map = null, markers = null, loadTimer = null;
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+  function popupHtml(el) {
+    var t = el.tags || {};
+    var name = t.name || "駐車場（名称なし）";
+    var lat = el.lat != null ? el.lat : el.center.lat;
+    var lon = el.lon != null ? el.lon : el.center.lon;
+    var lines = ["<b>" + esc(name) + "</b>"];
+    if (t.fee === "no") lines.push("料金：無料");
+    else if (t.charge) lines.push("料金：" + esc(t.charge));
+    else if (t["parking:fee"]) lines.push("料金：" + esc(t["parking:fee"]));
+    else lines.push("料金：情報なし（下のリンクで確認できます）");
+    if (t.capacity) lines.push("台数：" + esc(t.capacity) + "台");
+    if (t.access === "private") lines.push("※利用者限定の駐車場の可能性があります");
+    var gq = encodeURIComponent(name + " 駐車場 料金");
+    lines.push('<a href="https://www.google.com/maps/search/?api=1&query=' + lat + "," + lon + '" target="_blank" rel="noopener noreferrer">Googleマップで開く</a>');
+    lines.push('<a href="https://www.google.com/search?q=' + gq + '" target="_blank" rel="noopener noreferrer">料金を検索する</a>');
+    return lines.join("<br />");
+  }
+  function loadParking() {
+    if (!map) return;
+    var c = map.getCenter();
+    var radius = parseInt($("radiusSel").value, 10) || 1000;
+    var q = '[out:json][timeout:25];(node["amenity"="parking"](around:' + radius + "," + c.lat + "," + c.lng + ');way["amenity"="parking"](around:' + radius + "," + c.lat + "," + c.lng + "););out center tags 80;";
+    $("mapStatus").textContent = "駐車場を読み込み中…";
+    var endpoints = ["https://overpass-api.de/api/interpreter", "https://overpass.kumi.systems/api/interpreter"];
+    var tried = 0;
+    function attempt() {
+      fetch(endpoints[tried], {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8" },
+        body: "data=" + encodeURIComponent(q)
+      }).then(function (r) {
+        if (!r.ok) throw new Error("http " + r.status);
+        return r.json();
+      }).then(function (data) {
+        markers.clearLayers();
+        var n = 0;
+        (data.elements || []).forEach(function (el) {
+          var lat = el.lat != null ? el.lat : (el.center && el.center.lat);
+          var lon = el.lon != null ? el.lon : (el.center && el.center.lon);
+          if (lat == null || lon == null) return;
+          L.marker([lat, lon]).addTo(markers).bindPopup(popupHtml(el));
+          n++;
+        });
+        $("mapStatus").textContent = "この周辺で " + n + " 件の駐車場が見つかりました（OpenStreetMapに登録があるものだけです）。";
+      }).catch(function () {
+        tried++;
+        if (tried < endpoints.length) { attempt(); return; }
+        $("mapStatus").textContent = "読み込みに失敗しました。データ提供サーバーが混み合っていることがあります。少し待って地図を動かしてみてください。";
+      });
+    }
+    attempt();
+  }
+  function scheduleLoad() {
+    if (loadTimer) clearTimeout(loadTimer);
+    loadTimer = setTimeout(loadParking, 600);
+  }
+  function initMap() {
+    if (typeof L === "undefined") {
+      $("mapStatus").textContent = "地図ライブラリを読み込めませんでした。通信環境を確認してください。";
+      return;
+    }
+    map = L.map("map").setView([35.6812, 139.7671], 15);
+    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 19,
+      attribution: "© OpenStreetMap contributors"
+    }).addTo(map);
+    markers = L.layerGroup().addTo(map);
+    map.on("moveend", scheduleLoad);
+    loadParking();
+  }
+  $("radiusSel").addEventListener("change", loadParking);
+  $("placeGo").addEventListener("click", function () {
+    var q = $("placeQ").value.trim();
+    if (!q || !map) return;
+    $("mapStatus").textContent = "場所を検索中…";
+    fetch("https://nominatim.openstreetmap.org/search?format=json&limit=1&q=" + encodeURIComponent(q))
+      .then(function (r) { return r.json(); })
+      .then(function (arr) {
+        if (!arr || !arr.length) { $("mapStatus").textContent = "その場所が見つかりませんでした。"; return; }
+        map.setView([parseFloat(arr[0].lat), parseFloat(arr[0].lon)], 16);
+      })
+      .catch(function () { $("mapStatus").textContent = "場所の検索に失敗しました。"; });
+  });
+  $("geoBtn").addEventListener("click", function () {
+    if (!navigator.geolocation || !map) return;
+    $("mapStatus").textContent = "現在地を取得中…";
+    navigator.geolocation.getCurrentPosition(function (pos) {
+      map.setView([pos.coords.latitude, pos.coords.longitude], 16);
+    }, function () {
+      $("mapStatus").textContent = "現在地を取得できませんでした。";
+    }, { timeout: 10000 });
+  });
+  initMap();
+})();
+</script>
+<script src="basket-snippet.js"></script>
+</body>
+</html>

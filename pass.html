@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>移動シミュレーター｜定期代お得度チェックシミュレーター</title>
+<meta name="description" content="片道運賃と定期代を入れるだけで、定期券と都度払いのどちらがお得か、月に何日乗れば元が取れるかを試算できる無料ツール。1か月・3か月・6か月定期の比較対応。" />
+<link rel="canonical" href="https://wankodo.github.io/mobility-simulator/pass.html" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="移動シミュレーター" />
+<meta property="og:title" content="移動シミュレーター｜定期代お得度チェックシミュレーター" />
+<meta property="og:description" content="片道運賃と定期代から、定期券と都度払いのどちらがお得かを試算。" />
+<meta property="og:url" content="https://wankodo.github.io/mobility-simulator/pass.html" />
+<meta property="og:image" content="https://wankodo.github.io/mobility-simulator/ogp.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<link rel="icon" type="image/svg+xml" href="favicon.svg" />
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3970535652265626" crossorigin="anonymous"></script>
+<script type="application/ld+json">
+{"@context": "https://schema.org", "@type": "WebApplication", "name": "定期代お得度チェックシミュレーター", "url": "https://wankodo.github.io/mobility-simulator/pass.html", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Web", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "JPY"}, "description": "片道運賃と定期代から、定期券と都度払いのどちらがお得か、元が取れる日数を試算できる無料ツール。", "inLanguage": "ja", "isPartOf": {"@type": "WebSite", "name": "移動シミュレーター", "url": "https://wankodo.github.io/mobility-simulator/"}}
+</script>
+<style>
+:root{
+  --paper:#f7f5ef; --card:#fffdf8; --ink:#263238; --sub:#68707c; --line:#e5ddcb;
+  --navy:#1f4d5a; --teal:#2e7d74; --accent:#b3541e; --accent2:#e07b39;
+  --ok:#2e7d32;
+  --shadow:0 10px 26px rgba(60,50,20,.14);
+  --radius:18px;
+}
+*{box-sizing:border-box;}
+html{-webkit-text-size-adjust:100%;}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans","Noto Sans JP","Yu Gothic UI","Yu Gothic",Meiryo,system-ui,sans-serif;
+  line-height:1.75;font-size:15.5px;padding-bottom:118px;}
+a{color:var(--navy);}
+header{border-top:6px solid var(--navy);padding:22px 4vw 6px;text-align:center;}
+.eyebrow{font-size:15px;font-weight:800;letter-spacing:.24em;color:var(--navy);margin:0 0 2px;}
+h1{font-size:29px;margin:0 0 4px;font-weight:800;letter-spacing:.06em;color:#33291a;}
+.lead{color:#4c4433;max-width:720px;margin:6px auto 4px;font-size:15px;}
+nav.gnav{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding:14px 4vw 2px;}
+nav.gnav a{text-decoration:none;color:var(--navy);background:#fff;border:1.5px solid var(--line);
+  padding:8px 15px;border-radius:999px;font-weight:700;font-size:14px;box-shadow:0 3px 8px rgba(60,50,20,.07);}
+nav.gnav a.on{background:var(--navy);color:#fff;border-color:var(--navy);}
+main{max-width:860px;margin:0 auto;padding:10px 4vw 30px;}
+.card{background:var(--card);border:1.5px solid var(--line);border-radius:var(--radius);
+  box-shadow:var(--shadow);padding:20px 18px 22px;margin:18px 0 22px;}
+.card h2{margin:0 0 4px;font-size:20px;color:#33291a;}
+.card .sub{color:var(--sub);font-size:13.5px;margin:0 0 12px;}
+fieldset{border:0;margin:0 0 16px;padding:0;}
+legend,.lab{display:block;font-weight:800;font-size:14.5px;margin:0 0 7px;color:#4a3f27;}
+.hint{font-size:12.5px;color:var(--sub);margin:6px 0 0;}
+.numrow{display:flex;align-items:center;gap:8px;}
+.numrow input[type="number"]{flex:1;min-width:0;font:inherit;font-size:17px;font-weight:700;
+  padding:11px 12px;border:1.5px solid var(--line);border-radius:12px;background:#fbfcfe;color:var(--ink);}
+.unit{font-weight:700;color:var(--sub);font-size:14px;white-space:nowrap;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px 16px;}
+@media (max-width:560px){.grid2{grid-template-columns:1fr;}}
+select.sel{flex:1;min-width:0;font:inherit;font-size:15px;font-weight:700;padding:11px 10px;border:1.5px solid var(--line);border-radius:12px;background:#fbfcfe;color:var(--ink);}
+.totalBox{background:#fdf6ec;border:1.5px solid #ead9bd;border-radius:14px;padding:14px 16px;margin:4px 0 10px;}
+.totalBox .t{font-size:13px;font-weight:800;color:#8a6d3b;letter-spacing:.08em;}
+.totalBox .v{font-size:34px;font-weight:800;color:#33291a;line-height:1.25;}
+table.rows{width:100%;border-collapse:collapse;font-size:14.5px;}
+table.rows th,table.rows td{padding:7px 4px;border-bottom:1px dashed var(--line);text-align:left;vertical-align:top;}
+table.rows th{color:var(--sub);font-weight:700;white-space:nowrap;width:42%;}
+table.rows td{font-weight:700;}
+.exam{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}
+.exam button{font:inherit;font-size:13px;font-weight:700;color:var(--navy);background:#fff;border:1.5px solid var(--line);border-radius:999px;padding:6px 13px;cursor:pointer;}
+#map{height:430px;border-radius:14px;border:1.5px solid var(--line);z-index:0;background:#e8e4da;}
+.maptools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 10px;}
+.maptools input[type="text"]{flex:1;min-width:160px;font:inherit;font-size:15px;padding:10px 12px;border:1.5px solid var(--line);border-radius:12px;background:#fbfcfe;}
+.maptools button{font:inherit;font-size:14px;font-weight:800;color:#fff;background:var(--teal);border:0;border-radius:12px;padding:11px 16px;cursor:pointer;}
+.maptools button.ghost{background:#fff;color:var(--navy);border:1.5px solid var(--line);}
+details.policy{margin-top:26px;border-top:1px dashed var(--line);padding-top:12px;}
+details.policy summary{cursor:pointer;font-weight:800;color:var(--navy);font-size:14.5px;}
+details.policy .body{font-size:13.5px;color:#4c4433;}
+footer{text-align:center;color:var(--sub);font-size:12.5px;padding:10px 4vw 26px;}
+.basketbar{position:fixed;left:0;right:0;bottom:0;z-index:60;background:rgba(255,253,248,.97);
+  border-top:1.5px solid var(--line);box-shadow:0 -6px 18px rgba(60,50,20,.12);
+  padding:10px 4vw calc(10px + env(safe-area-inset-bottom));display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap;}
+.basketbar .binfo{font-size:13px;color:var(--sub);font-weight:700;}
+.basketbar .binfo b{color:var(--ink);font-size:16px;}
+.basketbar button{font:inherit;font-size:15px;font-weight:800;color:#fff;background:var(--accent);border:0;border-radius:999px;padding:11px 22px;cursor:pointer;box-shadow:0 4px 10px rgba(179,84,30,.35);}
+.basketbar button:active{transform:scale(.98);}
+</style>
+</head>
+<body>
+<header>
+  <p class="eyebrow">移動シミュレーター</p>
+  <h1>🎫 定期代お得度チェックシミュレーター</h1>
+  <p class="lead">片道運賃と定期代を入れるだけで、定期券と都度払いのどちらがお得か、月に何日乗れば元が取れるかを試算できます。</p>
+</header>
+<nav class="gnav">
+  <a href="index.html">トップ</a>
+  <a href="train.html">🚃 電車・新幹線</a>
+  <a href="timescar.html">🚗 タイムズカー</a>
+  <a href="highway.html">🛣️ 高速料金</a>
+  <a href="gasoline.html">⛽ ガソリン代</a>
+  <a href="parking.html">🅿️ 駐車場</a>
+  <a href="taxi.html">🚕 タクシー</a>
+  <a href="pass.html" class="on">🎫 定期代</a>
+</nav>
+<main>
+  <section class="card">
+    <h2>定期券と都度払いの比較</h2>
+    <p class="sub">片道運賃は<a href="train.html">電車・新幹線シミュレーター</a>で調べられます。定期代は各社の公式サイトや駅の案内で確認してください（初期値は入力例です）。</p>
+    <div class="grid2">
+      <div class="field">
+        <label class="lab" for="oneway">片道運賃</label>
+        <div class="numrow"><input type="number" id="oneway" inputmode="numeric" min="0" step="10" value="200" /><span class="unit">円</span></div>
+      </div>
+      <div class="field">
+        <label class="lab" for="rides">1日に乗る回数</label>
+        <div class="numrow"><select class="sel" id="rides">
+          <option value="1">1回（片道だけ）</option>
+          <option value="2" selected>2回（往復）</option>
+          <option value="3">3回</option>
+          <option value="4">4回</option>
+        </select></div>
+      </div>
+      <div class="field">
+        <label class="lab" for="pass1">定期代（1か月）</label>
+        <div class="numrow"><input type="number" id="pass1" inputmode="numeric" min="0" step="10" value="7000" /><span class="unit">円</span></div>
+      </div>
+      <div class="field">
+        <label class="lab" for="days">月に乗る日数</label>
+        <div class="numrow"><select class="sel" id="days"></select><span class="unit">日</span></div>
+        <p class="hint">平日だけなら20日前後、週5日勤務の目安です。</p>
+      </div>
+      <div class="field">
+        <label class="lab" for="pass3">定期代（3か月・任意）</label>
+        <div class="numrow"><input type="number" id="pass3" inputmode="numeric" min="0" step="10" value="19950" /><span class="unit">円</span></div>
+      </div>
+      <div class="field">
+        <label class="lab" for="pass6">定期代（6か月・任意）</label>
+        <div class="numrow"><input type="number" id="pass6" inputmode="numeric" min="0" step="10" value="37800" /><span class="unit">円</span></div>
+        <p class="hint">3か月・6か月は空欄にすると比較から外れます。</p>
+      </div>
+    </div>
+    <div style="height:14px"></div>
+    <div class="totalBox">
+      <div class="t">おすすめ</div>
+      <div class="v" id="verdict" style="font-size:26px;">6か月定期（月あたり ¥6,300）</div>
+      <div id="verdictSub" style="font-weight:700;color:#8a6d3b;">都度払いより月に ¥1,700、年間で ¥20,400 お得です</div>
+    </div>
+    <table class="rows">
+      <tr><th>都度払い（月あたり）</th><td id="rPayg">¥8,000</td></tr>
+      <tr><th>1か月定期</th><td id="rP1">月あたり ¥7,000（元が取れるのは月に18日）</td></tr>
+      <tr><th>3か月定期</th><td id="rP3">月あたり ¥6,650（元が取れるのは月に17日）</td></tr>
+      <tr><th>6か月定期</th><td id="rP6">月あたり ¥6,300（元が取れるのは月に16日）</td></tr>
+    </table>
+    <details class="policy">
+      <summary>計算のしかたと注意</summary>
+      <div class="body">
+        <p>都度払い（月あたり）＝片道運賃×1日の乗車回数×月に乗る日数。定期は期間の総額を月数で割って月あたりに換算し、いちばん安い方法をおすすめに出します。「元が取れる日数」は、その定期代を片道運賃×乗車回数で割った日数（月あたり）です。</p>
+        <p>定期券は期間中なら休日や私用でも同じ区間を何度でも乗れるため、通勤・通学以外でも使う場合は、ここでの試算より実際のお得度は高くなります。逆に、長期休暇や出張が多い月は都度払いが安くなることもあります。バス定期や連絡定期、通学定期の割引率は会社ごとに違うため、実際の定期代を入力して比べてください。</p>
+      </div>
+    </details>
+  </section>
+
+  <details class="policy">
+    <summary>プライバシーポリシー</summary>
+    <div class="body">
+      <p>当サイト「移動シミュレーター」は、個人を特定する情報を収集しません。</p>
+      <p><strong>入力データについて：</strong>入力した内容は、お使いの端末のブラウザの中だけで処理され、サーバーへ送信されることはありません。「行程カゴ」の内容は、お使いのブラウザの localStorage にのみ保存されます。</p>
+      <p><strong>広告について：</strong>当サイトは、第三者配信の広告サービス（Google AdSense）を利用する場合があります。広告配信事業者は、ユーザーの興味に応じた広告を表示するため Cookie を使用することがあります。パーソナライズ広告は、Google の「広告設定」から無効にできます。</p>
+      <p><strong>アクセス解析について：</strong>当サイトはアクセス解析ツールを使用していません。</p>
+      <p><strong>免責事項：</strong>計算結果は目安であり、実際の運賃・定期代は各事業者の公式情報をご確認ください。当サイトの利用によって生じた損害について、運営者は責任を負いません。</p>
+      <p><strong>お問い合わせ：</strong>当サイトは個人運営のツールサイトです。</p>
+      <p>制定日：2026年11月15日</p>
+    </div>
+  </details>
+</main>
+<footer>
+  <p>このページは個人が作成した非公式の計算ツールです。鉄道・バス事業者の公式ページではありません。実際の運賃・定期代は各事業者の公式情報をご確認ください。</p>
+  <p>制作：andy（わんこ堂）× 熊八 🐾（Muse Spark）</p>
+</footer>
+<div class="basketbar">
+  <span class="binfo">おすすめの月あたり <b id="barAmount">¥6,300</b></span>
+  <button type="button" id="basketAdd">＋ 行程カゴに入れる</button>
+  <span class="binfo" id="basketMsg"></span>
+</div>
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var yen = function (n) { return "¥" + Math.round(n).toLocaleString("ja-JP"); };
+  (function () {
+    var html = "";
+    for (var v = 1; v <= 31; v++) html += '<option value="' + v + '"' + (v === 20 ? " selected" : "") + ">" + v + "</option>";
+    $("days").innerHTML = html;
+  })();
+  function num(id) {
+    var v = parseFloat($(id).value);
+    return isFinite(v) && v > 0 ? v : 0;
+  }
+  function raw(id) { return $(id).value.trim(); }
+  window.IDO_BASKET = { kind: "pass", label: "", amount: 0 };
+  function calc() {
+    var oneway = num("oneway");
+    var rides = parseInt($("rides").value, 10) || 2;
+    var days = parseInt($("days").value, 10) || 20;
+    var perDay = oneway * rides;
+    var payg = perDay * days;
+    var opts = [{ name: "都度払い", monthly: payg, months: 0, total: 0 }];
+    [[1, "pass1"], [3, "pass3"], [6, "pass6"]].forEach(function (pair) {
+      var months = pair[0], id = pair[1];
+      if (raw(id) === "") return;
+      var total = num(id);
+      if (total <= 0) return;
+      opts.push({ name: months + "か月定期", monthly: total / months, months: months, total: total });
+    });
+    var best = opts[0];
+    opts.forEach(function (o) { if (o.monthly < best.monthly) best = o; });
+    function breakDays(total, months) {
+      if (perDay <= 0) return "—";
+      return Math.ceil((total / months) / perDay);
+    }
+    function rowText(months, id) {
+      if (raw(id) === "" || num(id) <= 0) return "未入力（比較していません）";
+      var total = num(id);
+      var monthly = total / months;
+      var diff = payg - monthly;
+      var s = "月あたり " + yen(monthly) + "（元が取れるのは月に" + breakDays(total, months) + "日";
+      s += diff > 0 ? "／都度払いより月 " + yen(diff) + " お得）" : diff < 0 ? "／都度払いより月 " + yen(-diff) + " 高い）" : "／都度払いと同じ）";
+      return s;
+    }
+    $("rPayg").textContent = yen(payg) + "（" + days + "日 × " + rides + "回 × " + yen(oneway) + "）";
+    $("rP1").textContent = rowText(1, "pass1");
+    $("rP3").textContent = rowText(3, "pass3");
+    $("rP6").textContent = rowText(6, "pass6");
+    if (best.months === 0) {
+      $("verdict").textContent = "都度払い（月あたり " + yen(payg) + "）";
+      $("verdictSub").textContent = "今の乗り方では定期券より都度払いが安いです";
+    } else {
+      var saved = payg - best.monthly;
+      $("verdict").textContent = best.name + "（月あたり " + yen(best.monthly) + "）";
+      $("verdictSub").textContent = "都度払いより月に " + yen(saved) + "、年間で " + yen(saved * 12) + " お得です";
+    }
+    $("barAmount").textContent = yen(best.monthly);
+    window.IDO_BASKET.amount = Math.round(best.monthly);
+    window.IDO_BASKET.label = "定期代（" + best.name + "・月あたり）";
+  }
+  ["oneway", "pass1", "pass3", "pass6"].forEach(function (id) {
+    $(id).addEventListener("input", calc);
+  });
+  ["rides", "days"].forEach(function (id) {
+    $(id).addEventListener("change", calc);
+  });
+  calc();
+})();
+</script>
+<script src="basket-snippet.js"></script>
+</body>
+</html>

@@ -1,0 +1,396 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="description" content="ガソリン代計算シミュレーター。走行距離・燃費・ガソリン単価を入れるだけで、往復のガソリン代、使用量、1人あたり、通勤の月額・年額まで無料で試算できます。" />
+<title>移動シミュレーター｜ガソリン代計算シミュレーター</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg" />
+<style>
+  :root { --navy:#12283f; --navy2:#0b1c2c; --amber:#f2a81d; --fuel:#ea580c; --fuel2:#f97316; --ink:#1c2733; --mut:#5b6b7c; --bg:#edf1f5; --card:#fff; --line:#e1e8ef; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:system-ui,-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif; color:var(--ink);
+         background:linear-gradient(180deg,#e8eef4 0%,#f2f5f8 320px,#edf1f5 100%); }
+  nav.top { display:flex; flex-wrap:wrap; gap:8px 18px; align-items:center; color:#fff; padding:12px 16px;
+    background:linear-gradient(120deg,var(--navy2),var(--navy) 55%,#1d3d5c); box-shadow:0 2px 14px rgba(11,28,44,.35);
+    font-size:14px; position:relative; z-index:5; }
+  nav.top a { color:#cfe2f3; text-decoration:none; transition:opacity .15s ease; }
+  nav.top a:hover { opacity:.72; }
+  nav.top a.brand { color:#fff; font-weight:800; }
+  nav.top a.here { color:#fff; font-weight:800; border-bottom:2px solid var(--fuel2); padding-bottom:2px; }
+  main { max-width:960px; margin:0 auto; padding:24px 16px 40px; }
+  .title-panel { position:relative; overflow:hidden; color:#fff; border-radius:20px; padding:24px 22px; margin-bottom:18px;
+    background:linear-gradient(120deg,#3a1503,#7c2d12 60%,#9a3412); box-shadow:0 10px 26px -12px rgba(124,45,18,.55); }
+  .title-panel::after { content:""; position:absolute; inset:auto 0 0 0; height:6px;
+    background:linear-gradient(90deg,var(--fuel2),var(--amber)); }
+  .title-panel .badge { display:inline-block; background:var(--amber); color:#231a00; font-weight:800; font-size:12px;
+    padding:3px 10px; border-radius:999px; letter-spacing:.08em; margin-bottom:10px; }
+  .title-panel h1 { margin:0; font-size:clamp(24px,5.6vw,34px); font-weight:900; }
+  .title-panel p { margin:10px 0 4px; color:#ffe8d6; line-height:1.8; font-size:14px; max-width:720px; }
+  section.panel { background:var(--card); border-radius:20px; padding:22px; margin-bottom:18px;
+    border:1px solid var(--line); box-shadow:0 3px 14px rgba(18,40,63,.06), 0 14px 30px -20px rgba(18,40,63,.25); }
+  section.panel h2 { margin:0 0 14px; font-size:17px; font-weight:800; display:flex; align-items:center; gap:10px; }
+  section.panel h2::before { content:""; width:9px; height:20px; border-radius:3px; background:linear-gradient(180deg,var(--fuel2),var(--fuel)); flex:none; }
+  .field { margin-bottom:18px; }
+  .field:last-child { margin-bottom:0; }
+  .field label.lab { display:block; font-weight:700; font-size:14px; margin-bottom:8px; }
+  .field .hint { color:var(--mut); font-size:12px; margin-top:6px; line-height:1.7; }
+  .seg { position:relative; display:flex; background:#e7ecf2; border-radius:12px; padding:4px; gap:0; }
+  .seg .plate { position:absolute; top:4px; bottom:4px; border-radius:9px;
+    background:linear-gradient(180deg,var(--fuel2),var(--fuel));
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.38), inset 0 -3px 0 rgba(0,0,0,.20), 0 6px 14px -6px rgba(15,30,45,.40);
+    transition:left .28s cubic-bezier(.4,0,.2,1), width .28s cubic-bezier(.4,0,.2,1); }
+  .seg button { position:relative; z-index:1; flex:1; border:0; background:transparent; color:var(--ink);
+    font:inherit; font-weight:700; font-size:14px; padding:10px 6px; border-radius:9px; cursor:pointer; }
+  .seg button.on { color:#fff; }
+  .numrow { display:flex; align-items:center; gap:10px; }
+  .numrow input[type="number"] { flex:1; min-width:0; font:inherit; font-size:18px; font-weight:700; padding:12px 14px;
+    border:1.5px solid var(--line); border-radius:12px; background:#fbfcfe; color:var(--ink); }
+  .numrow input[type="number"]:focus { outline:3px solid rgba(249,115,22,.35); border-color:var(--fuel2); }
+  .numrow .unit { font-weight:700; color:var(--mut); font-size:14px; flex:none; }
+  .result-big { text-align:center; padding:10px 0 4px; }
+  .result-big .cap { color:var(--mut); font-size:13px; font-weight:700; letter-spacing:.06em; }
+  .result-big .amt { font-size:clamp(38px,9vw,54px); font-weight:900; color:var(--fuel); line-height:1.15;
+    text-shadow:0 2px 12px rgba(234,88,12,.18); }
+  .result-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin-top:14px; }
+  .result-grid .cell { background:#fdf4ec; border:1px solid #f7ddc8; border-radius:14px; padding:12px 14px; }
+  .result-grid .cell .k { color:var(--mut); font-size:12px; font-weight:700; }
+  .result-grid .cell .v { font-size:19px; font-weight:800; margin-top:3px; }
+  .note { color:var(--mut); font-size:13px; line-height:1.85; }
+  .note li { margin-bottom:4px; }
+  details.pp { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:16px 20px; margin-bottom:18px; }
+  details.pp summary { font-weight:800; cursor:pointer; }
+  details.pp p { color:var(--mut); font-size:13px; line-height:1.85; }
+  footer { max-width:960px; margin:0 auto; padding:0 16px 110px; color:var(--mut); font-size:13px; line-height:1.8; }
+  .stickybar { position:fixed; left:0; right:0; bottom:0; z-index:50; color:#fff;
+    background:linear-gradient(120deg,#3a1503,#7c2d12 60%,#9a3412); border-top:3px solid var(--amber);
+    padding:10px 16px calc(10px + env(safe-area-inset-bottom)); display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+    box-shadow:0 -6px 20px rgba(58,21,3,.35); }
+  .stickybar .lab { font-size:12px; font-weight:700; color:#ffd9b0; }
+  .stickybar .amt { font-size:24px; font-weight:900; color:var(--amber); text-shadow:0 0 14px rgba(242,168,29,.45); }
+  .stickybar .sub { font-size:12px; color:#ffe8d6; }
+</style>
+<link rel="canonical" href="https://wankodo.github.io/mobility-simulator/gasoline.html" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="移動シミュレーター" />
+<meta property="og:title" content="移動シミュレーター｜ガソリン代計算シミュレーター" />
+<meta property="og:description" content="走行距離・燃費・ガソリン単価から、往復のガソリン代・使用量・1人あたり・通勤の月額年額まで無料で試算できます。" />
+<meta property="og:url" content="https://wankodo.github.io/mobility-simulator/gasoline.html" />
+<meta property="og:image" content="https://wankodo.github.io/mobility-simulator/ogp.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://wankodo.github.io/mobility-simulator/ogp.png" />
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3970535652265626" crossorigin="anonymous"></script>
+<style id="design-polish-3">
+  button, .seg button{
+    transition: box-shadow .12s ease, transform .05s ease, filter .15s ease;
+  }
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "@id": "https://wankodo.github.io/mobility-simulator/gasoline.html#app",
+  "url": "https://wankodo.github.io/mobility-simulator/gasoline.html",
+  "name": "ガソリン代計算シミュレーター",
+  "description": "走行距離・燃費・ガソリン単価から、往復のガソリン代・使用量・1人あたり・通勤の月額年額まで無料で試算できます。",
+  "applicationCategory": "TravelApplication",
+  "operatingSystem": "Webブラウザ",
+  "inLanguage": "ja",
+  "isFree": true,
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "JPY" },
+  "isPartOf": { "@id": "https://wankodo.github.io/mobility-simulator/#website" }
+}
+</script>
+</head>
+<body>
+<nav class="top">
+  <a class="brand" href="index.html">移動シミュレーター</a>
+  <a href="train.html">電車・新幹線</a>
+  <a href="timescar.html">タイムズカー</a>
+  <a href="highway.html">高速道路</a>
+  <a class="here" href="gasoline.html">ガソリン代</a>
+</nav>
+<main>
+  <div class="title-panel">
+    <span class="badge">ガソリン代</span>
+    <h1>⛽ ガソリン代計算シミュレーター</h1>
+    <p>走行距離と燃費、ガソリンの単価を入れるだけで、ガソリン代の目安がその場で出ます。往復・割り勘・通勤の月額／年額まで対応。計算はブラウザの中だけで完結し、入力が送信されることはありません。</p>
+  </div>
+
+  <section class="panel">
+    <h2>条件を入れる</h2>
+    <div class="field">
+      <label class="lab">片道／往復</label>
+      <div class="seg" id="segTrip"><span class="plate"></span>
+        <button type="button" data-v="oneway">片道</button>
+        <button type="button" data-v="round" class="on">往復</button>
+      </div>
+    </div>
+    <div class="field">
+      <label class="lab" for="dist">走行距離（片道）</label>
+      <div class="numrow"><input type="number" id="dist" inputmode="decimal" min="0" step="0.1" value="20" /><span class="unit">km</span></div>
+      <p class="hint">目的地までの距離（道のり）を調べる：<a href="https://www.google.com/maps/dir/" target="_blank" rel="noopener noreferrer">Googleマップ</a> ／ <a href="https://maps.apple.com/?dirflg=d" target="_blank" rel="noopener noreferrer">Appleマップ</a> ／ <a href="https://map.yahoo.co.jp/" target="_blank" rel="noopener noreferrer">Yahoo!マップ</a> ／ <a href="https://www.navitime.co.jp/drive/" target="_blank" rel="noopener noreferrer">NAVITIME</a> ／ <a href="https://mapfan.com/" target="_blank" rel="noopener noreferrer">MapFan</a><br />ルート検索で表示された片道の距離を、上に入力してください。</p>
+    </div>
+    <div class="field">
+      <label class="lab" for="carSel">車種から選ぶ（任意）</label>
+      <div class="numrow"><select id="carSel" style="flex:1;min-width:0;font:inherit;font-size:15px;font-weight:700;padding:12px 10px;border:1.5px solid var(--line);border-radius:12px;background:#fbfcfe;color:var(--ink);">
+        <option value="">車種を選ぶと燃費の目安が入ります</option>
+        <option data-fill="15.5">N-BOX（ホンダ）実燃費 約15.5km/L／カタログ 21.6km/L</option>
+        <option data-fill="26.5">ヤリス（トヨタ）実燃費 約26.5km/L／カタログ 35.8km/L</option>
+        <option data-fill="18.0">スペーシア（スズキ）実燃費 約18.0km/L／カタログ 23.9km/L</option>
+        <option data-fill="23.5">カローラ（トヨタ）実燃費 約23.5km/L／カタログ 29.8km/L</option>
+        <option data-fill="17.6">タント（ダイハツ）実燃費 約17.6km/L／カタログ 22.6km/L</option>
+        <option data-fill="15.9">ムーヴ（ダイハツ）実燃費 約15.9km/L／カタログ 22.6km/L</option>
+        <option data-fill="20.3">シエンタ（トヨタ）実燃費 約20.3km/L／カタログ 27.6km/L</option>
+        <option data-fill="14.9">ライズ（トヨタ）実燃費 約14.9km/L／カタログ 20.7km/L</option>
+        <option data-fill="13.8">ルーミー（トヨタ）実燃費 約13.8km/L／カタログ 18.4km/L</option>
+        <option data-fill="16.5">フリード（ホンダ）実燃費 約16.5km/L／カタログ 25.6km/L</option>
+        <option data-fill="18.5">ハスラー（スズキ）実燃費 約18.5km/L／カタログ 25.0km/L</option>
+        <option data-fill="13.7">アルファード（トヨタ）実燃費 約13.7km/L／カタログ 18.0km/L</option>
+        <option data-fill="18.0">ノア（トヨタ）実燃費 約18.0km/L／カタログ 23.6km/L</option>
+        <option data-fill="17.5">ヴォクシー（トヨタ）実燃費 約17.5km/L／カタログ 23.6km/L</option>
+        <option data-fill="19.8">ノート（日産）実燃費 約19.8km/L／カタログ 28.4km/L</option>
+        <option data-fill="20.8">ワゴンR（スズキ）実燃費 約20.8km/L／カタログ 25.1km/L</option>
+        <option data-fill="14.9">ルークス（日産）実燃費 約14.9km/L／カタログ 21.0km/L</option>
+        <option data-fill="15.4">セレナ（日産）実燃費 約15.4km/L／カタログ 19.0km/L</option>
+        <option data-fill="22.9">アクア（トヨタ）実燃費 約22.9km/L／カタログ 33.6km/L</option>
+        <option data-fill="18.3">ヴェゼル（ホンダ）実燃費 約18.3km/L／カタログ 25.3km/L</option>
+        <option data-fill="21.9">プリウス（トヨタ）実燃費 約21.9km/L／カタログ 28.4km/L</option>
+        <option data-fill="19.3">デリカミニ（三菱）実燃費 約19.3km/L／カタログ 21.0km/L</option>
+        <option data-fill="28.2">アルト（スズキ）実燃費 未確認／カタログ 28.2km/L（カタログ値を入力）</option>
+        <option data-fill="16.6">ステップワゴン（ホンダ）実燃費 約16.6km/L／カタログ 19.6km/L</option>
+        <option data-fill="18.2">クラウン（トヨタ）実燃費 約18.2km/L／カタログ 23.1km/L</option>
+        <option data-fill="21.3">ミラ イース（ダイハツ）実燃費 約21.3km/L／カタログ 27.0km/L</option>
+        <option data-fill="16.5">ソリオ（スズキ）実燃費 約16.5km/L／カタログ 22.0km/L</option>
+        <option data-fill="16.0">ハリアー（トヨタ）実燃費 約16.0km/L／カタログ 22.4km/L</option>
+        <option data-fill="12.2">ジムニー（スズキ・軽）実燃費 約12.2km/L／カタログ 14.3km/L</option>
+        <option data-fill="21.4">タフト（ダイハツ）実燃費 未確認／カタログ 21.4km/L（カタログ値を入力）</option>
+      </select></div>
+      <p class="hint">2025年の新車販売台数トップ30（登録車＋軽自動車）。実燃費は e燃費・みんカラの利用者給油記録の集計平均をもとにした目安で、カタログ値（WLTCモード）より低めに出ます。アルトとタフトは集計平均が確認できなかったため、カタログ値を入れています。</p>
+    </div>
+    <div class="field">
+      <label class="lab" for="fuelEff">燃費</label>
+      <div class="numrow"><input type="number" id="fuelEff" inputmode="decimal" min="0.1" step="0.1" value="15" /><span class="unit">km/L</span></div>
+      <p class="hint">車のメーター表示やカタログ値が目安です。実燃費は季節・渋滞・エアコンで変わります。</p>
+    </div>
+    <div class="field">
+      <label class="lab">油種（単価の初期値）</label>
+      <div class="seg" id="segFuel"><span class="plate"></span>
+        <button type="button" data-v="regular" class="on">レギュラー</button>
+        <button type="button" data-v="premium">ハイオク</button>
+        <button type="button" data-v="diesel">軽油</button>
+      </div>
+      <div class="numrow" style="margin-top:10px;"><input type="number" id="price" inputmode="decimal" min="0" step="0.1" value="170.2" /><span class="unit">円/L</span></div>
+      <p class="hint">初期値は資源エネルギー庁の石油製品価格調査（2026年10月5日調査の全国平均：レギュラー170.2円／ハイオク181.0円／軽油159.6円）です。実際の単価はレシートやスタンドの表示に合わせて変えてください。</p>
+    </div>
+    <div class="field">
+      <label class="lab" for="people">割り勘する人数</label>
+      <div class="numrow"><input type="number" id="people" inputmode="numeric" min="1" step="1" value="1" /><span class="unit">人</span></div>
+    </div>
+    <div class="field">
+      <label class="lab" for="perWeek">週に何回走るか（月額・年額の計算用）</label>
+      <div class="numrow"><input type="number" id="perWeek" inputmode="numeric" min="0" step="1" value="5" /><span class="unit">回／週</span></div>
+      <p class="hint">通勤なら週5回が目安です。月額＝1回分×週の回数×52週÷12か月、年額＝1回分×週の回数×52週で計算します。</p>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>試算結果</h2>
+    <div class="result-big">
+      <div class="cap">ガソリン代（<span id="tripLabel">往復</span>）</div>
+      <div class="amt" id="gasTotal">¥—</div>
+    </div>
+    <div class="result-grid">
+      <div class="cell"><div class="k">使うガソリンの量</div><div class="v" id="resLiters">—</div></div>
+      <div class="cell"><div class="k">1kmあたり</div><div class="v" id="resPerKm">—</div></div>
+      <div class="cell"><div class="k">1人あたり（割り勘）</div><div class="v" id="resPerPerson">—</div></div>
+      <div class="cell"><div class="k">月額の目安</div><div class="v" id="resMonthly">—</div></div>
+      <div class="cell"><div class="k">年額の目安</div><div class="v" id="resYearly">—</div></div>
+      <div class="cell"><div class="k">総走行距離</div><div class="v" id="resDist">—</div></div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>計算のしかたと注意</h2>
+    <ul class="note">
+      <li>ガソリン代 ＝ 走行距離（km）÷ 燃費（km/L）× 単価（円/L）で計算しています。往復は片道の距離を2倍にします。</li>
+      <li>高速道路の通行料金は含みません。高速を使う場合は<a href="highway.html">高速料金シミュレーター</a>と合わせてご覧ください。両方とも「行程カゴ」に入れると、<a href="index.html">トップページ</a>で合計と割り勘が出せます。</li>
+      <li>金額は目安です。実際の燃費は運転のしかたや道路状況で変わります。</li>
+    </ul>
+  </section>
+
+  <details class="pp">
+    <summary>プライバシーポリシー</summary>
+    <p>このページの計算はすべてお使いのブラウザの中で完結します。入力した距離・燃費・単価などの内容がサーバーに送信・保存されることはありません。行程カゴの中身は、お使いのブラウザの localStorage にのみ保存されます。</p>
+    <p>このサイトでは、広告配信のために Google AdSense を利用する場合があります。Google を含む第三者配信事業者は、Cookie を使用して、ユーザーがそのウェブサイトや他のウェブサイトに過去にアクセスした際の情報に基づいて広告を配信することがあります。パーソナライズ広告は <a href="https://adssettings.google.com/" target="_blank" rel="noopener noreferrer">Google の広告設定</a>から無効にできます。</p>
+    <p>表示される金額は公開資料と計算式に基づく試算であり、実際の料金を保証するものではありません。</p>
+  </details>
+</main>
+<footer>
+  <p>本ページは非公式の個人ツールです。ガソリン価格は地域・店舗・時期により変動します。正確な価格は各店舗の表示をご確認ください。</p>
+  <p>制作：andy（わんこ堂）× 熊八 🐾（Muse Spark）</p>
+</footer>
+
+<div class="stickybar">
+  <span class="lab">ガソリン代</span>
+  <span class="amt" id="stickyPrice">¥—</span>
+  <span class="sub" id="stickyRoute">—</span>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  var PRICES = { regular: 170.2, premium: 181.0, diesel: 159.6 };
+  var state = { trip: "round", fuel: "regular" };
+
+  function yen(n) { return "¥" + Math.round(n).toLocaleString("ja-JP"); }
+  function num(id) {
+    var v = parseFloat(document.getElementById(id).value);
+    return isNaN(v) ? 0 : v;
+  }
+
+  function setupSeg(id, key, onPick) {
+    var seg = document.getElementById(id);
+    var plate = seg.querySelector(".plate");
+    var btns = Array.prototype.slice.call(seg.querySelectorAll("button"));
+    function move() {
+      var on = seg.querySelector("button.on");
+      if (!on) return;
+      plate.style.left = on.offsetLeft + "px";
+      plate.style.width = on.offsetWidth + "px";
+    }
+    btns.forEach(function (b) {
+      b.addEventListener("click", function () {
+        btns.forEach(function (x) { x.classList.remove("on"); });
+        b.classList.add("on");
+        state[key] = b.getAttribute("data-v");
+        move();
+        if (onPick) onPick(state[key]);
+        calc();
+      });
+    });
+    window.addEventListener("resize", move);
+    move();
+    return move;
+  }
+
+  var moveTrip = setupSeg("segTrip", "trip", null);
+  var moveFuel = setupSeg("segFuel", "fuel", function (v) {
+    document.getElementById("price").value = PRICES[v];
+  });
+
+  function calc() {
+    var dist = num("dist");
+    var eff = num("fuelEff");
+    var price = num("price");
+    var people = Math.max(1, Math.floor(num("people")) || 1);
+    var perWeek = num("perWeek");
+    var totalDist = state.trip === "round" ? dist * 2 : dist;
+    var liters = eff > 0 ? totalDist / eff : 0;
+    var cost = liters * price;
+    document.getElementById("tripLabel").textContent = state.trip === "round" ? "往復" : "片道";
+    document.getElementById("gasTotal").textContent = yen(cost);
+    document.getElementById("resLiters").textContent = liters.toFixed(2) + " L";
+    document.getElementById("resPerKm").textContent = totalDist > 0 ? yen(cost / totalDist) : "—";
+    document.getElementById("resPerPerson").textContent = yen(Math.ceil(cost / people));
+    document.getElementById("resMonthly").textContent = yen(cost * perWeek * 52 / 12);
+    document.getElementById("resYearly").textContent = yen(cost * perWeek * 52);
+    document.getElementById("resDist").textContent = totalDist.toLocaleString("ja-JP") + " km";
+    document.getElementById("stickyPrice").textContent = yen(cost);
+    document.getElementById("stickyRoute").textContent =
+      (state.trip === "round" ? "往復" : "片道") + " " + totalDist.toLocaleString("ja-JP") + "km／燃費 " + eff + "km/L／" + price + "円/L";
+  }
+
+  ["dist", "fuelEff", "price", "people", "perWeek"].forEach(function (id) {
+    document.getElementById(id).addEventListener("input", calc);
+  });
+  document.getElementById("carSel").addEventListener("change", function () {
+    var opt = this.options[this.selectedIndex];
+    var fill = opt ? opt.getAttribute("data-fill") : null;
+    if (fill) {
+      document.getElementById("fuelEff").value = fill;
+      calc();
+    }
+  });
+  window.addEventListener("load", function () { moveTrip(); moveFuel(); calc(); });
+  calc();
+})();
+</script>
+<script>window.IDO_BASKET={kind:"gasoline"};</script>
+<script>
+/* ===== 移動シミュレーター 行程カゴ（共通部品） ===== */
+(function () {
+  "use strict";
+  var KEY = "ido_itinerary_v1";
+  var CFG = window.IDO_BASKET || { kind: "portal" };
+  function load() {
+    try {
+      var raw = localStorage.getItem(KEY);
+      var arr = raw ? JSON.parse(raw) : [];
+      return Array.isArray(arr) ? arr : [];
+    } catch (e) { return []; }
+  }
+  function save(items) {
+    try { localStorage.setItem(KEY, JSON.stringify(items)); } catch (e) {}
+  }
+  function yen(n) { return "¥" + Math.round(n).toLocaleString("ja-JP"); }
+  function parseAmt(text) {
+    if (!text) return null;
+    var digits = String(text).replace(/[^0-9]/g, "");
+    if (!digits) return null;
+    var v = parseInt(digits, 10);
+    return isNaN(v) ? null : v;
+  }
+  function elText(id) {
+    var el = document.getElementById(id);
+    return el ? el.textContent.trim() : "";
+  }
+  function extract() {
+    if (CFG.kind === "gasoline") {
+      var a = parseAmt(elText("gasTotal"));
+      if (a === null) return null;
+      var route = elText("stickyRoute");
+      return { kind: "gasoline", label: "ガソリン代 " + (route && route !== "—" ? route : ""), amount: a, unit: "台分" };
+    }
+    return null;
+  }
+  function total(items) {
+    return items.reduce(function (s, it) { return s + it.amount * (it.qty || 1); }, 0);
+  }
+  if (CFG.kind !== "portal") {
+    var box = document.createElement("div");
+    box.id = "ido-basket-widget";
+    box.style.cssText = "position:fixed;right:12px;bottom:92px;z-index:9999;background:#12283f;color:#fff;border-radius:12px;padding:10px 12px;box-shadow:0 6px 20px rgba(0,0,0,.3);font-family:system-ui,-apple-system,sans-serif;font-size:13px;max-width:78vw;";
+    box.innerHTML =
+      '<div id="ido-basket-status" style="margin-bottom:8px;color:#cfe2f3;">行程カゴ：0件／¥0</div>' +
+      '<button id="ido-basket-add" type="button" style="background:#f2a81d;color:#12283f;border:0;border-radius:8px;padding:8px 12px;font-weight:800;cursor:pointer;">＋ 行程に追加</button> ' +
+      '<a href="index.html" style="color:#fff;text-decoration:underline;">カゴを見る</a>';
+    document.body.appendChild(box);
+    var status = document.getElementById("ido-basket-status");
+    function refresh() {
+      var items = load();
+      status.textContent = "行程カゴ：" + items.length + "件／" + yen(total(items));
+    }
+    refresh();
+    window.addEventListener("storage", function (e) { if (e.key === KEY) refresh(); });
+    document.getElementById("ido-basket-add").addEventListener("click", function () {
+      var got = extract();
+      if (!got) {
+        alert("まだ料金が出ていません。先に条件を選んで料金を表示してから追加してください。");
+        return;
+      }
+      var items = load();
+      got.id = Date.now();
+      got.qty = 1;
+      items.push(got);
+      save(items);
+      refresh();
+      status.textContent = "追加しました：" + got.label + " " + yen(got.amount);
+    });
+  }
+})();
+</script>
+</body>
+</html>

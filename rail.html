@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="description" content="電車での移動に役立つツール集です。電車・新幹線の運賃シミュレーターと、定期代のお得度チェックの2本を用意しています。" />
+<title>移動シミュレーター｜電車系ツール</title>
+<style>
+  :root { --navy:#12283f; --navy2:#0b1c2c; --amber:#f2a81d; --ink:#1c2733; --mut:#5b6b7c; --bg:#edf1f5; --card:#fff; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:system-ui,-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif; color:var(--ink);
+         background:linear-gradient(180deg,#e8eef4 0%,#f2f5f8 320px,#edf1f5 100%); }
+  header.site { position:relative; overflow:hidden; color:#fff; padding:40px 18px 34px;
+    background:linear-gradient(120deg,var(--navy2) 0%,var(--navy) 55%,#1d3d5c 100%); }
+  header.site::before { content:""; position:absolute; inset:0; pointer-events:none;
+    background:
+      radial-gradient(560px 260px at 88% -40px, rgba(242,168,29,.35), rgba(242,168,29,0) 70%),
+      radial-gradient(700px 320px at -10% 120%, rgba(47,127,208,.30), rgba(47,127,208,0) 70%); }
+  header.site::after { content:""; position:absolute; inset:0; pointer-events:none; opacity:.05;
+    background:repeating-linear-gradient(115deg,#fff 0 1px,transparent 1px 14px); }
+  header.site .brand { position:relative; font-size:13px; letter-spacing:.34em; color:var(--amber); font-weight:800; margin:0 0 10px; }
+  header.site h1 { position:relative; margin:0; font-size:clamp(32px,7vw,46px); font-weight:900; letter-spacing:.02em; text-shadow:0 2px 14px rgba(0,0,0,.25); }
+  header.site p.lead { position:relative; margin:12px 0 0; color:#d7e4f2; max-width:720px; line-height:1.8; }
+  main { max-width:960px; margin:0 auto; padding:26px 16px 40px; }
+  .cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:18px; }
+  a.card { position:relative; display:block; background:var(--card); border-radius:20px; padding:24px 22px 20px; text-decoration:none; color:var(--ink);
+           border:1px solid #e1e8ef; box-shadow:0 3px 14px rgba(18,40,63,.07), 0 14px 30px -18px rgba(18,40,63,.25);
+           transition:transform .18s ease, box-shadow .18s ease; overflow:hidden; }
+  a.card::before { content:""; position:absolute; top:0; left:0; right:0; height:6px; background:var(--acc,#ccc); }
+  a.card:hover { transform:translateY(-4px); box-shadow:0 8px 22px rgba(18,40,63,.12), 0 22px 38px -18px rgba(18,40,63,.35); }
+  a.card:focus-visible { outline:3px solid var(--amber); outline-offset:2px; }
+  a.card.train { --acc:linear-gradient(90deg,#12b981,#0d8a63); --tint:#e3f7ef; }
+  a.card.car { --acc:linear-gradient(90deg,#ffb020,#f28c13); --tint:#fdf1de; }
+  a.card.highway { --acc:linear-gradient(90deg,#3f9be0,#2f6fd0); --tint:#e4f0fb; }
+  a.card.gas { --acc:linear-gradient(90deg,#f97316,#ea580c); --tint:#fdeee3; }
+  a.card.park { --acc:linear-gradient(90deg,#2e9e8f,#2e7d74); --tint:#e2f2ef; }
+  a.card.taxi { --acc:linear-gradient(90deg,#eab308,#ca8a04); --tint:#fdf6dd; }
+  a.card.pass { --acc:linear-gradient(90deg,#12b981,#0d8a63); --tint:#e3f7ef; }
+  a.card .ic { display:flex; align-items:center; justify-content:center; width:56px; height:56px; border-radius:16px;
+               background:var(--tint,#eef2f6); font-size:30px; margin-bottom:14px; }
+  a.card h2 { margin:0 0 8px; font-size:20px; font-weight:800; letter-spacing:.01em; }
+  a.card p { margin:0; color:var(--mut); line-height:1.75; font-size:14px; }
+  a.card .go { display:inline-flex; align-items:center; gap:6px; margin-top:16px; font-weight:800; color:var(--navy);
+               background:#f4f7fa; border:1px solid #e1e8ef; padding:7px 14px; border-radius:999px; font-size:13px;
+               transition:background .18s ease, gap .18s ease; }
+  a.card:hover .go { background:#fdf1de; gap:10px; }
+  section.box { background:var(--card); border-radius:20px; padding:22px; margin-top:20px;
+                border:1px solid #e1e8ef; box-shadow:0 3px 14px rgba(18,40,63,.06); }
+  section.box h2 { margin:0 0 10px; font-size:18px; font-weight:800; display:flex; align-items:center; gap:10px; }
+  section.box h2::before { content:""; width:9px; height:20px; border-radius:3px; background:linear-gradient(180deg,var(--amber),#f28c13); flex:none; }
+  section.box p, section.box li { color:var(--mut); line-height:1.8; font-size:14px; }
+  footer { max-width:960px; margin:0 auto; padding:0 16px 36px; color:var(--mut); font-size:13px; line-height:1.8; }
+
+  a.card.catcar { --acc:linear-gradient(90deg,#ffb020,#f28c13); --tint:#fdf1de; }
+  a.card.catrail { --acc:linear-gradient(90deg,#12b981,#0d8a63); --tint:#e3f7ef; }
+  a.card.catuseful { --acc:linear-gradient(90deg,#3f9be0,#2f6fd0); --tint:#e4f0fb; }
+  .backlink { display:inline-block; margin:0 0 14px; font-weight:700; color:var(--navy); text-decoration:none; }
+</style>
+<link rel="canonical" href="https://wankodo.github.io/mobility-simulator/rail.html" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="移動シミュレーター" />
+<meta property="og:title" content="移動シミュレーター｜電車系ツール" />
+<meta property="og:description" content="電車での移動に役立つツール集です。電車・新幹線の運賃シミュレーターと、定期代のお得度チェックの2本を用意しています。" />
+<meta property="og:url" content="https://wankodo.github.io/mobility-simulator/rail.html" />
+<meta property="og:image" content="https://wankodo.github.io/mobility-simulator/ogp.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<link rel="icon" type="image/svg+xml" href="favicon.svg" />
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3970535652265626" crossorigin="anonymous"></script>
+</head>
+<body>
+<header class="site">
+  <p class="brand">移動シミュレーター</p>
+  <h1>🚃 電車系ツール</h1>
+  <p class="lead">電車での移動に役立つツール集です。電車・新幹線の運賃シミュレーターと、定期代のお得度チェックの2本を用意しています。</p>
+</header>
+<main>
+  <a class="backlink" href="index.html">← トップへ戻る</a>
+  <div class="cards">
+    <a class="card train" href="train.html">
+      <span class="ic">🚃</span>
+      <h2>電車・新幹線シミュレーター</h2>
+      <p>電車・新幹線の運賃と発車時刻を調べます。全452路線を収録し、在来線・有料特急・新幹線の運賃試算、駅の時刻表、発車までのカウントダウン表示に対応しています。ケーブルカーやロープウェイも一部収録しています。</p>
+      <span class="go">開く →</span>
+    </a>
+    <a class="card pass" href="pass.html">
+      <span class="ic">🎫</span>
+      <h2>定期代お得度チェックシミュレーター</h2>
+      <p>片道運賃と定期代から、定期券と都度払いのどちらがお得かを試算します。月に何日乗れば元が取れるか、1か月・3か月・6か月定期の比較もできます。</p>
+      <span class="go">開く →</span>
+    </a>
+
+  </div>
+</main>
+<footer>
+  <p>このサイトは個人が作成した非公式の計算ツール集です。各事業者の公式ページではありません。実際の料金は公式情報をご確認ください。</p>
+  <p>制作：andy（わんこ堂）× 熊八 🐾（Muse Spark）</p>
+</footer>
+</body>
+</html>
