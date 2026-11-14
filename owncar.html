@@ -240,7 +240,7 @@
       <p class="hint">車両代は（購入価格 − 売却見込み）÷ 乗る年数で、年あたりに均して計算します。</p>
     </div>
     <div class="field">
-      <label class="lab" for="taxSel">自動車税（排気量の目安）</label>
+      <label class="lab" for="taxSel">自動車税（区分を選ぶ）</label>
       <div class="numrow"><select id="taxSel" style="flex:1;min-width:0;font:inherit;font-size:15px;font-weight:700;padding:12px 10px;border:1.5px solid var(--line);border-radius:12px;background:#fbfcfe;color:var(--ink);">
         <option value="10800">軽自動車（10,800円／年）</option>
         <option value="25000">1.0L以下（25,000円／年）</option>
@@ -249,9 +249,20 @@
         <option value="43500">2.0〜2.5L（43,500円／年）</option>
         <option value="50000">2.5〜3.0L（50,000円／年）</option>
         <option value="57000">3.0〜3.5L（57,000円／年）</option>
+        <optgroup label="貨物車（最大積載量）">
+          <option value="5000">軽貨物・軽トラ（5,000円／年）</option>
+          <option value="8000">積載1トン以下（8,000円／年）</option>
+          <option value="11500">積載1〜2トン（11,500円／年）</option>
+          <option value="16000">積載2〜3トン（16,000円／年）</option>
+          <option value="20500">積載3〜4トン（20,500円／年）</option>
+          <option value="25500">積載4〜5トン（25,500円／年）</option>
+          <option value="30000">積載5〜6トン（30,000円／年）</option>
+          <option value="35000">積載6〜7トン（35,000円／年）</option>
+          <option value="40500">積載7〜8トン（40,500円／年）</option>
+        </optgroup>
       </select></div>
       <div class="numrow" style="margin-top:10px;"><input type="number" id="taxYen" inputmode="numeric" min="0" step="100" value="30500" /><span class="unit">円／年</span></div>
-      <p class="hint">2019年10月以降に初度登録された自家用乗用車の税率です。13年超の古い車は重課で高くなります。</p>
+      <p class="hint">乗用車は2019年10月以降に初度登録された自家用乗用車の税率（13年超は重課で高くなります）。貨物車（ピックアップ・トラック）は排気量ではなく最大積載量で税額が決まり、軽トラなどの軽貨物は一律5,000円です。</p>
     </div>
     <div class="field">
       <label class="lab" for="insYen">任意保険（年額）</label>
@@ -260,7 +271,11 @@
     <div class="field">
       <label class="lab" for="shakenYen">車検（1回あたり）</label>
       <div class="numrow"><input type="number" id="shakenYen" inputmode="numeric" min="0" step="1000" value="80000" /><span class="unit">円</span></div>
-      <p class="hint">2年に1回として、年額では半分にして計算します。</p>
+      <div class="numrow" style="margin-top:10px;"><select id="shakenCycle" style="flex:1;min-width:0;font:inherit;font-size:15px;font-weight:700;padding:12px 10px;border:1.5px solid var(--line);border-radius:12px;background:#fbfcfe;color:var(--ink);">
+        <option value="2" selected>2年に1回（乗用車・軽自動車）</option>
+        <option value="1">毎年（普通貨物・ピックアップなど）</option>
+      </select></div>
+      <p class="hint">選んだ周期で割って年額に換算します。普通貨物（1ナンバー）は毎年車検です。</p>
     </div>
     <div class="field">
       <label class="lab" for="parkingM">駐車場代（月額）</label>
@@ -383,7 +398,7 @@
     var carYear = Math.max(0, (num("priceWan") - num("resaleWan")) * 10000 / years);
     var tax = num("taxYen");
     var ins = num("insYen");
-    var shakenYear = num("shakenYen") / 2;
+    var shakenYear = num("shakenYen") / Math.max(1, num("shakenCycle"));
     var parkYear = num("parkingM") * 12;
     var maint = num("maintYen");
     var eff = num("effKm");
@@ -425,6 +440,7 @@
   ["priceWan", "years", "resaleWan", "taxYen", "insYen", "shakenYen", "parkingM", "maintYen", "kmM", "effKm", "gPrice", "csFee", "csHours", "csRate", "csKm", "csDistRate", "csTimes"].forEach(function (id) {
     document.getElementById(id).addEventListener("input", calc);
   });
+  document.getElementById("shakenCycle").addEventListener("change", calc);
   document.getElementById("taxSel").addEventListener("change", function () {
     document.getElementById("taxYen").value = this.value;
     calc();
