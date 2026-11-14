@@ -398,6 +398,38 @@
 <meta property="og:description" content="高速道路の通行料金を無料で試算。全231路線・1,862か所のIC・出入口から入口と出口を選ぶだけで、ETC割引・深夜割引・休日割引を自動判定して計算します。首都高など別体系にも対応。" />
 <meta property="og:url" content="https://wankodo.github.io/mobility-simulator/highway.html" />
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3970535652265626" crossorigin="anonymous"></script>
+<style id="design-polish">
+  body nav{ background:linear-gradient(120deg,#0b1c2c,#12283f 55%,#1d3d5c)!important; box-shadow:0 2px 14px rgba(11,28,44,.35); padding-top:12px!important; padding-bottom:12px!important; }
+  body nav a{ transition:opacity .15s ease; }
+  body nav a:hover{ opacity:.72; }
+
+  .lead h1 .sign{ background:linear-gradient(180deg,var(--green),var(--green-deep)); box-shadow:0 4px 12px rgba(0,77,53,.35); }
+  .card{ border-radius:18px; box-shadow:0 2px 10px rgba(10,40,28,.06),0 16px 34px -20px rgba(10,40,28,.30); }
+  .calc-btn{ background:linear-gradient(180deg,var(--green),var(--green-deep)); box-shadow:0 8px 20px -8px rgba(0,77,53,.55); transition:filter .15s ease, transform .05s ease; }
+  .calc-btn:hover{ filter:brightness(1.07); }
+  .sticky-bar{ background:linear-gradient(120deg,var(--green-deep),#065f40); }
+</style>
+<style id="design-polish-2">
+  @media (prefers-color-scheme: light){ body{ background-image:linear-gradient(180deg,#e9f2ec,#f7f7f4 340px); } }
+  .lead{ margin-top:20px; padding:28px 24px 22px; border-radius:18px; color:#fff;
+         background:linear-gradient(135deg,#076b47 0%,var(--green-deep) 55%,#003d29 100%);
+         border:2px solid #ffffff; outline:2px solid var(--green-deep);
+         box-shadow:0 18px 38px -16px rgba(0,61,41,.55), 0 3px 12px rgba(0,61,41,.25); }
+  .lead p{ color:#d5ecdf; }
+  .lead .meta span{ background:rgba(255,255,255,.13); border-color:rgba(255,255,255,.38); color:#fff; }
+  .lead h1 .sign{ background:linear-gradient(180deg,#ffc61a,#f5b301); color:#3d2c00; outline:2px solid rgba(255,255,255,.9); box-shadow:0 4px 12px rgba(0,0,0,.30); }
+  #stickyMainPrice{ text-shadow:0 0 18px rgba(245,179,1,.45); }
+</style>
+<style id="design-polish-3">
+  button, a.card .go{
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.38), inset 0 -3px 0 rgba(0,0,0,.20), 0 6px 14px -6px rgba(15,30,45,.40);
+    transition: box-shadow .12s ease, transform .05s ease, filter .15s ease;
+  }
+  button:active, a.card:active .go{
+    transform: translateY(2px);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.22), inset 0 -1px 0 rgba(0,0,0,.20), 0 2px 5px -2px rgba(15,30,45,.35);
+  }
+</style>
 </head>
   <body>
 <nav style="display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;background:#12283f;color:#fff;padding:10px 16px;font-family:system-ui,-apple-system,sans-serif;font-size:14px;"><a href="index.html" style="color:#fff;font-weight:800;text-decoration:none;">移動シミュレーター</a><a href="timescar.html" style="color:#cfe2f3;text-decoration:none;">タイムズカー</a><a href="highway.html" style="color:#cfe2f3;text-decoration:none;">高速道路</a><a href="train.html" style="color:#cfe2f3;text-decoration:none;">電車・新幹線</a></nav>

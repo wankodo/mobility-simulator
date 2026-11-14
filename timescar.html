@@ -280,6 +280,35 @@
 <meta property="og:description" content="タイムズカーの利用料金を無料で試算。時間料金・最大時間料金・ナイトパックを自動で比べて最安の組み合わせを計算します。車両クラス、安心補償、給油・洗車、ステージ割引、チケットにも対応。" />
 <meta property="og:url" content="https://wankodo.github.io/mobility-simulator/timescar.html" />
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3970535652265626" crossorigin="anonymous"></script>
+<style id="design-polish">
+  body nav{ background:linear-gradient(120deg,#0b1c2c,#12283f 55%,#1d3d5c)!important; box-shadow:0 2px 14px rgba(11,28,44,.35); padding-top:12px!important; padding-bottom:12px!important; }
+  body nav a{ transition:opacity .15s ease; }
+  body nav a:hover{ opacity:.72; }
+
+  header.page-head{ padding:12px 2px 14px; margin-bottom:18px; border-bottom:3px solid transparent; border-image:linear-gradient(90deg,var(--amber),rgba(255,183,0,0)) 1; }
+  .panel{ border-radius:18px; box-shadow:0 2px 10px rgba(12,42,77,.06),0 16px 34px -20px rgba(12,42,77,.28); }
+  .panel h2::before{ content:""; width:9px; height:18px; border-radius:3px; background:linear-gradient(180deg,var(--amber),#f28c13); align-self:center; flex:none; }
+  .mobile-bar{ background:linear-gradient(120deg,var(--navy),var(--navy-2)); border-top:2px solid var(--amber); }
+</style>
+<style id="design-polish-3">
+  button, a.card .go{
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.38), inset 0 -3px 0 rgba(0,0,0,.20), 0 6px 14px -6px rgba(15,30,45,.40);
+    transition: box-shadow .12s ease, transform .05s ease, filter .15s ease;
+  }
+  button:active, a.card:active .go{
+    transform: translateY(2px);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.22), inset 0 -1px 0 rgba(0,0,0,.20), 0 2px 5px -2px rgba(15,30,45,.35);
+  }
+</style>
+<style id="design-polish-4">
+  .seg{ position:relative; }
+  .seg .seg-ind{ position:absolute; z-index:0; border-radius:7px; background:var(--seg-on);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.35), inset 0 -3px 0 rgba(0,0,0,.22), 0 4px 10px -2px rgba(0,0,0,.35);
+    transition: left .28s cubic-bezier(.4,0,.2,1), width .28s cubic-bezier(.4,0,.2,1), top .28s ease, height .28s ease, opacity .15s ease; }
+  .seg label{ z-index:1; }
+  .seg .seg-face{ box-shadow: inset 0 1px 0 rgba(255,255,255,.22), inset 0 -2px 0 rgba(0,0,0,.07); }
+  .seg input:checked + .seg-face{ background:transparent; box-shadow: inset 0 1px 0 rgba(255,255,255,.22); }
+</style>
 </head>
   <body>
 <nav style="display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;background:#12283f;color:#fff;padding:10px 16px;font-family:system-ui,-apple-system,sans-serif;font-size:14px;"><a href="index.html" style="color:#fff;font-weight:800;text-decoration:none;">移動シミュレーター</a><a href="timescar.html" style="color:#cfe2f3;text-decoration:none;">タイムズカー</a><a href="highway.html" style="color:#cfe2f3;text-decoration:none;">高速道路</a><a href="train.html" style="color:#cfe2f3;text-decoration:none;">電車・新幹線</a></nav>
@@ -977,8 +1006,20 @@
     box.innerHTML =
       '<div id="ido-basket-status" style="margin-bottom:8px;color:#cfe2f3;">行程カゴ：0件／¥0</div>' +
       '<button id="ido-basket-add" type="button" style="background:#f2a81d;color:#12283f;border:0;border-radius:8px;padding:8px 12px;font-weight:800;cursor:pointer;">＋ 行程に追加</button> ' +
-      '<a href="index.html" style="color:#fff;text-decoration:underline;">カゴを見る</a>';
+      '<a href="/" style="color:#fff;text-decoration:underline;">カゴを見る</a>';
     document.body.appendChild(box);
+
+    /* 同意ポップアップ表示中はカゴを隠す（ポップアップを確実に最前面にするため） */
+    function syncWidgetVisibility() {
+      var ov = document.querySelector(".pp-overlay");
+      var open = ov && (ov.classList.contains("open") || window.getComputedStyle(ov).display !== "none");
+      box.style.display = open ? "none" : "";
+    }
+    if (window.MutationObserver) {
+      new MutationObserver(syncWidgetVisibility).observe(document.body, { attributes: true, attributeFilter: ["class", "style"], subtree: true });
+    }
+    setInterval(syncWidgetVisibility, 500);
+    syncWidgetVisibility();
 
     var status = document.getElementById("ido-basket-status");
     function refresh() {
@@ -1061,7 +1102,42 @@
     window.addEventListener("storage", function (e) { if (e.key === KEY) render(); });
   }
 })();
-
+</script>
+<script>
+/* セグメント切替：強調色スライド（共通部品） */
+(function () {
+  function activeEl(seg) {
+    var inp = seg.querySelector("input:checked");
+    if (inp) return inp.closest("label") || inp;
+    return seg.querySelector("button.on");
+  }
+  function setup(seg) {
+    if (seg.querySelector(".seg-ind")) return;
+    var ind = document.createElement("span");
+    ind.className = "seg-ind";
+    seg.insertBefore(ind, seg.firstChild);
+    function place() {
+      var el = activeEl(seg);
+      if (!el) { ind.style.opacity = "0"; return; }
+      ind.style.opacity = "1";
+      ind.style.left = el.offsetLeft + "px";
+      ind.style.top = el.offsetTop + "px";
+      ind.style.width = el.offsetWidth + "px";
+      ind.style.height = el.offsetHeight + "px";
+    }
+    seg._segPlace = place;
+    place();
+    setTimeout(place, 300);
+    new MutationObserver(place).observe(seg, { attributes: true, attributeFilter: ["class", "checked"], subtree: true });
+    seg.addEventListener("change", function () { setTimeout(place, 0); });
+    seg.addEventListener("click", function () { setTimeout(place, 0); });
+  }
+  function init() { document.querySelectorAll(".seg").forEach(setup); }
+  function replaceAll() { document.querySelectorAll(".seg").forEach(function (s) { if (s._segPlace) s._segPlace(); }); }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
+  window.addEventListener("load", replaceAll);
+  window.addEventListener("resize", replaceAll);
+})();
 </script>
 </body>
 </html>

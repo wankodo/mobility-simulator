@@ -6,22 +6,44 @@
 <meta name="description" content="移動シミュレーターは、タイムズカーのレンタル料金、高速道路の通行料金、電車・新幹線の運賃を無料で試算できるツール集です。" />
 <title>移動シミュレーター</title>
 <style>
-  :root { --navy:#12283f; --amber:#f2a81d; --ink:#1c2733; --mut:#5b6b7c; --bg:#f4f6f8; --card:#fff; }
+  :root { --navy:#12283f; --navy2:#0b1c2c; --amber:#f2a81d; --ink:#1c2733; --mut:#5b6b7c; --bg:#edf1f5; --card:#fff; }
   * { box-sizing:border-box; }
-  body { margin:0; font-family:system-ui,-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif; color:var(--ink); background:var(--bg); }
-  header.site { background:var(--navy); color:#fff; padding:28px 18px 24px; }
-  header.site .brand { font-size:13px; letter-spacing:.14em; color:#a9bfd8; margin:0 0 6px; }
-  header.site h1 { margin:0; font-size:clamp(28px,6vw,40px); font-weight:900; }
-  header.site p.lead { margin:10px 0 0; color:#d7e4f2; max-width:720px; line-height:1.7; }
-  main { max-width:960px; margin:0 auto; padding:22px 16px 40px; }
-  .cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:16px; }
-  a.card { display:block; background:var(--card); border-radius:14px; padding:20px; text-decoration:none; color:var(--ink);
-           box-shadow:0 2px 10px rgba(18,40,63,.08); border-top:5px solid var(--amber); }
-  a.card h2 { margin:0 0 8px; font-size:20px; }
-  a.card p { margin:0; color:var(--mut); line-height:1.7; font-size:14px; }
-  a.card .go { display:inline-block; margin-top:12px; font-weight:700; color:var(--navy); }
-  section.box { background:var(--card); border-radius:14px; padding:20px; margin-top:18px; box-shadow:0 2px 10px rgba(18,40,63,.08); }
-  section.box h2 { margin:0 0 10px; font-size:18px; }
+  body { margin:0; font-family:system-ui,-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif; color:var(--ink);
+         background:linear-gradient(180deg,#e8eef4 0%,#f2f5f8 320px,#edf1f5 100%); }
+  header.site { position:relative; overflow:hidden; color:#fff; padding:40px 18px 34px;
+    background:linear-gradient(120deg,var(--navy2) 0%,var(--navy) 55%,#1d3d5c 100%); }
+  header.site::before { content:""; position:absolute; inset:0; pointer-events:none;
+    background:
+      radial-gradient(560px 260px at 88% -40px, rgba(242,168,29,.35), rgba(242,168,29,0) 70%),
+      radial-gradient(700px 320px at -10% 120%, rgba(47,127,208,.30), rgba(47,127,208,0) 70%); }
+  header.site::after { content:""; position:absolute; inset:0; pointer-events:none; opacity:.05;
+    background:repeating-linear-gradient(115deg,#fff 0 1px,transparent 1px 14px); }
+  header.site .brand { position:relative; font-size:13px; letter-spacing:.34em; color:var(--amber); font-weight:800; margin:0 0 10px; }
+  header.site h1 { position:relative; margin:0; font-size:clamp(32px,7vw,46px); font-weight:900; letter-spacing:.02em; text-shadow:0 2px 14px rgba(0,0,0,.25); }
+  header.site p.lead { position:relative; margin:12px 0 0; color:#d7e4f2; max-width:720px; line-height:1.8; }
+  main { max-width:960px; margin:0 auto; padding:26px 16px 40px; }
+  .cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:18px; }
+  a.card { position:relative; display:block; background:var(--card); border-radius:20px; padding:24px 22px 20px; text-decoration:none; color:var(--ink);
+           border:1px solid #e1e8ef; box-shadow:0 3px 14px rgba(18,40,63,.07), 0 14px 30px -18px rgba(18,40,63,.25);
+           transition:transform .18s ease, box-shadow .18s ease; overflow:hidden; }
+  a.card::before { content:""; position:absolute; top:0; left:0; right:0; height:6px; background:var(--acc,#ccc); }
+  a.card:hover { transform:translateY(-4px); box-shadow:0 8px 22px rgba(18,40,63,.12), 0 22px 38px -18px rgba(18,40,63,.35); }
+  a.card:focus-visible { outline:3px solid var(--amber); outline-offset:2px; }
+  a.card.train { --acc:linear-gradient(90deg,#12b981,#0d8a63); --tint:#e3f7ef; }
+  a.card.car { --acc:linear-gradient(90deg,#ffb020,#f28c13); --tint:#fdf1de; }
+  a.card.highway { --acc:linear-gradient(90deg,#3f9be0,#2f6fd0); --tint:#e4f0fb; }
+  a.card .ic { display:flex; align-items:center; justify-content:center; width:56px; height:56px; border-radius:16px;
+               background:var(--tint,#eef2f6); font-size:30px; margin-bottom:14px; }
+  a.card h2 { margin:0 0 8px; font-size:20px; font-weight:800; letter-spacing:.01em; }
+  a.card p { margin:0; color:var(--mut); line-height:1.75; font-size:14px; }
+  a.card .go { display:inline-flex; align-items:center; gap:6px; margin-top:16px; font-weight:800; color:var(--navy);
+               background:#f4f7fa; border:1px solid #e1e8ef; padding:7px 14px; border-radius:999px; font-size:13px;
+               transition:background .18s ease, gap .18s ease; }
+  a.card:hover .go { background:#fdf1de; gap:10px; }
+  section.box { background:var(--card); border-radius:20px; padding:22px; margin-top:20px;
+                border:1px solid #e1e8ef; box-shadow:0 3px 14px rgba(18,40,63,.06); }
+  section.box h2 { margin:0 0 10px; font-size:18px; font-weight:800; display:flex; align-items:center; gap:10px; }
+  section.box h2::before { content:""; width:9px; height:20px; border-radius:3px; background:linear-gradient(180deg,var(--amber),#f28c13); flex:none; }
   section.box p, section.box li { color:var(--mut); line-height:1.8; font-size:14px; }
   footer { max-width:960px; margin:0 auto; padding:0 16px 36px; color:var(--mut); font-size:13px; line-height:1.8; }
 </style>
@@ -32,27 +54,39 @@
 <meta property="og:description" content="移動シミュレーターは、タイムズカーのレンタル料金、高速道路の通行料金、電車・新幹線の運賃を無料で試算できるツール集です。" />
 <meta property="og:url" content="https://wankodo.github.io/mobility-simulator/" />
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3970535652265626" crossorigin="anonymous"></script>
+<style id="design-polish-3">
+  button, a.card .go{
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.38), inset 0 -3px 0 rgba(0,0,0,.20), 0 6px 14px -6px rgba(15,30,45,.40);
+    transition: box-shadow .12s ease, transform .05s ease, filter .15s ease;
+  }
+  button:active, a.card:active .go{
+    transform: translateY(2px);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.22), inset 0 -1px 0 rgba(0,0,0,.20), 0 2px 5px -2px rgba(15,30,45,.35);
+  }
+</style>
 </head>
 <body>
 <header class="site">
-  <p class="brand">WANKODO</p>
   <h1>移動シミュレーター</h1>
   <p class="lead">お出かけや旅行の前に、移動にかかる料金をまとめて試算できる無料のツール集です。カーシェア（タイムズカー）、高速道路、電車・新幹線の3つのシミュレーターを用意しています。いずれも登録不要で、計算はお使いのブラウザの中だけで完結します。</p>
 </header>
 <main>
   <div class="cards">
-    <a class="card" href="train.html">
-      <h2>🚃 電車・新幹線シミュレーター</h2>
+    <a class="card train" href="train.html">
+      <span class="ic">🚃</span>
+      <h2>電車・新幹線シミュレーター</h2>
       <p>電車・新幹線の運賃と発車時刻を調べます。全452路線を収録し、在来線・有料特急・新幹線の運賃試算、駅の時刻表、発車までのカウントダウン表示に対応しています。ケーブルカーやロープウェイも一部収録しています。</p>
       <span class="go">開く →</span>
     </a>
-    <a class="card" href="timescar.html">
-      <h2>🚗 タイムズカー料金シミュレーター</h2>
+    <a class="card car" href="timescar.html">
+      <span class="ic">🚗</span>
+      <h2>タイムズカー料金シミュレーター</h2>
       <p>タイムズカーの利用料金を試算します。時間料金・最大時間料金・ナイトパックを自動で比べて、いちばん安い組み合わせで計算します。車両クラス、安心補償、給油・洗車、ステージ割引、チケットにも対応しています。</p>
       <span class="go">開く →</span>
     </a>
-    <a class="card" href="highway.html">
-      <h2>🛣️ 高速料金シミュレーター</h2>
+    <a class="card highway" href="highway.html">
+      <span class="ic">🛣️</span>
+      <h2>高速料金シミュレーター</h2>
       <p>高速道路の通行料金を試算します。全231路線・1,862か所のIC・出入口から入口と出口を選ぶと、路線網から距離を出して料金を計算します。ETC割引・深夜割引・休日割引の自動判定、首都高などの別体系にも対応しています。</p>
       <span class="go">開く →</span>
     </a>
@@ -152,8 +186,20 @@
     box.innerHTML =
       '<div id="ido-basket-status" style="margin-bottom:8px;color:#cfe2f3;">行程カゴ：0件／¥0</div>' +
       '<button id="ido-basket-add" type="button" style="background:#f2a81d;color:#12283f;border:0;border-radius:8px;padding:8px 12px;font-weight:800;cursor:pointer;">＋ 行程に追加</button> ' +
-      '<a href="index.html" style="color:#fff;text-decoration:underline;">カゴを見る</a>';
+      '<a href="/" style="color:#fff;text-decoration:underline;">カゴを見る</a>';
     document.body.appendChild(box);
+
+    /* 同意ポップアップ表示中はカゴを隠す（ポップアップを確実に最前面にするため） */
+    function syncWidgetVisibility() {
+      var ov = document.querySelector(".pp-overlay");
+      var open = ov && (ov.classList.contains("open") || window.getComputedStyle(ov).display !== "none");
+      box.style.display = open ? "none" : "";
+    }
+    if (window.MutationObserver) {
+      new MutationObserver(syncWidgetVisibility).observe(document.body, { attributes: true, attributeFilter: ["class", "style"], subtree: true });
+    }
+    setInterval(syncWidgetVisibility, 500);
+    syncWidgetVisibility();
 
     var status = document.getElementById("ido-basket-status");
     function refresh() {
@@ -236,7 +282,6 @@
     window.addEventListener("storage", function (e) { if (e.key === KEY) render(); });
   }
 })();
-
 </script>
 </body>
 </html>
