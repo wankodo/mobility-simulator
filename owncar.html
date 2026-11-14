@@ -1,0 +1,456 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="description" content="マイカー維持費 vs カーシェア比較シミュレーター。車両価格・税金・保険・車検・駐車場代などの維持費と、カーシェアの利用料金を比べて、年額・月額と損益分岐（月に何回までならカーシェアが安いか）まで無料で試算できます。" />
+<title>移動シミュレーター｜マイカー維持費 vs カーシェア比較シミュレーター</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg" />
+<style>
+  :root { --navy:#12283f; --navy2:#0b1c2c; --amber:#f2a81d; --fuel:#7c3aed; --fuel2:#8b5cf6; --ink:#1c2733; --mut:#5b6b7c; --bg:#edf1f5; --card:#fff; --line:#e1e8ef; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:system-ui,-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif; color:var(--ink);
+         background:linear-gradient(180deg,#e8eef4 0%,#f2f5f8 320px,#edf1f5 100%); }
+  nav.top { display:flex; flex-wrap:wrap; gap:8px 18px; align-items:center; color:#fff; padding:12px 16px;
+    background:linear-gradient(120deg,var(--navy2),var(--navy) 55%,#1d3d5c); box-shadow:0 2px 14px rgba(11,28,44,.35);
+    font-size:14px; position:relative; z-index:5; }
+  nav.top a { color:#cfe2f3; text-decoration:none; transition:opacity .15s ease; }
+  nav.top a:hover { opacity:.72; }
+  nav.top a.brand { color:#fff; font-weight:800; }
+  nav.top a.here { color:#fff; font-weight:800; border-bottom:2px solid var(--fuel2); padding-bottom:2px; }
+  main { max-width:960px; margin:0 auto; padding:24px 16px 40px; }
+  .title-panel { position:relative; overflow:hidden; color:#fff; border-radius:20px; padding:24px 22px; margin-bottom:18px;
+    background:linear-gradient(120deg,#2e1065,#5b21b6 60%,#7c3aed); box-shadow:0 10px 26px -12px rgba(91,33,182,.55); }
+  .title-panel::after { content:""; position:absolute; inset:auto 0 0 0; height:6px;
+    background:linear-gradient(90deg,var(--fuel2),var(--amber)); }
+  .title-panel .badge { display:inline-block; background:var(--amber); color:#231a00; font-weight:800; font-size:12px;
+    padding:3px 10px; border-radius:999px; letter-spacing:.08em; margin-bottom:10px; }
+  .title-panel h1 { margin:0; font-size:clamp(24px,5.6vw,34px); font-weight:900; }
+  .title-panel p { margin:10px 0 4px; color:#ede9fe; line-height:1.8; font-size:14px; max-width:720px; }
+  section.panel { background:var(--card); border-radius:20px; padding:22px; margin-bottom:18px;
+    border:1px solid var(--line); box-shadow:0 3px 14px rgba(18,40,63,.06), 0 14px 30px -20px rgba(18,40,63,.25); }
+  section.panel h2 { margin:0 0 14px; font-size:17px; font-weight:800; display:flex; align-items:center; gap:10px; }
+  section.panel h2::before { content:""; width:9px; height:20px; border-radius:3px; background:linear-gradient(180deg,var(--fuel2),var(--fuel)); flex:none; }
+  .field { margin-bottom:18px; }
+  .field:last-child { margin-bottom:0; }
+  .field label.lab { display:block; font-weight:700; font-size:14px; margin-bottom:8px; }
+  .field .hint { color:var(--mut); font-size:12px; margin-top:6px; line-height:1.7; }
+  .seg { position:relative; display:flex; background:#e7ecf2; border-radius:12px; padding:4px; gap:0; }
+  .seg .plate { position:absolute; top:4px; bottom:4px; border-radius:9px;
+    background:linear-gradient(180deg,var(--fuel2),var(--fuel));
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.38), inset 0 -3px 0 rgba(0,0,0,.20), 0 6px 14px -6px rgba(15,30,45,.40);
+    transition:left .28s cubic-bezier(.4,0,.2,1), width .28s cubic-bezier(.4,0,.2,1); }
+  .seg button { position:relative; z-index:1; flex:1; border:0; background:transparent; color:var(--ink);
+    font:inherit; font-weight:700; font-size:14px; padding:10px 6px; border-radius:9px; cursor:pointer; }
+  .seg button.on { color:#fff; }
+  .numrow { display:flex; align-items:center; gap:10px; }
+  .numrow input[type="number"] { flex:1; min-width:0; font:inherit; font-size:18px; font-weight:700; padding:12px 14px;
+    border:1.5px solid var(--line); border-radius:12px; background:#fbfcfe; color:var(--ink); }
+  .numrow input[type="number"]:focus { outline:3px solid rgba(249,115,22,.35); border-color:var(--fuel2); }
+  .numrow .unit { font-weight:700; color:var(--mut); font-size:14px; flex:none; }
+  .result-big { text-align:center; padding:10px 0 4px; }
+  .result-big .cap { color:var(--mut); font-size:13px; font-weight:700; letter-spacing:.06em; }
+  .result-big .amt { font-size:clamp(38px,9vw,54px); font-weight:900; color:var(--fuel); line-height:1.15;
+    text-shadow:0 2px 12px rgba(234,88,12,.18); }
+  .result-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin-top:14px; }
+  .result-grid .cell { background:#fdf4ec; border:1px solid #f7ddc8; border-radius:14px; padding:12px 14px; }
+  .result-grid .cell .k { color:var(--mut); font-size:12px; font-weight:700; }
+  .result-grid .cell .v { font-size:19px; font-weight:800; margin-top:3px; }
+  .note { color:var(--mut); font-size:13px; line-height:1.85; }
+  .note li { margin-bottom:4px; }
+  details.pp { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:16px 20px; margin-bottom:18px; }
+  details.pp summary { font-weight:800; cursor:pointer; }
+  details.pp p { color:var(--mut); font-size:13px; line-height:1.85; }
+  footer { max-width:960px; margin:0 auto; padding:0 16px 110px; color:var(--mut); font-size:13px; line-height:1.8; }
+  .stickybar { position:fixed; left:0; right:0; bottom:0; z-index:50; color:#fff;
+    background:linear-gradient(120deg,#3a1503,#7c2d12 60%,#9a3412); border-top:3px solid var(--amber);
+    padding:10px 16px calc(10px + env(safe-area-inset-bottom)); display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+    box-shadow:0 -6px 20px rgba(58,21,3,.35); }
+  .stickybar .lab { font-size:12px; font-weight:700; color:#ffd9b0; }
+  .stickybar .amt { font-size:24px; font-weight:900; color:var(--amber); text-shadow:0 0 14px rgba(242,168,29,.45); }
+  .stickybar .sub { font-size:12px; color:#ffe8d6; }
+</style>
+<link rel="canonical" href="https://wankodo.github.io/mobility-simulator/gasoline.html" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="移動シミュレーター" />
+<meta property="og:title" content="移動シミュレーター｜ガソリン代計算シミュレーター" />
+<meta property="og:description" content="走行距離・燃費・ガソリン単価から、往復のガソリン代・使用量・1人あたり・通勤の月額年額まで無料で試算できます。" />
+<meta property="og:url" content="https://wankodo.github.io/mobility-simulator/gasoline.html" />
+<meta property="og:image" content="https://wankodo.github.io/mobility-simulator/ogp.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://wankodo.github.io/mobility-simulator/ogp.png" />
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3970535652265626" crossorigin="anonymous"></script>
+<style id="design-polish-3">
+  button, .seg button{
+    transition: box-shadow .12s ease, transform .05s ease, filter .15s ease;
+  }
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "@id": "https://wankodo.github.io/mobility-simulator/gasoline.html#app",
+  "url": "https://wankodo.github.io/mobility-simulator/gasoline.html",
+  "name": "ガソリン代計算シミュレーター",
+  "description": "走行距離・燃費・ガソリン単価から、往復のガソリン代・使用量・1人あたり・通勤の月額年額まで無料で試算できます。",
+  "applicationCategory": "TravelApplication",
+  "operatingSystem": "Webブラウザ",
+  "inLanguage": "ja",
+  "isFree": true,
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "JPY" },
+  "isPartOf": { "@id": "https://wankodo.github.io/mobility-simulator/#website" }
+}
+</script>
+<link rel="stylesheet" href="site-unified.css?v=15" />
+<script>
+(function () {
+  var PIC = {
+    "🚗": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11l1.5-4.5A2 2 0 0 1 8.4 5h7.2a2 2 0 0 1 1.9 1.5L19 11"/><path d="M3 11h18v6h-2.6"/><path d="M3 17h2.6"/><circle cx="7.5" cy="17" r="1.8"/><circle cx="16.5" cy="17" r="1.8"/><path d="M9.3 17h5.4"/></svg>',
+    "🚕": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9.6" y="2.6" width="4.8" height="2.2" rx="0.6"/><path d="M5 12l1.5-4.2A2 2 0 0 1 8.4 6.4h7.2a2 2 0 0 1 1.9 1.4L19 12"/><path d="M3 12h18v5.5h-2.6"/><path d="M3 17.5h2.6"/><circle cx="7.5" cy="17.5" r="1.8"/><circle cx="16.5" cy="17.5" r="1.8"/><path d="M9.3 17.5h5.4"/></svg>',
+    "⚖️": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v18"/><path d="M8 21h8"/><path d="M4 6h16"/><path d="M7 6l-2.4 5.5a3.2 3.2 0 0 0 4.8 0L7 6z"/><path d="M17 6l-2.4 5.5a3.2 3.2 0 0 0 4.8 0L17 6z"/></svg>',
+    "⛽": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v16"/><path d="M3 21h14"/><rect x="7.2" y="5.8" width="5.6" height="4.2" rx="0.6"/><path d="M15 10l2.1 2.1a2 2 0 0 1 .6 1.4V18a1.9 1.9 0 0 0 3.8 0v-6.8a2 2 0 0 0-.6-1.4L18.6 7.5"/></svg>',
+    "🅿": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2.5"/><path d="M9.5 16.8V7.2h3.4a2.9 2.9 0 0 1 0 5.8H9.5"/></svg>',
+    "🛣": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21L10 3"/><path d="M19 21L14 3"/><path d="M12 18.6v-2.2"/><path d="M12 13.6v-2.2"/><path d="M12 8.6V6.4"/></svg>',
+    "🚃": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3.5" width="14" height="13" rx="2.5"/><path d="M5 10.3h14"/><path d="M9 13.9h.01M15 13.9h.01" stroke-width="2.6"/><path d="M8.5 20.5l2-4"/><path d="M15.5 20.5l-2-4"/><path d="M7 20.5h10"/></svg>',
+    "🎫": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8.6a2.4 2.4 0 0 0 0 2.8V15a1.6 1.6 0 0 0 1.6 1.6h12.8A1.6 1.6 0 0 0 20 15v-3.6a2.4 2.4 0 0 1 0-2.8V7A1.6 1.6 0 0 0 18.4 5.4H5.6A1.6 1.6 0 0 0 4 7z"/><path d="M13.8 6.2v1.7M13.8 10.2v1.7M13.8 14.2v1.6"/></svg>',
+    "🧰": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="9" width="18" height="10" rx="1.6"/><path d="M9 9V7a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/><path d="M3 13.6h18"/><rect x="10.3" y="12.3" width="3.4" height="2.6" rx="0.5"/></svg>',
+    "🧺": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.6 10.2h14.8l-1.5 7.9a2 2 0 0 1-2 1.6H8.1a2 2 0 0 1-2-1.6z"/><path d="M8.6 10.2L12 4.6l3.4 5.6"/><path d="M3 10.2h18"/><path d="M9.2 13.8v2.4M12 13.8v2.4M14.8 13.8v2.4"/></svg>',
+    "📍": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-6.6-5.5-6.6-10.3a6.6 6.6 0 0 1 13.2 0C18.6 15.5 12 21 12 21z"/><circle cx="12" cy="10.4" r="2.3"/></svg>',
+    "🐾": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="12" cy="15.8" rx="4.4" ry="3.6"/><circle cx="5.8" cy="10.8" r="1.8"/><circle cx="9.3" cy="7.8" r="1.9"/><circle cx="14.7" cy="7.8" r="1.9"/><circle cx="18.2" cy="10.8" r="1.8"/></svg>'
+  };
+  var KEYS = Object.keys(PIC);
+  function makePic(ch) {
+    var s = document.createElement("span");
+    s.className = "ido-pic";
+    s.dataset.emoji = ch;
+    s.innerHTML = PIC[ch];
+    return s;
+  }
+  function swapIn(root) {
+    if (!root || root.nodeType !== 1) return;
+    var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+      acceptNode: function (n) {
+        if (!n.nodeValue) return NodeFilter.FILTER_REJECT;
+        var p = n.parentElement;
+        if (!p) return NodeFilter.FILTER_REJECT;
+        var tag = p.tagName;
+        if (tag === "SCRIPT" || tag === "STYLE" || tag === "TEXTAREA") return NodeFilter.FILTER_REJECT;
+        if (p.closest(".ido-pic")) return NodeFilter.FILTER_REJECT;
+        for (var i = 0; i < KEYS.length; i++) if (n.nodeValue.indexOf(KEYS[i]) >= 0) return NodeFilter.FILTER_ACCEPT;
+        return NodeFilter.FILTER_REJECT;
+      }
+    });
+    var nodes = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+    nodes.forEach(function (n) {
+      var text = n.nodeValue;
+      var frag = document.createDocumentFragment();
+      var buf = "";
+      for (var i = 0; i < text.length; i++) {
+        var matched = null;
+        for (var k = 0; k < KEYS.length; k++) {
+          if (text.startsWith(KEYS[k], i)) { matched = KEYS[k]; break; }
+        }
+        if (matched) {
+          if (buf) { frag.appendChild(document.createTextNode(buf)); buf = ""; }
+          frag.appendChild(makePic(matched));
+          i += matched.length - 1;
+          if (text.charCodeAt(i + 1) === 0xFE0F) i++;
+        } else {
+          buf += text[i];
+        }
+      }
+      if (buf) frag.appendChild(document.createTextNode(buf));
+      if (n.parentNode) n.parentNode.replaceChild(frag, n);
+    });
+  }
+  function swapOut(root) {
+    root.querySelectorAll(".ido-pic").forEach(function (s) {
+      s.replaceWith(document.createTextNode(s.dataset.emoji || ""));
+    });
+  }
+  var mo = null;
+  function applyIcons() {
+    if (!document.body) return;
+    var isAndy = (document.documentElement.dataset.theme || "kuma") === "andy";
+    if (mo) { mo.disconnect(); mo = null; }
+    if (isAndy) {
+      swapIn(document.body);
+      mo = new MutationObserver(function (muts) {
+        muts.forEach(function (m) {
+          m.addedNodes.forEach(function (nd) { if (nd.nodeType === 1) swapIn(nd); });
+        });
+      });
+      mo.observe(document.body, { childList: true, subtree: true });
+    } else {
+      swapOut(document.body);
+    }
+  }
+  try {
+    var t = localStorage.getItem("ido_theme_v1");
+    if (t === "andy" || t === "kuma") document.documentElement.dataset.theme = t;
+  } catch (e) {}
+  document.addEventListener("DOMContentLoaded", function () {
+    var btns = document.querySelectorAll("[data-ido-theme]");
+    function sync() {
+      var cur = document.documentElement.dataset.theme || "kuma";
+      btns.forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.idoTheme === cur)); });
+    }
+    btns.forEach(function (b) {
+      b.addEventListener("click", function () {
+        document.documentElement.dataset.theme = b.dataset.idoTheme;
+        try { localStorage.setItem("ido_theme_v1", b.dataset.idoTheme); } catch (e) {}
+        sync();
+        applyIcons();
+      });
+    });
+    sync();
+    applyIcons();
+  });
+})();
+</script>
+</head>
+<body>
+<header class="ido-sitebar"><a class="ido-brand" href="index.html" aria-label="移動シミュレーター トップへ"><span class="ido-brand-mark" aria-hidden="true">移</span><span class="ido-brand-text"><small>MOBILITY SIMULATOR</small></span></a><div class="ido-category-nav" role="navigation" aria-label="カテゴリ"><a href="index.html">トップ</a><a href="car.html" class="is-current" aria-current="page">車系</a><a href="rail.html">電車系</a><a href="useful.html">便利系</a></div><div class="ido-theme-switch" role="group" aria-label="表示モード切替"><button type="button" data-ido-theme="kuma" aria-pressed="true">熊八モード</button><button type="button" data-ido-theme="andy" aria-pressed="false">Andyモード</button></div></header>
+
+<main>
+<div class="ido-toolnav" role="navigation" aria-label="車系ツール"><span class="ido-toolnav-label">車系ツール</span><a href="car.html">車系トップ</a><a href="timescar.html">🚗 タイムズカー</a><a href="highway.html">🛣️ 高速料金</a><a href="gasoline.html">⛽ ガソリン代</a><a href="ev.html">⚡ EV電気代</a><a href="parking.html">🅿️ 駐車場</a><a href="taxi.html">🚕 タクシー</a><a href="owncar.html" aria-current="page">⚖️ マイカー比較</a></div>
+
+  <div class="title-panel ido-hero">
+    <span class="badge">マイカー比較</span>
+    <h1>⚖️ マイカー維持費 vs カーシェア比較</h1>
+    <p>車を買うのと、カーシェアで借りるのと、結局どっちが得なのか。維持費の内訳と利用頻度を入れるだけで、年額・月額の差と「月に何回までならカーシェアが安いか」の損益分岐までその場で出ます。計算はブラウザの中だけで完結します。</p>
+  </div>
+
+  <section class="panel">
+    <h2>マイカーの条件</h2>
+    <div class="field">
+      <label class="lab" for="priceWan">車両価格</label>
+      <div class="numrow"><input type="number" id="priceWan" inputmode="decimal" min="0" step="1" value="200" /><span class="unit">万円</span></div>
+    </div>
+    <div class="field">
+      <label class="lab" for="years">乗る年数</label>
+      <div class="numrow"><input type="number" id="years" inputmode="decimal" min="1" step="1" value="8" /><span class="unit">年</span></div>
+    </div>
+    <div class="field">
+      <label class="lab" for="resaleWan">売却・下取りの見込み</label>
+      <div class="numrow"><input type="number" id="resaleWan" inputmode="decimal" min="0" step="1" value="20" /><span class="unit">万円</span></div>
+      <p class="hint">車両代は（購入価格 − 売却見込み）÷ 乗る年数で、年あたりに均して計算します。</p>
+    </div>
+    <div class="field">
+      <label class="lab" for="taxSel">自動車税（排気量の目安）</label>
+      <div class="numrow"><select id="taxSel" style="flex:1;min-width:0;font:inherit;font-size:15px;font-weight:700;padding:12px 10px;border:1.5px solid var(--line);border-radius:12px;background:#fbfcfe;color:var(--ink);">
+        <option value="10800">軽自動車（10,800円／年）</option>
+        <option value="25000">1.0L以下（25,000円／年）</option>
+        <option value="30500" selected>1.0〜1.5L（30,500円／年）</option>
+        <option value="36000">1.5〜2.0L（36,000円／年）</option>
+        <option value="43500">2.0〜2.5L（43,500円／年）</option>
+        <option value="50000">2.5〜3.0L（50,000円／年）</option>
+        <option value="57000">3.0〜3.5L（57,000円／年）</option>
+      </select></div>
+      <div class="numrow" style="margin-top:10px;"><input type="number" id="taxYen" inputmode="numeric" min="0" step="100" value="30500" /><span class="unit">円／年</span></div>
+      <p class="hint">2019年10月以降に初度登録された自家用乗用車の税率です。13年超の古い車は重課で高くなります。</p>
+    </div>
+    <div class="field">
+      <label class="lab" for="insYen">任意保険（年額）</label>
+      <div class="numrow"><input type="number" id="insYen" inputmode="numeric" min="0" step="1000" value="60000" /><span class="unit">円</span></div>
+    </div>
+    <div class="field">
+      <label class="lab" for="shakenYen">車検（1回あたり）</label>
+      <div class="numrow"><input type="number" id="shakenYen" inputmode="numeric" min="0" step="1000" value="80000" /><span class="unit">円</span></div>
+      <p class="hint">2年に1回として、年額では半分にして計算します。</p>
+    </div>
+    <div class="field">
+      <label class="lab" for="parkingM">駐車場代（月額）</label>
+      <div class="numrow"><input type="number" id="parkingM" inputmode="numeric" min="0" step="500" value="10000" /><span class="unit">円</span></div>
+    </div>
+    <div class="field">
+      <label class="lab" for="maintYen">メンテナンス・消耗品（年額）</label>
+      <div class="numrow"><input type="number" id="maintYen" inputmode="numeric" min="0" step="1000" value="30000" /><span class="unit">円</span></div>
+      <p class="hint">オイル・タイヤ・バッテリーなどの目安です。</p>
+    </div>
+    <div class="field">
+      <label class="lab" for="kmM">月の走行距離</label>
+      <div class="numrow"><input type="number" id="kmM" inputmode="decimal" min="0" step="10" value="500" /><span class="unit">km</span></div>
+    </div>
+    <div class="field">
+      <label class="lab" for="effKm">燃費</label>
+      <div class="numrow"><input type="number" id="effKm" inputmode="decimal" min="0.1" step="0.1" value="15" /><span class="unit">km/L</span></div>
+    </div>
+    <div class="field">
+      <label class="lab" for="gPrice">ガソリンの単価</label>
+      <div class="numrow"><input type="number" id="gPrice" inputmode="decimal" min="0" step="0.1" value="170.2" /><span class="unit">円/L</span></div>
+      <p class="hint">初期値はレギュラーの全国平均（資源エネルギー庁の石油製品価格調査・2026年10月5日調査）です。</p>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>カーシェアの条件</h2>
+    <div class="field">
+      <label class="lab" for="csFee">月会費</label>
+      <div class="numrow"><input type="number" id="csFee" inputmode="numeric" min="0" step="10" value="880" /><span class="unit">円</span></div>
+      <p class="hint">初期値はタイムズカー個人プランの月額基本料です。同額の無料利用分が含まれるため、利用料から同じ金額を差し引いて計算します。</p>
+    </div>
+    <div class="field">
+      <label class="lab" for="csHours">1回あたりの利用時間</label>
+      <div class="numrow"><input type="number" id="csHours" inputmode="decimal" min="0" step="0.5" value="3" /><span class="unit">時間</span></div>
+    </div>
+    <div class="field">
+      <label class="lab" for="csRate">時間料金（1時間あたり）</label>
+      <div class="numrow"><input type="number" id="csRate" inputmode="numeric" min="0" step="10" value="880" /><span class="unit">円</span></div>
+      <p class="hint">初期値はタイムズカーのベーシッククラス（220円／15分＝880円／時間）です。</p>
+    </div>
+    <div class="field">
+      <label class="lab" for="csKm">1回あたりの走行距離</label>
+      <div class="numrow"><input type="number" id="csKm" inputmode="decimal" min="0" step="1" value="30" /><span class="unit">km</span></div>
+    </div>
+    <div class="field">
+      <label class="lab" for="csDistRate">距離料金</label>
+      <div class="numrow"><input type="number" id="csDistRate" inputmode="numeric" min="0" step="1" value="20" /><span class="unit">円/km</span></div>
+      <p class="hint">タイムズカーの距離料金は、走行距離のうち20kmを超えた分にかかります（2025年12月改定後の条件）。</p>
+    </div>
+    <div class="field">
+      <label class="lab" for="csTimes">月に使う回数</label>
+      <div class="numrow"><input type="number" id="csTimes" inputmode="decimal" min="0" step="1" value="4" /><span class="unit">回</span></div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>比較結果</h2>
+    <div class="result-big">
+      <div class="cap" id="verdictCap">—</div>
+      <div class="amt" id="diffYear">¥—</div>
+    </div>
+    <div class="result-grid">
+      <div class="cell"><div class="k">マイカー（年額）</div><div class="v" id="ownYear">—</div></div>
+      <div class="cell"><div class="k">マイカー（月あたり）</div><div class="v" id="ownMonth">—</div></div>
+      <div class="cell"><div class="k">カーシェア（年額）</div><div class="v" id="csYear">—</div></div>
+      <div class="cell"><div class="k">カーシェア（月あたり）</div><div class="v" id="csMonth">—</div></div>
+      <div class="cell"><div class="k">カーシェア1回あたり</div><div class="v" id="csPerUse">—</div></div>
+      <div class="cell"><div class="k">損益分岐（カーシェアが安いのは）</div><div class="v" id="bePoint">—</div></div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>マイカー維持費の内訳（年あたり）</h2>
+    <ul class="note">
+      <li>車両代（償却）：<b id="bdCar">—</b></li>
+      <li>自動車税：<b id="bdTax">—</b></li>
+      <li>任意保険：<b id="bdIns">—</b></li>
+      <li>車検（年換算）：<b id="bdShaken">—</b></li>
+      <li>駐車場代：<b id="bdPark">—</b></li>
+      <li>メンテナンス：<b id="bdMaint">—</b></li>
+      <li>ガソリン代：<b id="bdGas">—</b></li>
+    </ul>
+  </section>
+
+  <section class="panel">
+    <h2>計算のしかたと注意</h2>
+    <ul class="note">
+      <li>マイカーの車両代は（購入価格 − 売却見込み）÷ 乗る年数で年あたりに均しています。ローンの金利や手数料は含みません。</li>
+      <li>カーシェアは時間料金＋距離料金（20kmを超えた分）で計算し、長時間のパック料金は考慮していません。長く乗る場合は、実際はパックで安くなることがあります。</li>
+      <li>事故や故障の修理費、罰金などの突発費用は含みません。金額はすべて目安です。</li>
+    </ul>
+  </section>
+
+    <p class="pp-footer"><button type="button" class="pp-link" data-pp-open>プライバシーポリシー</button></p>
+</main>
+<footer class="ido-site-footer ido-footer-with-bar">
+  <p>本ページは非公式の個人ツールです。料金や税率は時期により変わります。正確な金額は各事業者の公式情報とご契約の内容をご確認ください。</p>
+  <p>制作：andy（わんこ堂）× 熊八 🐾（Muse Spark）</p>
+</footer>
+
+<div class="stickybar">
+  <span class="lab">比較の差額（年）</span>
+  <span class="amt" id="stickyPrice">¥—</span>
+  <span class="sub" id="stickyRoute">—</span>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  function yen(n) { return "¥" + Math.round(n).toLocaleString("ja-JP"); }
+  function num(id) {
+    var v = parseFloat(document.getElementById(id).value);
+    return isNaN(v) ? 0 : v;
+  }
+  function set(id, text) { document.getElementById(id).textContent = text; }
+
+  function calc() {
+    var years = Math.max(1, num("years"));
+    var carYear = Math.max(0, (num("priceWan") - num("resaleWan")) * 10000 / years);
+    var tax = num("taxYen");
+    var ins = num("insYen");
+    var shakenYear = num("shakenYen") / 2;
+    var parkYear = num("parkingM") * 12;
+    var maint = num("maintYen");
+    var eff = num("effKm");
+    var gasYear = eff > 0 ? num("kmM") * 12 / eff * num("gPrice") : 0;
+    var ownYear = carYear + tax + ins + shakenYear + parkYear + maint + gasYear;
+    var ownMonth = ownYear / 12;
+
+    var fee = num("csFee");
+    var perUse = num("csHours") * num("csRate") + Math.max(0, num("csKm") - 20) * num("csDistRate");
+    var usage = perUse * num("csTimes");
+    var csMonth = fee + Math.max(0, usage - fee);
+    var csYear = csMonth * 12;
+
+    var diff = ownYear - csYear;
+    set("verdictCap", diff >= 0 ? "カーシェアの方が安い（年あたりの差額）" : "マイカーの方が安い（年あたりの差額）");
+    set("diffYear", yen(Math.abs(diff)));
+    set("ownYear", yen(ownYear));
+    set("ownMonth", yen(ownMonth));
+    set("csYear", yen(csYear));
+    set("csMonth", yen(csMonth));
+    set("csPerUse", yen(perUse));
+    if (perUse > 0 && ownMonth > fee) {
+      var be = (ownMonth - fee) / perUse;
+      set("bePoint", "月 約" + (Math.floor(be * 10) / 10).toFixed(1) + "回まで");
+    } else {
+      set("bePoint", "—");
+    }
+    set("bdCar", yen(carYear));
+    set("bdTax", yen(tax));
+    set("bdIns", yen(ins));
+    set("bdShaken", yen(shakenYear));
+    set("bdPark", yen(parkYear));
+    set("bdMaint", yen(maint));
+    set("bdGas", yen(gasYear));
+    set("stickyPrice", yen(Math.abs(diff)));
+    set("stickyRoute", "マイカー 月" + yen(ownMonth) + " ／ カーシェア 月" + yen(csMonth));
+  }
+
+  ["priceWan", "years", "resaleWan", "taxYen", "insYen", "shakenYen", "parkingM", "maintYen", "kmM", "effKm", "gPrice", "csFee", "csHours", "csRate", "csKm", "csDistRate", "csTimes"].forEach(function (id) {
+    document.getElementById(id).addEventListener("input", calc);
+  });
+  document.getElementById("taxSel").addEventListener("change", function () {
+    document.getElementById("taxYen").value = this.value;
+    calc();
+  });
+  calc();
+})();
+</script>
+<div class="pp-overlay" data-pp-overlay>
+  <div class="pp-dialog privacy-policy" role="dialog" aria-modal="true" aria-labelledby="ppTitle">
+    <div class="pp-scroll">
+      <h2 id="ppTitle">プライバシーポリシー</h2>
+      <p>当サイト「移動シミュレーター」は、個人を特定する情報を収集しません。</p>
+      <p><strong>入力データについて：</strong>計算ツールに入力した内容は、お使いの端末のブラウザの中だけで処理され、サーバーへ送信されることはありません。「行程カゴ」の内容は、お使いのブラウザの localStorage にのみ保存されます。</p>
+      <p><strong>広告について：</strong>当サイトは、第三者配信の広告サービス（Google AdSense）を利用する場合があります。広告配信事業者は、ユーザーの興味に応じた広告を表示するため Cookie を使用することがあります。パーソナライズ広告は、Google の「広告設定」から無効にできます。</p>
+      <p><strong>アクセス解析について：</strong>当サイトはアクセス解析ツールを使用していません。</p>
+      <p><strong>免責事項：</strong>計算結果は目安であり、実際の料金は各事業者の公式情報をご確認ください。当サイトの利用によって生じた損害について、運営者は責任を負いません。</p>
+      <p><strong>お問い合わせ：</strong>当サイトは個人運営のツールサイトです。</p>
+      <p>制定日：2026年11月15日</p>
+    </div>
+    <div class="pp-actions">
+      <div class="pp-btn-row">
+        <button type="button" class="pp-close-btn" data-pp-close>閉じる</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="policy-snippet.js"></script>
+</body>
+</html>
