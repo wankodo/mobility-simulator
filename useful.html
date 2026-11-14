@@ -54,6 +54,7 @@
   a.card.catcar { --acc:linear-gradient(90deg,#ffb020,#f28c13); --tint:#fdf1de; }
   a.card.catrail { --acc:linear-gradient(90deg,#12b981,#0d8a63); --tint:#e3f7ef; }
   a.card.catuseful { --acc:linear-gradient(90deg,#3f9be0,#2f6fd0); --tint:#e4f0fb; }
+  a.card.moving { --acc:linear-gradient(90deg,#f43f5e,#e11d48); --tint:#fde8ec; }
   .backlink { display:inline-block; margin:0 0 14px; font-weight:700; color:var(--navy); text-decoration:none; }
 </style>
 <link rel="canonical" href="https://wankodo.github.io/mobility-simulator/useful.html" />
@@ -70,6 +71,7 @@
 <script>
 (function () {
   var PIC = {
+    "📦": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8l-9-5-9 5v8l9 5 9-5V8z"/><path d="M3 8l9 5 9-5"/><path d="M12 13v8"/></svg>',
     "🚗": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11l1.5-4.5A2 2 0 0 1 8.4 5h7.2a2 2 0 0 1 1.9 1.5L19 11"/><path d="M3 11h18v6h-2.6"/><path d="M3 17h2.6"/><circle cx="7.5" cy="17" r="1.8"/><circle cx="16.5" cy="17" r="1.8"/><path d="M9.3 17h5.4"/></svg>',
     "🚕": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9.6" y="2.6" width="4.8" height="2.2" rx="0.6"/><path d="M5 12l1.5-4.2A2 2 0 0 1 8.4 6.4h7.2a2 2 0 0 1 1.9 1.4L19 12"/><path d="M3 12h18v5.5h-2.6"/><path d="M3 17.5h2.6"/><circle cx="7.5" cy="17.5" r="1.8"/><circle cx="16.5" cy="17.5" r="1.8"/><path d="M9.3 17.5h5.4"/></svg>',
     "⛽": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v16"/><path d="M3 21h14"/><rect x="7.2" y="5.8" width="5.6" height="4.2" rx="0.6"/><path d="M15 10l2.1 2.1a2 2 0 0 1 .6 1.4V18a1.9 1.9 0 0 0 3.8 0v-6.8a2 2 0 0 0-.6-1.4L18.6 7.5"/></svg>',
@@ -189,6 +191,12 @@
       <span class="ic">🧺</span>
       <h2>行程カゴ（トップページ）</h2>
       <p>各ツールで試算した料金をカゴに入れると、トップページで1日の移動の合計と割り勘が出せます。車系・電車系のツールをまたいで使えます。</p>
+      <span class="go">開く →</span>
+    </a>
+    <a class="card moving" href="moving.html">
+      <span class="ic">📦</span>
+      <h2>引っ越し費用の目安</h2>
+      <p>世帯と荷物量、移動距離、時期（通常期／繁忙期）とオプションから、引っ越し料金の相場の目安と安め〜高めの幅を試算します。見積もりを取る前の出発点に。</p>
       <span class="go">開く →</span>
     </a>
 
