@@ -235,7 +235,7 @@
     </div>
     <div class="field">
       <label class="lab" for="dist">走行距離（片道）</label>
-      <div class="numrow"><input type="number" id="dist" inputmode="decimal" min="0" step="0.1" value="20" /><span class="unit">km</span></div>
+      <div class="numrow"><input type="number" id="dist" inputmode="decimal" min="0" step="0.1" /><span class="unit">km</span></div>
       <p class="hint">目的地までの距離（道のり）を調べる：<a href="https://www.google.com/maps/dir/" target="_blank" rel="noopener noreferrer">Googleマップ</a> ／ <a href="https://maps.apple.com/?dirflg=d" target="_blank" rel="noopener noreferrer">Appleマップ</a> ／ <a href="https://map.yahoo.co.jp/" target="_blank" rel="noopener noreferrer">Yahoo!マップ</a> ／ <a href="https://www.navitime.co.jp/drive/" target="_blank" rel="noopener noreferrer">NAVITIME</a> ／ <a href="https://mapfan.com/" target="_blank" rel="noopener noreferrer">MapFan</a><br />ルート検索で表示された片道の距離を、上に入力してください。</p>
     </div>
     <div class="field">
@@ -254,7 +254,7 @@
     </div>
     <div class="field">
       <label class="lab" for="fuelEff">電費</label>
-      <div class="numrow"><input type="number" id="fuelEff" inputmode="decimal" min="0.1" step="0.1" value="6.5" /><span class="unit">km/kWh</span></div>
+      <div class="numrow"><input type="number" id="fuelEff" inputmode="decimal" min="0.1" step="0.1" /><span class="unit">km/kWh</span></div>
       <p class="hint">車の電費表示やカタログ値が目安です。実電費は季節（特に冬の暖房）・高速走行・エアコンで変わります。</p>
     </div>
     <div class="field">
@@ -263,16 +263,16 @@
         <button type="button" data-v="home" class="on">自宅（標準）</button>
         <button type="button" data-v="night">自宅（夜間・お得）</button>
       </div>
-      <div class="numrow" style="margin-top:10px;"><input type="number" id="price" inputmode="decimal" min="0" step="0.1" value="31" /><span class="unit">円/kWh</span></div>
+      <div class="numrow" style="margin-top:10px;"><input type="number" id="price" inputmode="decimal" min="0" step="0.1" /><span class="unit">円/kWh</span></div>
       <p class="hint">自宅（標準）の31円/kWhは、全国家庭用電気料金の目安単価です。夜間が安くなるプランの目安として25円/kWhを置いています。公共の急速充電は「30分あたり」の時間制料金が多く単価に換算しにくいため、使う場合は契約内容に合わせて単価を入力してください。実際の単価はご契約のプランに合わせて変えてください。</p>
     </div>
     <div class="field">
       <label class="lab" for="people">割り勘する人数</label>
-      <div class="numrow"><input type="number" id="people" inputmode="numeric" min="1" step="1" value="1" /><span class="unit">人</span></div>
+      <div class="numrow"><input type="number" id="people" inputmode="numeric" min="1" step="1" /><span class="unit">人</span></div>
     </div>
     <div class="field">
       <label class="lab" for="perWeek">週に何回走るか（月額・年額の計算用）</label>
-      <div class="numrow"><input type="number" id="perWeek" inputmode="numeric" min="0" step="1" value="5" /><span class="unit">回／週</span></div>
+      <div class="numrow"><input type="number" id="perWeek" inputmode="numeric" min="0" step="1" /><span class="unit">回／週</span></div>
       <p class="hint">通勤なら週5回が目安です。月額＝1回分×週の回数×52週÷12か月、年額＝1回分×週の回数×52週で計算します。</p>
     </div>
   </section>
@@ -297,11 +297,11 @@
     <h2>ガソリン車と比べると</h2>
     <div class="field">
       <label class="lab" for="cmpEff">比べるガソリン車の燃費</label>
-      <div class="numrow"><input type="number" id="cmpEff" inputmode="decimal" min="0.1" step="0.1" value="15" /><span class="unit">km/L</span></div>
+      <div class="numrow"><input type="number" id="cmpEff" inputmode="decimal" min="0.1" step="0.1" /><span class="unit">km/L</span></div>
     </div>
     <div class="field">
       <label class="lab" for="cmpPrice">ガソリンの単価</label>
-      <div class="numrow"><input type="number" id="cmpPrice" inputmode="decimal" min="0" step="0.1" value="170.2" /><span class="unit">円/L</span></div>
+      <div class="numrow"><input type="number" id="cmpPrice" inputmode="decimal" min="0" step="0.1" /><span class="unit">円/L</span></div>
       <p class="hint">初期値はレギュラーの全国平均（資源エネルギー庁の石油製品価格調査・2026年10月5日調査）です。</p>
     </div>
     <div class="result-grid">
@@ -376,6 +376,15 @@
   });
 
   function calc() {
+    var coreMissing = ["dist", "fuelEff", "price"].some(function (id) { return document.getElementById(id).value.trim() === ""; });
+    if (coreMissing) {
+      document.getElementById("tripLabel").textContent = state.trip === "round" ? "往復" : "片道";
+      document.getElementById("evTotal").textContent = "¥—";
+      ["resKwh", "resPerKm", "resPerPerson", "resMonthly", "resYearly", "resDist"].forEach(function (id) { document.getElementById(id).textContent = "—"; });
+      document.getElementById("stickyPrice").textContent = "¥—";
+      document.getElementById("stickyRoute").textContent = "未入力";
+      return;
+    }
     var dist = num("dist");
     var eff = num("fuelEff");
     var price = num("price");
@@ -388,13 +397,17 @@
     document.getElementById("evTotal").textContent = yen(cost);
     document.getElementById("resKwh").textContent = kwh.toFixed(2) + " kWh";
     document.getElementById("resPerKm").textContent = totalDist > 0 ? yen(cost / totalDist) : "—";
-    document.getElementById("resPerPerson").textContent = yen(Math.ceil(cost / people));
-    document.getElementById("resMonthly").textContent = yen(cost * perWeek * 52 / 12);
-    document.getElementById("resYearly").textContent = yen(cost * perWeek * 52);
+    document.getElementById("resPerPerson").textContent = document.getElementById("people").value.trim() === "" ? "—" : yen(Math.ceil(cost / people));
+    document.getElementById("resMonthly").textContent = document.getElementById("perWeek").value.trim() === "" ? "—" : yen(cost * perWeek * 52 / 12);
+    document.getElementById("resYearly").textContent = document.getElementById("perWeek").value.trim() === "" ? "—" : yen(cost * perWeek * 52);
     document.getElementById("resDist").textContent = totalDist.toLocaleString("ja-JP") + " km";
     document.getElementById("stickyPrice").textContent = yen(cost);
     document.getElementById("stickyRoute").textContent =
       (state.trip === "round" ? "往復" : "片道") + " " + totalDist.toLocaleString("ja-JP") + "km／電費 " + eff + "km/kWh／" + price + "円/kWh";
+    if (document.getElementById("cmpEff").value.trim() === "" || document.getElementById("cmpPrice").value.trim() === "" || document.getElementById("perWeek").value.trim() === "") {
+      ["cmpGas", "cmpDiff", "cmpDiffMonth"].forEach(function (id) { document.getElementById(id).textContent = "—"; });
+      return;
+    }
     var gEff = num("cmpEff");
     var gPrice = num("cmpPrice");
     var gCost = gEff > 0 ? totalDist / gEff * gPrice : 0;
@@ -454,7 +467,12 @@
       var a = parseAmt(elText("evTotal"));
       if (a === null) return null;
       var route = elText("stickyRoute");
-      return { kind: "ev", label: "EV電気代 " + (route && route !== "—" ? route : ""), amount: a, unit: "台分" };
+      var det = [];
+      [["総走行距離", "resDist"], ["使う電気の量", "resKwh"], ["月額の目安", "resMonthly"], ["年額の目安", "resYearly"]].forEach(function (p) {
+        var v = elText(p[1]);
+        if (v && v !== "—") det.push(p[0] + " " + v);
+      });
+      return { kind: "ev", label: "EV電気代 " + (route && route !== "—" ? route : ""), amount: a, unit: "台分", details: det };
     }
     return null;
   }

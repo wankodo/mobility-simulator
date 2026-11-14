@@ -206,19 +206,19 @@
     <h2>⏱️ ドライブ所要時間の計算</h2>
     <p>距離と平均速度から、休憩を入れた所要時間と到着時刻の目安を出します。</p>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:10px;">
-      <label style="font-weight:700;font-size:14px;">距離（km）<br /><input type="number" id="uDist" value="120" min="0" step="1" style="width:100%;font:inherit;padding:10px;border:1.5px solid #e1e8ef;border-radius:10px;" /></label>
-      <label style="font-weight:700;font-size:14px;">平均速度<br /><select id="uSpeed" style="width:100%;font:inherit;padding:10px;border:1.5px solid #e1e8ef;border-radius:10px;">
+      <label style="font-weight:700;font-size:14px;">距離（km）<br /><input type="number" id="uDist" min="0" step="1" style="width:100%;font:inherit;padding:10px;border:1.5px solid #e1e8ef;border-radius:10px;" /></label>
+      <label style="font-weight:700;font-size:14px;">平均速度<br /><select id="uSpeed" style="width:100%;font:inherit;padding:10px;border:1.5px solid #e1e8ef;border-radius:10px;"><option value="" selected>選択してください</option>
         <option value="25">市街地（時速25km）</option>
-        <option value="35" selected>一般道（時速35km）</option>
+        <option value="35">一般道（時速35km）</option>
         <option value="50">郊外の幹線道路（時速50km）</option>
         <option value="80">高速道路（時速80km）</option>
         <option value="100">高速道路・速め（時速100km）</option>
       </select></label>
-      <label style="font-weight:700;font-size:14px;">出発時刻<br /><input type="time" id="uStart" value="09:00" style="width:100%;font:inherit;padding:10px;border:1.5px solid #e1e8ef;border-radius:10px;" /></label>
-      <label style="font-weight:700;font-size:14px;">休憩<br /><select id="uRest" style="width:100%;font:inherit;padding:10px;border:1.5px solid #e1e8ef;border-radius:10px;">
+      <label style="font-weight:700;font-size:14px;">出発時刻<br /><input type="time" id="uStart" style="width:100%;font:inherit;padding:10px;border:1.5px solid #e1e8ef;border-radius:10px;" /></label>
+      <label style="font-weight:700;font-size:14px;">休憩<br /><select id="uRest" style="width:100%;font:inherit;padding:10px;border:1.5px solid #e1e8ef;border-radius:10px;"><option value="" selected>選択してください</option>
         <option value="0">休憩なし</option>
         <option value="60:10">1時間ごとに10分</option>
-        <option value="120:15" selected>2時間ごとに15分</option>
+        <option value="120:15">2時間ごとに15分</option>
         <option value="120:30">2時間ごとに30分</option>
       </select></label>
     </div>
@@ -229,6 +229,10 @@
 (function () {
   var $ = function (id) { return document.getElementById(id); };
   function calc() {
+    if ($("uDist").value.trim() === "" || $("uSpeed").value === "" || $("uStart").value === "" || $("uRest").value === "") {
+      $("uResult").textContent = "条件を入力すると、所要時間と到着時刻が出ます。";
+      return;
+    }
     var dist = parseFloat($("uDist").value) || 0;
     var speed = parseFloat($("uSpeed").value) || 35;
     var driveMin = speed > 0 ? dist / speed * 60 : 0;

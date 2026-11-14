@@ -205,33 +205,33 @@ footer{text-align:center;color:var(--sub);font-size:12.5px;padding:10px 4vw 26px
     <div class="grid2">
       <div class="field">
         <label class="lab" for="oneway">片道運賃</label>
-        <div class="numrow"><input type="number" id="oneway" inputmode="numeric" min="0" step="10" value="200" /><span class="unit">円</span></div>
+        <div class="numrow"><input type="number" id="oneway" inputmode="numeric" min="0" step="10" /><span class="unit">円</span></div>
       </div>
       <div class="field">
         <label class="lab" for="rides">1日に乗る回数</label>
-        <div class="numrow"><select class="sel" id="rides">
+        <div class="numrow"><select class="sel" id="rides"><option value="" selected>選択してください</option>
           <option value="1">1回（片道だけ）</option>
-          <option value="2" selected>2回（往復）</option>
+          <option value="2">2回（往復）</option>
           <option value="3">3回</option>
           <option value="4">4回</option>
         </select></div>
       </div>
       <div class="field">
         <label class="lab" for="pass1">定期代（1か月）</label>
-        <div class="numrow"><input type="number" id="pass1" inputmode="numeric" min="0" step="10" value="7000" /><span class="unit">円</span></div>
+        <div class="numrow"><input type="number" id="pass1" inputmode="numeric" min="0" step="10" /><span class="unit">円</span></div>
       </div>
       <div class="field">
         <label class="lab" for="days">月に乗る日数</label>
-        <div class="numrow"><select class="sel" id="days"></select><span class="unit">日</span></div>
+        <div class="numrow"><select class="sel" id="days"><option value="" selected>選択してください</option></select><span class="unit">日</span></div>
         <p class="hint">平日だけなら20日前後、週5日勤務の目安です。</p>
       </div>
       <div class="field">
         <label class="lab" for="pass3">定期代（3か月・任意）</label>
-        <div class="numrow"><input type="number" id="pass3" inputmode="numeric" min="0" step="10" value="19950" /><span class="unit">円</span></div>
+        <div class="numrow"><input type="number" id="pass3" inputmode="numeric" min="0" step="10" /><span class="unit">円</span></div>
       </div>
       <div class="field">
         <label class="lab" for="pass6">定期代（6か月・任意）</label>
-        <div class="numrow"><input type="number" id="pass6" inputmode="numeric" min="0" step="10" value="37800" /><span class="unit">円</span></div>
+        <div class="numrow"><input type="number" id="pass6" inputmode="numeric" min="0" step="10" /><span class="unit">円</span></div>
         <p class="hint">3か月・6か月は空欄にすると比較から外れます。</p>
       </div>
     </div>
@@ -272,8 +272,8 @@ footer{text-align:center;color:var(--sub);font-size:12.5px;padding:10px 4vw 26px
   var $ = function (id) { return document.getElementById(id); };
   var yen = function (n) { return "¥" + Math.round(n).toLocaleString("ja-JP"); };
   (function () {
-    var html = "";
-    for (var v = 1; v <= 31; v++) html += '<option value="' + v + '"' + (v === 20 ? " selected" : "") + ">" + v + "</option>";
+    var html = '<option value="" selected>選択してください</option>';
+    for (var v = 1; v <= 31; v++) html += '<option value="' + v + '">' + v + "</option>";
     $("days").innerHTML = html;
   })();
   function num(id) {
@@ -281,8 +281,18 @@ footer{text-align:center;color:var(--sub);font-size:12.5px;padding:10px 4vw 26px
     return isFinite(v) && v > 0 ? v : 0;
   }
   function raw(id) { return $(id).value.trim(); }
-  window.IDO_BASKET = { kind: "pass", label: "", amount: 0 };
+  window.IDO_BASKET = { kind: "pass", label: "", amount: 0, unit: "月分", details: [] };
   function calc() {
+    if (raw("oneway") === "" || raw("pass1") === "" || $("rides").value === "" || $("days").value === "") {
+      ["rPayg", "rP1", "rP3", "rP6"].forEach(function (id) { $(id).textContent = "—"; });
+      $("verdict").textContent = "条件を入力してください";
+      $("verdictSub").textContent = "";
+      $("barAmount").textContent = "—";
+      window.IDO_BASKET.amount = 0;
+      window.IDO_BASKET.label = "";
+      window.IDO_BASKET.details = [];
+      return;
+    }
     var oneway = num("oneway");
     var rides = parseInt($("rides").value, 10) || 2;
     var days = parseInt($("days").value, 10) || 20;
@@ -326,6 +336,12 @@ footer{text-align:center;color:var(--sub);font-size:12.5px;padding:10px 4vw 26px
     $("barAmount").textContent = yen(best.monthly);
     window.IDO_BASKET.amount = Math.round(best.monthly);
     window.IDO_BASKET.label = "定期代（" + best.name + "・月あたり）";
+    window.IDO_BASKET.details = [
+      "都度払い（月あたり）" + $("rPayg").textContent,
+      "1か月定期 " + $("rP1").textContent,
+      "3か月定期 " + $("rP3").textContent,
+      "6か月定期 " + $("rP6").textContent
+    ];
   }
   ["oneway", "pass1", "pass3", "pass6"].forEach(function (id) {
     $(id).addEventListener("input", calc);

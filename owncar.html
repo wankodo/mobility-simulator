@@ -228,23 +228,23 @@
     <h2>マイカーの条件</h2>
     <div class="field">
       <label class="lab" for="priceWan">車両価格</label>
-      <div class="numrow"><input type="number" id="priceWan" inputmode="decimal" min="0" step="1" value="200" /><span class="unit">万円</span></div>
+      <div class="numrow"><input type="number" id="priceWan" inputmode="decimal" min="0" step="1" /><span class="unit">万円</span></div>
     </div>
     <div class="field">
       <label class="lab" for="years">乗る年数</label>
-      <div class="numrow"><input type="number" id="years" inputmode="decimal" min="1" step="1" value="8" /><span class="unit">年</span></div>
+      <div class="numrow"><input type="number" id="years" inputmode="decimal" min="1" step="1" /><span class="unit">年</span></div>
     </div>
     <div class="field">
       <label class="lab" for="resaleWan">売却・下取りの見込み</label>
-      <div class="numrow"><input type="number" id="resaleWan" inputmode="decimal" min="0" step="1" value="20" /><span class="unit">万円</span></div>
+      <div class="numrow"><input type="number" id="resaleWan" inputmode="decimal" min="0" step="1" /><span class="unit">万円</span></div>
       <p class="hint">車両代は（購入価格 − 売却見込み）÷ 乗る年数で、年あたりに均して計算します。</p>
     </div>
     <div class="field">
       <label class="lab" for="taxSel">自動車税（区分を選ぶ）</label>
-      <div class="numrow"><select id="taxSel" style="flex:1;min-width:0;font:inherit;font-size:15px;font-weight:700;padding:12px 10px;border:1.5px solid var(--line);border-radius:12px;background:#fbfcfe;color:var(--ink);">
+      <div class="numrow"><select id="taxSel" style="flex:1;min-width:0;font:inherit;font-size:15px;font-weight:700;padding:12px 10px;border:1.5px solid var(--line);border-radius:12px;background:#fbfcfe;color:var(--ink);"><option value="" selected>選択してください</option>
         <option value="10800">軽自動車（10,800円／年）</option>
         <option value="25000">1.0L以下（25,000円／年）</option>
-        <option value="30500" selected>1.0〜1.5L（30,500円／年）</option>
+        <option value="30500">1.0〜1.5L（30,500円／年）</option>
         <option value="36000">1.5〜2.0L（36,000円／年）</option>
         <option value="43500">2.0〜2.5L（43,500円／年）</option>
         <option value="50000">2.5〜3.0L（50,000円／年）</option>
@@ -261,42 +261,42 @@
           <option value="40500">積載7〜8トン（40,500円／年）</option>
         </optgroup>
       </select></div>
-      <div class="numrow" style="margin-top:10px;"><input type="number" id="taxYen" inputmode="numeric" min="0" step="100" value="30500" /><span class="unit">円／年</span></div>
+      <div class="numrow" style="margin-top:10px;"><input type="number" id="taxYen" inputmode="numeric" min="0" step="100" /><span class="unit">円／年</span></div>
       <p class="hint">乗用車は2019年10月以降に初度登録された自家用乗用車の税率（13年超は重課で高くなります）。貨物車（ピックアップ・トラック）は排気量ではなく最大積載量で税額が決まり、軽トラなどの軽貨物は一律5,000円です。</p>
     </div>
     <div class="field">
       <label class="lab" for="insYen">任意保険（年額）</label>
-      <div class="numrow"><input type="number" id="insYen" inputmode="numeric" min="0" step="1000" value="60000" /><span class="unit">円</span></div>
+      <div class="numrow"><input type="number" id="insYen" inputmode="numeric" min="0" step="1000" /><span class="unit">円</span></div>
     </div>
     <div class="field">
       <label class="lab" for="shakenYen">車検（1回あたり）</label>
-      <div class="numrow"><input type="number" id="shakenYen" inputmode="numeric" min="0" step="1000" value="80000" /><span class="unit">円</span></div>
-      <div class="numrow" style="margin-top:10px;"><select id="shakenCycle" style="flex:1;min-width:0;font:inherit;font-size:15px;font-weight:700;padding:12px 10px;border:1.5px solid var(--line);border-radius:12px;background:#fbfcfe;color:var(--ink);">
-        <option value="2" selected>2年に1回（乗用車・軽自動車）</option>
+      <div class="numrow"><input type="number" id="shakenYen" inputmode="numeric" min="0" step="1000" /><span class="unit">円</span></div>
+      <div class="numrow" style="margin-top:10px;"><select id="shakenCycle" style="flex:1;min-width:0;font:inherit;font-size:15px;font-weight:700;padding:12px 10px;border:1.5px solid var(--line);border-radius:12px;background:#fbfcfe;color:var(--ink);"><option value="" selected>選択してください</option>
+        <option value="2">2年に1回（乗用車・軽自動車）</option>
         <option value="1">毎年（普通貨物・ピックアップなど）</option>
       </select></div>
       <p class="hint">選んだ周期で割って年額に換算します。普通貨物（1ナンバー）は毎年車検です。</p>
     </div>
     <div class="field">
       <label class="lab" for="parkingM">駐車場代（月額）</label>
-      <div class="numrow"><input type="number" id="parkingM" inputmode="numeric" min="0" step="500" value="10000" /><span class="unit">円</span></div>
+      <div class="numrow"><input type="number" id="parkingM" inputmode="numeric" min="0" step="500" /><span class="unit">円</span></div>
     </div>
     <div class="field">
       <label class="lab" for="maintYen">メンテナンス・消耗品（年額）</label>
-      <div class="numrow"><input type="number" id="maintYen" inputmode="numeric" min="0" step="1000" value="30000" /><span class="unit">円</span></div>
+      <div class="numrow"><input type="number" id="maintYen" inputmode="numeric" min="0" step="1000" /><span class="unit">円</span></div>
       <p class="hint">オイル・タイヤ・バッテリーなどの目安です。</p>
     </div>
     <div class="field">
       <label class="lab" for="kmM">月の走行距離</label>
-      <div class="numrow"><input type="number" id="kmM" inputmode="decimal" min="0" step="10" value="500" /><span class="unit">km</span></div>
+      <div class="numrow"><input type="number" id="kmM" inputmode="decimal" min="0" step="10" /><span class="unit">km</span></div>
     </div>
     <div class="field">
       <label class="lab" for="effKm">燃費</label>
-      <div class="numrow"><input type="number" id="effKm" inputmode="decimal" min="0.1" step="0.1" value="15" /><span class="unit">km/L</span></div>
+      <div class="numrow"><input type="number" id="effKm" inputmode="decimal" min="0.1" step="0.1" /><span class="unit">km/L</span></div>
     </div>
     <div class="field">
       <label class="lab" for="gPrice">ガソリンの単価</label>
-      <div class="numrow"><input type="number" id="gPrice" inputmode="decimal" min="0" step="0.1" value="170.2" /><span class="unit">円/L</span></div>
+      <div class="numrow"><input type="number" id="gPrice" inputmode="decimal" min="0" step="0.1" /><span class="unit">円/L</span></div>
       <p class="hint">初期値はレギュラーの全国平均（資源エネルギー庁の石油製品価格調査・2026年10月5日調査）です。</p>
     </div>
   </section>
@@ -305,30 +305,30 @@
     <h2>カーシェアの条件</h2>
     <div class="field">
       <label class="lab" for="csFee">月会費</label>
-      <div class="numrow"><input type="number" id="csFee" inputmode="numeric" min="0" step="10" value="880" /><span class="unit">円</span></div>
+      <div class="numrow"><input type="number" id="csFee" inputmode="numeric" min="0" step="10" /><span class="unit">円</span></div>
       <p class="hint">初期値はタイムズカー個人プランの月額基本料です。同額の無料利用分が含まれるため、利用料から同じ金額を差し引いて計算します。</p>
     </div>
     <div class="field">
       <label class="lab" for="csHours">1回あたりの利用時間</label>
-      <div class="numrow"><input type="number" id="csHours" inputmode="decimal" min="0" step="0.5" value="3" /><span class="unit">時間</span></div>
+      <div class="numrow"><input type="number" id="csHours" inputmode="decimal" min="0" step="0.5" /><span class="unit">時間</span></div>
     </div>
     <div class="field">
       <label class="lab" for="csRate">時間料金（1時間あたり）</label>
-      <div class="numrow"><input type="number" id="csRate" inputmode="numeric" min="0" step="10" value="880" /><span class="unit">円</span></div>
+      <div class="numrow"><input type="number" id="csRate" inputmode="numeric" min="0" step="10" /><span class="unit">円</span></div>
       <p class="hint">初期値はタイムズカーのベーシッククラス（220円／15分＝880円／時間）です。</p>
     </div>
     <div class="field">
       <label class="lab" for="csKm">1回あたりの走行距離</label>
-      <div class="numrow"><input type="number" id="csKm" inputmode="decimal" min="0" step="1" value="30" /><span class="unit">km</span></div>
+      <div class="numrow"><input type="number" id="csKm" inputmode="decimal" min="0" step="1" /><span class="unit">km</span></div>
     </div>
     <div class="field">
       <label class="lab" for="csDistRate">距離料金</label>
-      <div class="numrow"><input type="number" id="csDistRate" inputmode="numeric" min="0" step="1" value="20" /><span class="unit">円/km</span></div>
+      <div class="numrow"><input type="number" id="csDistRate" inputmode="numeric" min="0" step="1" /><span class="unit">円/km</span></div>
       <p class="hint">タイムズカーの距離料金は、走行距離のうち20kmを超えた分にかかります（2025年12月改定後の条件）。</p>
     </div>
     <div class="field">
       <label class="lab" for="csTimes">月に使う回数</label>
-      <div class="numrow"><input type="number" id="csTimes" inputmode="decimal" min="0" step="1" value="4" /><span class="unit">回</span></div>
+      <div class="numrow"><input type="number" id="csTimes" inputmode="decimal" min="0" step="1" /><span class="unit">回</span></div>
     </div>
   </section>
 
@@ -394,11 +394,13 @@
   function set(id, text) { document.getElementById(id).textContent = text; }
 
   function calc() {
+    var ownOk = ["priceWan", "years", "resaleWan", "taxYen", "insYen", "shakenYen", "parkingM", "maintYen", "kmM", "effKm", "gPrice"].every(function (id) { return document.getElementById(id).value.trim() !== ""; });
+    var csOk = ["csFee", "csHours", "csRate", "csKm", "csDistRate", "csTimes"].every(function (id) { return document.getElementById(id).value.trim() !== ""; });
     var years = Math.max(1, num("years"));
     var carYear = Math.max(0, (num("priceWan") - num("resaleWan")) * 10000 / years);
     var tax = num("taxYen");
     var ins = num("insYen");
-    var shakenYear = num("shakenYen") / Math.max(1, num("shakenCycle"));
+    var shakenYear = num("shakenYen") / (document.getElementById("shakenCycle").value === "" ? 2 : Math.max(1, num("shakenCycle")));
     var parkYear = num("parkingM") * 12;
     var maint = num("maintYen");
     var eff = num("effKm");
@@ -435,6 +437,15 @@
     set("bdGas", yen(gasYear));
     set("stickyPrice", yen(Math.abs(diff)));
     set("stickyRoute", "マイカー 月" + yen(ownMonth) + " ／ カーシェア 月" + yen(csMonth));
+    if (!ownOk) { ["ownYear", "ownMonth", "bdCar", "bdTax", "bdIns", "bdShaken", "bdPark", "bdMaint", "bdGas"].forEach(function (id) { set(id, "—"); }); }
+    if (!csOk) { ["csYear", "csMonth", "csPerUse"].forEach(function (id) { set(id, "—"); }); }
+    if (!ownOk || !csOk) {
+      set("verdictCap", "条件を入力してください（両方の条件がそろうと判定が出ます）");
+      set("diffYear", "—");
+      set("bePoint", "—");
+      set("stickyPrice", "¥—");
+      set("stickyRoute", "未入力");
+    }
   }
 
   ["priceWan", "years", "resaleWan", "taxYen", "insYen", "shakenYen", "parkingM", "maintYen", "kmM", "effKm", "gPrice", "csFee", "csHours", "csRate", "csKm", "csDistRate", "csTimes"].forEach(function (id) {

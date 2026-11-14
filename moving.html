@@ -233,8 +233,8 @@
     <h2>条件</h2>
     <div class="field">
       <label class="lab" for="sizeSel">世帯・荷物量</label>
-      <div class="numrow"><select id="sizeSel" style="flex:1;min-width:0;font:inherit;font-size:15px;font-weight:700;padding:12px 10px;border:1.5px solid var(--line);border-radius:12px;background:#fbfcfe;color:var(--ink);">
-        <option value="0" selected>単身（荷物少なめ・ワンルーム）</option>
+      <div class="numrow"><select id="sizeSel" style="flex:1;min-width:0;font:inherit;font-size:15px;font-weight:700;padding:12px 10px;border:1.5px solid var(--line);border-radius:12px;background:#fbfcfe;color:var(--ink);"><option value="" selected>世帯・荷物量を選択してください</option>
+        <option value="0">単身（荷物少なめ・ワンルーム）</option>
         <option value="1">単身（荷物多め・1K〜1LDK）</option>
         <option value="2">2人暮らし（1LDK〜2DK）</option>
         <option value="3">家族3人（2LDK〜3DK）</option>
@@ -243,7 +243,7 @@
     </div>
     <div class="field">
       <label class="lab" for="distKm">移動距離（片道）</label>
-      <div class="numrow"><input type="number" id="distKm" inputmode="decimal" min="0" step="5" value="30" /><span class="unit">km</span></div>
+      <div class="numrow"><input type="number" id="distKm" inputmode="decimal" min="0" step="5" /><span class="unit">km</span></div>
       <p class="hint">距離の区分（市内・近距離・中距離・長距離）は自動で判定します。</p>
     </div>
     <div class="field">
@@ -334,6 +334,13 @@
   }
 
   function calc() {
+    if (document.getElementById("sizeSel").value === "" || document.getElementById("distKm").value.trim() === "") {
+      set("totalAmt", "¥—");
+      ["lowAmt", "highAmt", "baseAmt", "optAmt", "bracketLab", "truckLab"].forEach(function (id) { set(id, "—"); });
+      set("stickyPrice", "¥—");
+      set("stickyRoute", "未入力");
+      return;
+    }
     var size = parseInt(document.getElementById("sizeSel").value, 10) || 0;
     var km = num("distKm");
     var b = bracketOf(km);

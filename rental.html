@@ -235,7 +235,8 @@
     <div class="field">
       <label class="lab" for="companySel">レンタカー会社</label>
       <div class="numrow"><select id="companySel" style="flex:1;min-width:0;font:inherit;font-size:15px;font-weight:700;padding:12px 10px;border:1.5px solid var(--line);border-radius:12px;background:#fbfcfe;color:var(--ink);">
-        <option value="toyota" selected>トヨタレンタカー</option>
+        <option value="" selected>会社を選択してください</option>
+        <option value="toyota">トヨタレンタカー</option>
         <option value="nippon">ニッポンレンタカー</option>
         <option value="orix">オリックスレンタカー</option>
         <option value="times">タイムズカーレンタル</option>
@@ -249,7 +250,7 @@
     </div>
     <div class="field">
       <label class="lab" for="hours">利用時間</label>
-      <div class="numrow"><input type="number" id="hours" inputmode="decimal" min="1" step="1" value="24" /><span class="unit">時間</span></div>
+      <div class="numrow"><input type="number" id="hours" inputmode="decimal" min="1" step="1" /><span class="unit">時間</span></div>
       <p class="hint">料金表の区分（6時間まで／12時間まで／24時間まで／以降24時間ごと）で計算します。端数の時間は次の区分に切り上げます。ニコニコレンタカーは12時間／24時間区分です。</p>
     </div>
     <div class="field">
@@ -276,8 +277,8 @@
     </div>
     <div class="field">
       <label class="lab" for="onewaySel">乗り捨て（返却店舗）</label>
-      <div class="numrow"><select id="onewaySel" style="flex:1;min-width:0;font:inherit;font-size:15px;font-weight:700;padding:12px 10px;border:1.5px solid var(--line);border-radius:12px;background:#fbfcfe;color:var(--ink);">
-        <option value="0" selected>同じ店舗に返す（なし）</option>
+      <div class="numrow"><select id="onewaySel" style="flex:1;min-width:0;font:inherit;font-size:15px;font-weight:700;padding:12px 10px;border:1.5px solid var(--line);border-radius:12px;background:#fbfcfe;color:var(--ink);"><option value="" selected>選択してください</option>
+        <option value="0">同じ店舗に返す（なし）</option>
         <option value="3300">同一都道府県内（目安3,300円）</option>
         <option value="11000">近距離・隣県など（目安11,000円）</option>
         <option value="22000">長距離（目安22,000円）</option>
@@ -495,6 +496,13 @@
   }
 
   function calc() {
+    if (document.getElementById("companySel").value === "" || document.getElementById("classSel").value === "" || document.getElementById("hours").value.trim() === "") {
+      set("totalAmt", "¥—");
+      ["baseRawAmt", "discAmt", "baseAmt", "hoshoAmt", "optAmt", "perDay"].forEach(function (id) { set(id, "—"); });
+      set("stickyPrice", "¥—");
+      set("stickyRoute", "未入力");
+      return;
+    }
     var comp = company();
     var cl = cls();
     var hours = Math.max(1, num("hours"));
@@ -543,6 +551,25 @@
     var comp = company();
     var sel = document.getElementById("classSel");
     sel.innerHTML = "";
+    if (!comp) {
+      var po = document.createElement("option");
+      po.value = "";
+      po.textContent = "先に会社を選択してください";
+      sel.appendChild(po);
+      var dpo = document.createElement("option");
+      dpo.value = "";
+      dpo.textContent = "先に会社を選択してください";
+      document.getElementById("discountSel").innerHTML = "";
+      document.getElementById("discountSel").appendChild(dpo);
+      set("discountLab", "割引");
+      set("discountHint", "");
+      set("hoshoHint", "");
+      return;
+    }
+    var cph = document.createElement("option");
+    cph.value = "";
+    cph.textContent = "クラスを選択してください";
+    sel.appendChild(cph);
     comp.classes.forEach(function (c, i) {
       var o = document.createElement("option");
       o.value = i;
@@ -551,6 +578,10 @@
     });
     var dsel = document.getElementById("discountSel");
     dsel.innerHTML = "";
+    var dph = document.createElement("option");
+    dph.value = "";
+    dph.textContent = "選択してください";
+    dsel.appendChild(dph);
     comp.discounts.forEach(function (d, i) {
       var o = document.createElement("option");
       o.value = i;
@@ -567,6 +598,10 @@
   }
 
   function syncHoshoSeg() {
+    if (document.getElementById("classSel").value === "") {
+      document.querySelector('#segHosho button[data-v="w"]').disabled = false;
+      return;
+    }
     var cl = cls();
     var wBtn = document.querySelector('#segHosho button[data-v="w"]');
     if (cl.w === null || cl.w === undefined) {
@@ -652,7 +687,16 @@
       var a = parseAmt(elText("totalAmt"));
       if (a === null) return null;
       var route = elText("stickyRoute");
-      return { kind: "rental", label: "レンタカー " + (route && route !== "—" ? route : ""), amount: a, unit: "台分" };
+      var det = [];
+      var bv = elText("baseAmt");
+      if (bv && bv !== "—") det.push("基本料金（支払い分） " + bv);
+      var dc = elText("discAmt");
+      if (dc && dc !== "—" && dc !== "¥0") det.push("割引・料金区分の差額 " + dc);
+      [["補償", "hoshoAmt"], ["オプション・乗り捨て", "optAmt"], ["1日あたり", "perDay"]].forEach(function (p) {
+        var v = elText(p[1]);
+        if (v && v !== "—") det.push(p[0] + " " + v);
+      });
+      return { kind: "rental", label: "レンタカー " + (route && route !== "—" ? route : ""), amount: a, unit: "台分", details: det };
     }
     return null;
   }

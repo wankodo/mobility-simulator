@@ -234,7 +234,7 @@
     </div>
     <div class="field">
       <label class="lab" for="dist">走行距離（片道）</label>
-      <div class="numrow"><input type="number" id="dist" inputmode="decimal" min="0" step="0.1" value="20" /><span class="unit">km</span></div>
+      <div class="numrow"><input type="number" id="dist" inputmode="decimal" min="0" step="0.1" /><span class="unit">km</span></div>
       <p class="hint">目的地までの距離（道のり）を調べる：<a href="https://www.google.com/maps/dir/" target="_blank" rel="noopener noreferrer">Googleマップ</a> ／ <a href="https://maps.apple.com/?dirflg=d" target="_blank" rel="noopener noreferrer">Appleマップ</a> ／ <a href="https://map.yahoo.co.jp/" target="_blank" rel="noopener noreferrer">Yahoo!マップ</a> ／ <a href="https://www.navitime.co.jp/drive/" target="_blank" rel="noopener noreferrer">NAVITIME</a> ／ <a href="https://mapfan.com/" target="_blank" rel="noopener noreferrer">MapFan</a><br />ルート検索で表示された片道の距離を、上に入力してください。</p>
     </div>
     <div class="field">
@@ -276,7 +276,7 @@
     </div>
     <div class="field">
       <label class="lab" for="fuelEff">燃費</label>
-      <div class="numrow"><input type="number" id="fuelEff" inputmode="decimal" min="0.1" step="0.1" value="15" /><span class="unit">km/L</span></div>
+      <div class="numrow"><input type="number" id="fuelEff" inputmode="decimal" min="0.1" step="0.1" /><span class="unit">km/L</span></div>
       <p class="hint">車のメーター表示やカタログ値が目安です。実燃費は季節・渋滞・エアコンで変わります。</p>
     </div>
     <div class="field">
@@ -286,16 +286,16 @@
         <button type="button" data-v="premium">ハイオク</button>
         <button type="button" data-v="diesel">軽油</button>
       </div>
-      <div class="numrow" style="margin-top:10px;"><input type="number" id="price" inputmode="decimal" min="0" step="0.1" value="170.2" /><span class="unit">円/L</span></div>
+      <div class="numrow" style="margin-top:10px;"><input type="number" id="price" inputmode="decimal" min="0" step="0.1" /><span class="unit">円/L</span></div>
       <p class="hint">初期値は資源エネルギー庁の石油製品価格調査（2026年10月5日調査の全国平均：レギュラー170.2円／ハイオク181.0円／軽油159.6円）です。実際の単価はレシートやスタンドの表示に合わせて変えてください。</p>
     </div>
     <div class="field">
       <label class="lab" for="people">割り勘する人数</label>
-      <div class="numrow"><input type="number" id="people" inputmode="numeric" min="1" step="1" value="1" /><span class="unit">人</span></div>
+      <div class="numrow"><input type="number" id="people" inputmode="numeric" min="1" step="1" /><span class="unit">人</span></div>
     </div>
     <div class="field">
       <label class="lab" for="perWeek">週に何回走るか（月額・年額の計算用）</label>
-      <div class="numrow"><input type="number" id="perWeek" inputmode="numeric" min="0" step="1" value="5" /><span class="unit">回／週</span></div>
+      <div class="numrow"><input type="number" id="perWeek" inputmode="numeric" min="0" step="1" /><span class="unit">回／週</span></div>
       <p class="hint">通勤なら週5回が目安です。月額＝1回分×週の回数×52週÷12か月、年額＝1回分×週の回数×52週で計算します。</p>
     </div>
   </section>
@@ -381,6 +381,15 @@
   });
 
   function calc() {
+    var coreMissing = ["dist", "fuelEff", "price"].some(function (id) { return document.getElementById(id).value.trim() === ""; });
+    if (coreMissing) {
+      document.getElementById("tripLabel").textContent = state.trip === "round" ? "往復" : "片道";
+      document.getElementById("gasTotal").textContent = "¥—";
+      ["resLiters", "resPerKm", "resPerPerson", "resMonthly", "resYearly", "resDist"].forEach(function (id) { document.getElementById(id).textContent = "—"; });
+      document.getElementById("stickyPrice").textContent = "¥—";
+      document.getElementById("stickyRoute").textContent = "未入力";
+      return;
+    }
     var dist = num("dist");
     var eff = num("fuelEff");
     var price = num("price");
@@ -393,9 +402,9 @@
     document.getElementById("gasTotal").textContent = yen(cost);
     document.getElementById("resLiters").textContent = liters.toFixed(2) + " L";
     document.getElementById("resPerKm").textContent = totalDist > 0 ? yen(cost / totalDist) : "—";
-    document.getElementById("resPerPerson").textContent = yen(Math.ceil(cost / people));
-    document.getElementById("resMonthly").textContent = yen(cost * perWeek * 52 / 12);
-    document.getElementById("resYearly").textContent = yen(cost * perWeek * 52);
+    document.getElementById("resPerPerson").textContent = document.getElementById("people").value.trim() === "" ? "—" : yen(Math.ceil(cost / people));
+    document.getElementById("resMonthly").textContent = document.getElementById("perWeek").value.trim() === "" ? "—" : yen(cost * perWeek * 52 / 12);
+    document.getElementById("resYearly").textContent = document.getElementById("perWeek").value.trim() === "" ? "—" : yen(cost * perWeek * 52);
     document.getElementById("resDist").textContent = totalDist.toLocaleString("ja-JP") + " km";
     document.getElementById("stickyPrice").textContent = yen(cost);
     document.getElementById("stickyRoute").textContent =
@@ -451,7 +460,12 @@
       var a = parseAmt(elText("gasTotal"));
       if (a === null) return null;
       var route = elText("stickyRoute");
-      return { kind: "gasoline", label: "ガソリン代 " + (route && route !== "—" ? route : ""), amount: a, unit: "台分" };
+      var det = [];
+      [["総走行距離", "resDist"], ["使うガソリンの量", "resLiters"], ["月額の目安", "resMonthly"], ["年額の目安", "resYearly"]].forEach(function (p) {
+        var v = elText(p[1]);
+        if (v && v !== "—") det.push(p[0] + " " + v);
+      });
+      return { kind: "gasoline", label: "ガソリン代 " + (route && route !== "—" ? route : ""), amount: a, unit: "台分", details: det };
     }
     return null;
   }

@@ -252,7 +252,7 @@ footer{text-align:center;color:var(--sub);font-size:12.5px;padding:10px 4vw 26px
     </div>
     <div class="field">
       <label class="lab" for="capMode">最大料金の適用方法</label>
-      <div class="numrow"><select class="sel" id="capMode">
+      <div class="numrow"><select class="sel" id="capMode"><option value="" selected>選択してください</option>
         <option value="day">24時間ごとに最大料金</option>
         <option value="once">駐車中ずっと最大料金（1回のみ）</option>
         <option value="none">最大料金なし</option>
@@ -296,9 +296,9 @@ footer{text-align:center;color:var(--sub);font-size:12.5px;padding:10px 4vw 26px
       <input type="text" id="placeQ" placeholder="場所を検索（例：前橋駅、新宿駅）" />
       <button type="button" id="placeGo">検索</button>
       <button type="button" id="geoBtn" class="ghost">現在地</button>
-      <select class="sel" id="radiusSel" style="flex:0 0 auto;">
+      <select class="sel" id="radiusSel" style="flex:0 0 auto;"><option value="" selected>選択してください</option>
         <option value="500">半径500m</option>
-        <option value="1000" selected>半径1km</option>
+        <option value="1000">半径1km</option>
         <option value="2000">半径2km</option>
       </select>
     </div>
@@ -327,8 +327,20 @@ footer{text-align:center;color:var(--sub);font-size:12.5px;padding:10px 4vw 26px
     var v = parseFloat($(id).value);
     return isFinite(v) && v > 0 ? v : 0;
   }
-  window.IDO_BASKET = { kind: "parking", label: "", amount: 0 };
+  window.IDO_BASKET = { kind: "parking", label: "", amount: 0, unit: "回分", details: [] };
   function calc() {
+    if ($("unitPrice").value === "" || $("unitMin").value === "" || ($("parkHours").value === "" && $("parkMins").value === "")) {
+      $("totalYen").textContent = "—";
+      $("rTime").textContent = "—";
+      $("rBillable").textContent = "—";
+      $("rBase").textContent = "—";
+      $("rCap").textContent = "—";
+      $("barAmount").textContent = "—";
+      window.IDO_BASKET.amount = 0;
+      window.IDO_BASKET.label = "";
+      window.IDO_BASKET.details = [];
+      return;
+    }
     var price = num("unitPrice");
     var unitMin = Math.max(1, num("unitMin") || 30);
     var free = num("freeMin");
@@ -361,24 +373,29 @@ footer{text-align:center;color:var(--sub);font-size:12.5px;padding:10px 4vw 26px
     $("barAmount").textContent = yen(fee);
     window.IDO_BASKET.amount = fee;
     window.IDO_BASKET.label = "駐車場料金 " + Math.floor(totalMin / 60) + "時間" + (totalMin % 60) + "分";
+    window.IDO_BASKET.details = [
+      "駐車時間 " + $("rTime").textContent,
+      "課金対象 " + $("rBillable").textContent,
+      "最大料金：" + $("rCap").textContent
+    ];
   }
   function fillOptions(id, from, to, step, def, prefix, suffix) {
     var sel = $(id);
-    var html = "";
+    var html = '<option value="" selected>選択してください</option>';
     for (var v = from; v <= to; v += step) {
       html += '<option value="' + v + '"' + (v === def ? " selected" : "") + ">" + (prefix || "") + v.toLocaleString("ja-JP") + (suffix || "") + "</option>";
     }
     sel.innerHTML = html;
   }
-  fillOptions("unitPrice", 50, 1000, 50, 200);
-  fillOptions("unitMin", 5, 60, 5, 30);
-  fillOptions("freeMin", 0, 180, 5, 0);
-  fillOptions("parkHours", 0, 48, 1, 3);
-  fillOptions("parkMins", 0, 55, 5, 0);
+  fillOptions("unitPrice", 50, 1000, 50, null);
+  fillOptions("unitMin", 5, 60, 5, null);
+  fillOptions("freeMin", 0, 180, 5, null);
+  fillOptions("parkHours", 0, 48, 1, null);
+  fillOptions("parkMins", 0, 55, 5, null);
   (function () {
     var html = '<option value="">なし</option>';
     for (var v = 300; v <= 3000; v += 50) {
-      html += '<option value="' + v + '"' + (v === 1500 ? " selected" : "") + ">" + v.toLocaleString("ja-JP") + "</option>";
+      html += '<option value="' + v + '"' + "" + ">" + v.toLocaleString("ja-JP") + "</option>";
     }
     $("capYen").innerHTML = html;
   })();

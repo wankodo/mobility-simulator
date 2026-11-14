@@ -211,16 +211,16 @@ footer{text-align:center;color:var(--sub);font-size:12.5px;padding:10px 4vw 26px
       <summary>運賃表を自分で設定する</summary>
       <div class="body" style="margin-top:10px;">
         <div class="grid2">
-          <div class="field"><label class="lab" for="cBase">初乗り料金（円）</label><div class="numrow"><input type="number" id="cBase" value="500" step="10" /></div></div>
-          <div class="field"><label class="lab" for="cBaseM">初乗り距離（m）</label><div class="numrow"><input type="number" id="cBaseM" value="1000" step="10" /></div></div>
-          <div class="field"><label class="lab" for="cAdd">加算料金（円）</label><div class="numrow"><input type="number" id="cAdd" value="100" step="10" /></div></div>
-          <div class="field"><label class="lab" for="cAddM">加算距離（m）</label><div class="numrow"><input type="number" id="cAddM" value="232" step="1" /></div></div>
+          <div class="field"><label class="lab" for="cBase">初乗り料金（円）</label><div class="numrow"><input type="number" id="cBase" step="10" /></div></div>
+          <div class="field"><label class="lab" for="cBaseM">初乗り距離（m）</label><div class="numrow"><input type="number" id="cBaseM" step="10" /></div></div>
+          <div class="field"><label class="lab" for="cAdd">加算料金（円）</label><div class="numrow"><input type="number" id="cAdd" step="10" /></div></div>
+          <div class="field"><label class="lab" for="cAddM">加算距離（m）</label><div class="numrow"><input type="number" id="cAddM" step="1" /></div></div>
         </div>
       </div>
     </details>
     <div class="field">
       <label class="lab" for="distKm">走行距離</label>
-      <div class="numrow"><input type="number" id="distKm" inputmode="decimal" min="0" step="0.1" value="5" /><span class="unit">km</span></div>
+      <div class="numrow"><input type="number" id="distKm" inputmode="decimal" min="0" step="0.1" /><span class="unit">km</span></div>
       <p class="hint">目的地までの距離（道のり）を調べる：<a href="https://www.google.com/maps/dir/" target="_blank" rel="noopener noreferrer">Googleマップ</a> ／ <a href="https://maps.apple.com/?dirflg=d" target="_blank" rel="noopener noreferrer">Appleマップ</a> ／ <a href="https://map.yahoo.co.jp/" target="_blank" rel="noopener noreferrer">Yahoo!マップ</a> ／ <a href="https://www.navitime.co.jp/drive/" target="_blank" rel="noopener noreferrer">NAVITIME</a> ／ <a href="https://mapfan.com/" target="_blank" rel="noopener noreferrer">MapFan</a></p>
     </div>
     <div class="grid2">
@@ -231,11 +231,11 @@ footer{text-align:center;color:var(--sub);font-size:12.5px;padding:10px 4vw 26px
       </div>
       <div class="field">
         <label class="lab" for="timeSec">時間距離併用の換算</label>
-        <div class="numrow"><select class="sel" id="timeSec">
+        <div class="numrow"><select class="sel" id="timeSec"><option value="" selected>選択してください</option>
           <option value="60">60秒ごとに加算1回分</option>
           <option value="75">75秒ごとに加算1回分</option>
           <option value="85">85秒ごとに加算1回分</option>
-          <option value="90" selected>90秒ごとに加算1回分</option>
+          <option value="90">90秒ごとに加算1回分</option>
           <option value="95">95秒ごとに加算1回分</option>
           <option value="105">105秒ごとに加算1回分</option>
           <option value="120">120秒ごとに加算1回分</option>
@@ -244,14 +244,14 @@ footer{text-align:center;color:var(--sub);font-size:12.5px;padding:10px 4vw 26px
       </div>
       <div class="field">
         <label class="lab" for="nightSel">時間帯</label>
-        <div class="numrow"><select class="sel" id="nightSel">
+        <div class="numrow"><select class="sel" id="nightSel"><option value="" selected>選択してください</option>
           <option value="0">昼間</option>
           <option value="1">深夜・早朝（22時〜翌5時／2割増）</option>
         </select></div>
       </div>
       <div class="field">
         <label class="lab" for="pickupSel">迎車料金</label>
-        <div class="numrow"><select class="sel" id="pickupSel">
+        <div class="numrow"><select class="sel" id="pickupSel"><option value="" selected>選択してください</option>
           <option value="0">なし（流し・乗り場）</option>
           <option value="100">100円</option>
           <option value="200">200円</option>
@@ -263,12 +263,12 @@ footer{text-align:center;color:var(--sub);font-size:12.5px;padding:10px 4vw 26px
       </div>
       <div class="field">
         <label class="lab" for="tollYen">有料道路代（任意）</label>
-        <div class="numrow"><input type="number" id="tollYen" inputmode="numeric" min="0" step="10" value="0" /><span class="unit">円</span></div>
+        <div class="numrow"><input type="number" id="tollYen" inputmode="numeric" min="0" step="10" /><span class="unit">円</span></div>
         <p class="hint">高速道路などを使った場合の実費です。<a href="highway.html">高速料金シミュレーター</a>で調べられます。</p>
       </div>
       <div class="field">
         <label class="lab" for="people">割り勘の人数</label>
-        <div class="numrow"><select class="sel" id="people">
+        <div class="numrow"><select class="sel" id="people"><option value="" selected>選択してください</option>
           <option value="1">1人</option>
           <option value="2">2人</option>
           <option value="3">3人</option>
@@ -400,6 +400,10 @@ footer{text-align:center;color:var(--sub);font-size:12.5px;padding:10px 4vw 26px
     ["奄美ブロック（鹿児島県）", 600, 1300, 100, 370, 0]
   ];
   var areaSel = $("areaSel");
+  var oph = document.createElement("option");
+  oph.value = "";
+  oph.textContent = "地区を選択してください";
+  areaSel.appendChild(oph);
   AREAS.forEach(function (a, i) {
     var o = document.createElement("option");
     o.value = String(i);
@@ -412,14 +416,14 @@ footer{text-align:center;color:var(--sub);font-size:12.5px;padding:10px 4vw 26px
   areaSel.appendChild(oc);
   (function () {
     var html = "";
-    for (var v = 0; v <= 60; v += 5) html += '<option value="' + v + '"' + (v === 0 ? " selected" : "") + ">" + v + "</option>";
-    $("lowMin").innerHTML = html;
+    for (var v = 0; v <= 60; v += 5) html += '<option value="' + v + '"' + (v === -1 ? " selected" : "") + ">" + v + "</option>";
+    $("lowMin").innerHTML = '<option value="" selected>選択してください</option>' + html;
   })();
   function num(id) {
     var v = parseFloat($(id).value);
     return isFinite(v) && v > 0 ? v : 0;
   }
-  window.IDO_BASKET = { kind: "taxi", label: "", amount: 0 };
+  window.IDO_BASKET = { kind: "taxi", label: "", amount: 0, unit: "台分", details: [] };
   function table() {
     if (areaSel.value === "custom") {
       return { name: "カスタム", base: num("cBase") || 500, baseM: num("cBaseM") || 1000, add: num("cAdd") || 100, addM: num("cAddM") || 232 };
@@ -433,6 +437,14 @@ footer{text-align:center;color:var(--sub);font-size:12.5px;padding:10px 4vw 26px
     return { fare: t.base + units * t.add, units: units };
   }
   function calc() {
+    if (areaSel.value === "" || $("distKm").value.trim() === "" || (areaSel.value === "custom" && ["cBase", "cBaseM", "cAdd", "cAddM"].some(function (id) { return $(id).value.trim() === ""; }))) {
+      ["totalYen", "rMeter", "rBase", "rDist", "rLow", "rNight", "rPickup", "rToll", "rPer", "barAmount"].forEach(function (id) { $(id).textContent = "—"; });
+      if (areaSel.value === "") $("areaInfo").textContent = "";
+      window.IDO_BASKET.amount = 0;
+      window.IDO_BASKET.label = "";
+      window.IDO_BASKET.details = [];
+      return;
+    }
     var t = table();
     var distM = num("distKm") * 1000;
     var lowMin = parseInt($("lowMin").value, 10) || 0;
@@ -454,7 +466,7 @@ footer{text-align:center;color:var(--sub);font-size:12.5px;padding:10px 4vw 26px
     $("rNight").textContent = night ? "+" + yen(nightRes.fare - dayRes.fare) + "（距離を6/5倍で計算）" : "なし";
     $("rPickup").textContent = yen(pickup);
     $("rToll").textContent = yen(toll);
-    $("rPer").textContent = yen(Math.ceil(total / people)) + "（" + people + "人）";
+    $("rPer").textContent = $("people").value === "" ? "—" : yen(Math.ceil(total / people)) + "（" + people + "人）";
     $("barAmount").textContent = yen(total);
     if (areaSel.value === "custom") {
       $("areaInfo").textContent = "カスタム運賃表で計算しています。";
@@ -463,6 +475,15 @@ footer{text-align:center;color:var(--sub);font-size:12.5px;padding:10px 4vw 26px
     }
     window.IDO_BASKET.amount = total;
     window.IDO_BASKET.label = "タクシー " + t.name.replace(/（.*?）/, "") + " 約" + num("distKm") + "km";
+    var bdet = [
+      "メーター運賃 " + $("rMeter").textContent,
+      "初乗り " + $("rBase").textContent,
+      "距離の加算 " + $("rDist").textContent,
+      "深夜割増の増分 " + $("rNight").textContent
+    ];
+    if (pickup > 0) bdet.push("迎車料金 " + $("rPickup").textContent);
+    if (toll > 0) bdet.push("有料道路代 " + $("rToll").textContent);
+    window.IDO_BASKET.details = bdet;
   }
   areaSel.addEventListener("change", function () {
     var t = table();
