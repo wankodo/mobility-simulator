@@ -607,6 +607,165 @@ a.card .ic {
   box-shadow: inset 0 0 0 999px rgba(0, 0, 0, .16), 0 2px 8px rgba(0, 0, 0, .28);
 }
 
+/* ---------- セグメントの色固定（OSダークモードで半端に反転しないように） ---------- */
+
+.seg {
+  background-color: #e7ecf2;
+}
+
+.seg .seg-face {
+  color: #182635;
+}
+
+.seg input:checked + .seg-face {
+  background: #0c2a4d;
+  color: #ffffff;
+}
+
+/* ---------- 電車：チップ色ボタンの固定（OSダークモードで沈まないように） ---------- */
+
+.btn-sub,
+.swap {
+  background: #e2ebf5;
+  color: #0b2239;
+  border-color: #c7d6e4;
+}
+
+.stepper {
+  border-color: #c7d6e4;
+}
+
+.stepper button {
+  background: #e2ebf5;
+  color: #0b2239;
+}
+
+/* ---------- ブランド表記（トップ以外は英語のみ・大きめに） ---------- */
+
+.ido-brand-text > small:only-child {
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: .14em;
+  color: #ffffff;
+}
+
+/* ---------- プライバシーポリシー（タイムズ形式のモーダルに全ページ統一） ---------- */
+
+.pp-footer {
+  margin: 18px 0 0;
+  text-align: center;
+}
+
+.pp-link {
+  background: none;
+  border: 0;
+  padding: 10px 14px;
+  min-height: 44px;
+  color: var(--ido-muted);
+  font-size: 13px;
+  text-decoration: underline;
+  cursor: pointer;
+  border-radius: 999px;
+  transition: background-color .15s ease, color .15s ease;
+}
+
+.pp-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10001;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(8, 18, 30, .55);
+}
+
+.pp-overlay.open {
+  display: flex;
+}
+
+.pp-dialog {
+  width: 100%;
+  max-width: 640px;
+  max-height: min(86dvh, 760px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #ffffff;
+  border: 1px solid var(--ido-line);
+  border-radius: 14px;
+  box-shadow: var(--ido-shadow);
+  color: var(--ido-ink);
+  text-align: left;
+}
+
+.pp-scroll {
+  overflow-y: auto;
+  padding: 22px 22px 8px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.pp-actions {
+  border-top: 1px solid var(--ido-line);
+  padding: 12px 22px calc(14px + env(safe-area-inset-bottom));
+}
+
+.pp-btn-row {
+  display: flex;
+  gap: 10px;
+}
+
+@media (max-width: 520px) {
+  .pp-btn-row {
+    flex-direction: column;
+  }
+}
+
+.pp-close-btn {
+  flex: 1;
+  min-height: 48px;
+  border: 0;
+  border-radius: 9px;
+  cursor: pointer;
+  background: var(--ido-navy-900);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 900;
+}
+
+.privacy-policy h2 {
+  font-size: 16px;
+  margin: 0 0 6px;
+}
+
+.privacy-policy .pp-updated {
+  font-size: 12px;
+  color: var(--ido-muted);
+  margin: 0 0 4px;
+}
+
+.privacy-policy h3 {
+  font-size: 13.5px;
+  font-weight: 900;
+  color: var(--ido-ink);
+  margin: 16px 0 4px;
+}
+
+.privacy-policy p,
+.privacy-policy li {
+  font-size: 13px;
+  color: #42566b;
+}
+
+.privacy-policy p {
+  margin: 0 0 6px;
+}
+
+.privacy-policy ul {
+  margin: 0;
+  padding-left: 1.3em;
+}
+
 /* ---------- 高速：出入口の逆転ボタン（枠と地が同化しないように） ---------- */
 
 .swap-btn {
@@ -953,6 +1112,69 @@ html[data-theme="andy"] .swap-btn {
   background: rgba(70, 217, 236, .10);
   color: #d9fbff;
   box-shadow: none;
+}
+
+/* ガソリン代：試算結果のセル（クリーム地に薄文字にならないよう面を暗く） */
+html[data-theme="andy"] .result-grid .cell {
+  background: rgba(8, 22, 34, .85);
+  border-color: rgba(110, 205, 230, .32);
+}
+
+/* セグメント（Andyモード側の色を明示） */
+html[data-theme="andy"] .seg .seg-face {
+  color: #d8f1f6;
+}
+
+html[data-theme="andy"] .seg input:checked + .seg-face {
+  background: linear-gradient(180deg, #8ff2ff, #46d9ec);
+  color: #03222e;
+}
+
+/* プライバシーポリシー：リンクは黄色、ホバーは半強調 */
+html[data-theme="andy"] .pp-link {
+  color: #ffcf4d;
+  border-radius: 3px;
+}
+
+@media (hover: hover) {
+  html[data-theme="andy"] .pp-link:hover {
+    background: rgba(70, 217, 236, .22);
+    color: #d9fbff;
+    text-decoration: none;
+  }
+}
+
+/* 畳み込み（details）の見出しが闇に沈まないように */
+html[data-theme="andy"] details.policy summary,
+html[data-theme="andy"] details.pp summary,
+html[data-theme="andy"] .foldsec > summary {
+  color: #aee9f5;
+}
+
+/* プライバシーポリシーの本文（Andyモード側） */
+html[data-theme="andy"] .privacy-policy p,
+html[data-theme="andy"] .privacy-policy li {
+  color: #a9c9d9;
+}
+
+/* 電車：入れ替え・人数ボタン（Andyモード側） */
+html[data-theme="andy"] .swap,
+html[data-theme="andy"] .stepper button {
+  background: rgba(8, 22, 34, .85);
+  color: #d8f1f6;
+  border-color: rgba(110, 205, 230, .32);
+}
+
+html[data-theme="andy"] .stepper {
+  border-color: rgba(110, 205, 230, .32);
+}
+
+html[data-theme="andy"] .privacy-policy h3 {
+  color: #eaf7fb;
+}
+
+html[data-theme="andy"] .privacy-policy .pp-updated {
+  color: #a9c9d9;
 }
 
 /* ---------- Andyモード：角は丸めず、切り落とす ---------- */

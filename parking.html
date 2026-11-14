@@ -82,7 +82,7 @@ footer{text-align:center;color:var(--sub);font-size:12.5px;padding:10px 4vw 26px
 .basketbar button{font:inherit;font-size:15px;font-weight:800;color:#fff;background:var(--accent);border:0;border-radius:999px;padding:11px 22px;cursor:pointer;box-shadow:0 4px 10px rgba(179,84,30,.35);}
 .basketbar button:active{transform:scale(.98);}
 </style>
-<link rel="stylesheet" href="site-unified.css?v=9" />
+<link rel="stylesheet" href="site-unified.css?v=12" />
 <script>
 (function () {
   var PIC = {
@@ -191,7 +191,7 @@ footer{text-align:center;color:var(--sub);font-size:12.5px;padding:10px 4vw 26px
 </script>
 </head>
 <body>
-<header class="ido-sitebar"><a class="ido-brand" href="index.html" aria-label="移動シミュレーター トップへ"><span class="ido-brand-mark" aria-hidden="true">移</span><span class="ido-brand-text">移動シミュレーター<small>MOBILITY SIMULATOR</small></span></a><div class="ido-category-nav" role="navigation" aria-label="カテゴリ"><a href="index.html">トップ</a><a href="car.html" class="is-current" aria-current="page">車系</a><a href="rail.html">電車系</a><a href="useful.html">便利系</a></div><div class="ido-theme-switch" role="group" aria-label="表示モード切替"><button type="button" data-ido-theme="kuma" aria-pressed="true">熊八モード</button><button type="button" data-ido-theme="andy" aria-pressed="false">Andyモード</button></div></header>
+<header class="ido-sitebar"><a class="ido-brand" href="index.html" aria-label="移動シミュレーター トップへ"><span class="ido-brand-mark" aria-hidden="true">移</span><span class="ido-brand-text"><small>MOBILITY SIMULATOR</small></span></a><div class="ido-category-nav" role="navigation" aria-label="カテゴリ"><a href="index.html">トップ</a><a href="car.html" class="is-current" aria-current="page">車系</a><a href="rail.html">電車系</a><a href="useful.html">便利系</a></div><div class="ido-theme-switch" role="group" aria-label="表示モード切替"><button type="button" data-ido-theme="kuma" aria-pressed="true">熊八モード</button><button type="button" data-ido-theme="andy" aria-pressed="false">Andyモード</button></div></header>
 
 <header class="ido-hero">
   <p class="eyebrow">移動シミュレーター</p>
@@ -307,18 +307,7 @@ footer{text-align:center;color:var(--sub);font-size:12.5px;padding:10px 4vw 26px
     <p class="hint">地図データ：© OpenStreetMap contributors。この試作部分は地図と駐車場データを読み込むため通信が発生します（上の計算ツールは端末の中だけで計算します）。ピンを押すと、料金情報がある場合は表示し、無い場合は料金を検索できるリンクを出します。</p>
   </section>
 
-  <details class="policy">
-    <summary>プライバシーポリシー</summary>
-    <div class="body">
-      <p>当サイト「移動シミュレーター」は、個人を特定する情報を収集しません。</p>
-      <p><strong>入力データについて：</strong>計算ツールに入力した内容は、お使いの端末のブラウザの中だけで処理され、サーバーへ送信されることはありません。「行程カゴ」の内容は、お使いのブラウザの localStorage にのみ保存されます。地図試作で「現在地」を使った場合、位置情報は周辺の駐車場データを読み込むためにだけ使い、保存はしません。</p>
-      <p><strong>広告について：</strong>当サイトは、第三者配信の広告サービス（Google AdSense）を利用する場合があります。広告配信事業者は、ユーザーの興味に応じた広告を表示するため Cookie を使用することがあります。パーソナライズ広告は、Google の「広告設定」から無効にできます。</p>
-      <p><strong>アクセス解析について：</strong>当サイトはアクセス解析ツールを使用していません。</p>
-      <p><strong>免責事項：</strong>計算結果は目安であり、実際の料金は各事業者の公式情報をご確認ください。当サイトの利用によって生じた損害について、運営者は責任を負いません。</p>
-      <p><strong>お問い合わせ：</strong>当サイトは個人運営のツールサイトです。</p>
-      <p>制定日：2026年11月15日</p>
-    </div>
-  </details>
+    <p class="pp-footer"><button type="button" class="pp-link" data-pp-open>プライバシーポリシー</button></p>
 </main>
 <footer class="ido-site-footer">
   <p>このページは個人が作成した非公式の計算ツールです。駐車場事業者の公式ページではありません。実際の料金は各駐車場の公式情報をご確認ください。</p>
@@ -513,5 +502,25 @@ footer{text-align:center;color:var(--sub);font-size:12.5px;padding:10px 4vw 26px
 })();
 </script>
 <script src="basket-snippet.js"></script>
+<div class="pp-overlay" data-pp-overlay>
+  <div class="pp-dialog privacy-policy" role="dialog" aria-modal="true" aria-labelledby="ppTitle">
+    <div class="pp-scroll">
+      <h2 id="ppTitle">プライバシーポリシー</h2>
+      <p>当サイト「移動シミュレーター」は、個人を特定する情報を収集しません。</p>
+      <p><strong>入力データについて：</strong>計算ツールに入力した内容は、お使いの端末のブラウザの中だけで処理され、サーバーへ送信されることはありません。「行程カゴ」の内容は、お使いのブラウザの localStorage にのみ保存されます。地図試作で「現在地」を使った場合、位置情報は周辺の駐車場データを読み込むためにだけ使い、保存はしません。</p>
+      <p><strong>広告について：</strong>当サイトは、第三者配信の広告サービス（Google AdSense）を利用する場合があります。広告配信事業者は、ユーザーの興味に応じた広告を表示するため Cookie を使用することがあります。パーソナライズ広告は、Google の「広告設定」から無効にできます。</p>
+      <p><strong>アクセス解析について：</strong>当サイトはアクセス解析ツールを使用していません。</p>
+      <p><strong>免責事項：</strong>計算結果は目安であり、実際の料金は各事業者の公式情報をご確認ください。当サイトの利用によって生じた損害について、運営者は責任を負いません。</p>
+      <p><strong>お問い合わせ：</strong>当サイトは個人運営のツールサイトです。</p>
+      <p>制定日：2026年11月15日</p>
+    </div>
+    <div class="pp-actions">
+      <div class="pp-btn-row">
+        <button type="button" class="pp-close-btn" data-pp-close>閉じる</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="policy-snippet.js"></script>
 </body>
 </html>
