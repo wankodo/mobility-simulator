@@ -1,0 +1,512 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="description" content="レンタカー料金の目安シミュレーター。クラス（軽・コンパクト・ミニバンなど）と利用時間、補償やオプションを選ぶだけで、大手レンタカーの一般料金をもとにした料金の目安を無料で試算できます。" />
+<title>移動シミュレーター｜レンタカー料金の目安シミュレーター</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg" />
+<style>
+  :root { --navy:#12283f; --navy2:#0b1c2c; --amber:#f2a81d; --fuel:#16a34a; --fuel2:#22c55e; --ink:#1c2733; --mut:#5b6b7c; --bg:#edf1f5; --card:#fff; --line:#e1e8ef; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:system-ui,-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif; color:var(--ink);
+         background:linear-gradient(180deg,#e8eef4 0%,#f2f5f8 320px,#edf1f5 100%); }
+  nav.top { display:flex; flex-wrap:wrap; gap:8px 18px; align-items:center; color:#fff; padding:12px 16px;
+    background:linear-gradient(120deg,var(--navy2),var(--navy) 55%,#1d3d5c); box-shadow:0 2px 14px rgba(11,28,44,.35);
+    font-size:14px; position:relative; z-index:5; }
+  nav.top a { color:#cfe2f3; text-decoration:none; transition:opacity .15s ease; }
+  nav.top a:hover { opacity:.72; }
+  nav.top a.brand { color:#fff; font-weight:800; }
+  nav.top a.here { color:#fff; font-weight:800; border-bottom:2px solid var(--fuel2); padding-bottom:2px; }
+  main { max-width:960px; margin:0 auto; padding:24px 16px 40px; }
+  .title-panel { position:relative; overflow:hidden; color:#fff; border-radius:20px; padding:24px 22px; margin-bottom:18px;
+    background:linear-gradient(120deg,#052e16,#14532d 60%,#166534); box-shadow:0 10px 26px -12px rgba(20,83,45,.55); }
+  .title-panel::after { content:""; position:absolute; inset:auto 0 0 0; height:6px;
+    background:linear-gradient(90deg,var(--fuel2),var(--amber)); }
+  .title-panel .badge { display:inline-block; background:var(--amber); color:#231a00; font-weight:800; font-size:12px;
+    padding:3px 10px; border-radius:999px; letter-spacing:.08em; margin-bottom:10px; }
+  .title-panel h1 { margin:0; font-size:clamp(24px,5.6vw,34px); font-weight:900; }
+  .title-panel p { margin:10px 0 4px; color:#dcfce7; line-height:1.8; font-size:14px; max-width:720px; }
+  section.panel { background:var(--card); border-radius:20px; padding:22px; margin-bottom:18px;
+    border:1px solid var(--line); box-shadow:0 3px 14px rgba(18,40,63,.06), 0 14px 30px -20px rgba(18,40,63,.25); }
+  section.panel h2 { margin:0 0 14px; font-size:17px; font-weight:800; display:flex; align-items:center; gap:10px; }
+  section.panel h2::before { content:""; width:9px; height:20px; border-radius:3px; background:linear-gradient(180deg,var(--fuel2),var(--fuel)); flex:none; }
+  .field { margin-bottom:18px; }
+  .field:last-child { margin-bottom:0; }
+  .field label.lab { display:block; font-weight:700; font-size:14px; margin-bottom:8px; }
+  .field .hint { color:var(--mut); font-size:12px; margin-top:6px; line-height:1.7; }
+  .seg { position:relative; display:flex; background:#e7ecf2; border-radius:12px; padding:4px; gap:0; }
+  .seg .plate { position:absolute; top:4px; bottom:4px; border-radius:9px;
+    background:linear-gradient(180deg,var(--fuel2),var(--fuel));
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.38), inset 0 -3px 0 rgba(0,0,0,.20), 0 6px 14px -6px rgba(15,30,45,.40);
+    transition:left .28s cubic-bezier(.4,0,.2,1), width .28s cubic-bezier(.4,0,.2,1); }
+  .seg button { position:relative; z-index:1; flex:1; border:0; background:transparent; color:var(--ink);
+    font:inherit; font-weight:700; font-size:14px; padding:10px 6px; border-radius:9px; cursor:pointer; }
+  .seg button.on { color:#fff; }
+  .numrow { display:flex; align-items:center; gap:10px; }
+  .numrow input[type="number"] { flex:1; min-width:0; font:inherit; font-size:18px; font-weight:700; padding:12px 14px;
+    border:1.5px solid var(--line); border-radius:12px; background:#fbfcfe; color:var(--ink); }
+  .numrow input[type="number"]:focus { outline:3px solid rgba(249,115,22,.35); border-color:var(--fuel2); }
+  .numrow .unit { font-weight:700; color:var(--mut); font-size:14px; flex:none; }
+  .result-big { text-align:center; padding:10px 0 4px; }
+  .result-big .cap { color:var(--mut); font-size:13px; font-weight:700; letter-spacing:.06em; }
+  .result-big .amt { font-size:clamp(38px,9vw,54px); font-weight:900; color:var(--fuel); line-height:1.15;
+    text-shadow:0 2px 12px rgba(234,88,12,.18); }
+  .result-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin-top:14px; }
+  .result-grid .cell { background:#fdf4ec; border:1px solid #f7ddc8; border-radius:14px; padding:12px 14px; }
+  .result-grid .cell .k { color:var(--mut); font-size:12px; font-weight:700; }
+  .result-grid .cell .v { font-size:19px; font-weight:800; margin-top:3px; }
+  .note { color:var(--mut); font-size:13px; line-height:1.85; }
+  .note li { margin-bottom:4px; }
+  details.pp { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:16px 20px; margin-bottom:18px; }
+  details.pp summary { font-weight:800; cursor:pointer; }
+  details.pp p { color:var(--mut); font-size:13px; line-height:1.85; }
+  footer { max-width:960px; margin:0 auto; padding:0 16px 110px; color:var(--mut); font-size:13px; line-height:1.8; }
+  .stickybar { position:fixed; left:0; right:0; bottom:0; z-index:50; color:#fff;
+    background:linear-gradient(120deg,#3a1503,#7c2d12 60%,#9a3412); border-top:3px solid var(--amber);
+    padding:10px 16px calc(10px + env(safe-area-inset-bottom)); display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+    box-shadow:0 -6px 20px rgba(58,21,3,.35); }
+  .stickybar .lab { font-size:12px; font-weight:700; color:#ffd9b0; }
+  .stickybar .amt { font-size:24px; font-weight:900; color:var(--amber); text-shadow:0 0 14px rgba(242,168,29,.45); }
+  .stickybar .sub { font-size:12px; color:#ffe8d6; }
+
+  .optrow { display:flex; gap:10px; align-items:flex-start; padding:11px 12px; border:1.5px solid var(--line); border-radius:12px; margin-top:10px; background:#fbfcfe; cursor:pointer; }
+  .optrow input { width:19px; height:19px; margin-top:2px; accent-color:var(--fuel); flex:none; }
+  .optrow .t { font-weight:800; font-size:14.5px; color:var(--ink); }
+  .optrow .d { color:var(--mut); font-size:12.5px; margin-top:2px; }
+</style>
+<link rel="canonical" href="https://wankodo.github.io/mobility-simulator/gasoline.html" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="移動シミュレーター" />
+<meta property="og:title" content="移動シミュレーター｜ガソリン代計算シミュレーター" />
+<meta property="og:description" content="走行距離・燃費・ガソリン単価から、往復のガソリン代・使用量・1人あたり・通勤の月額年額まで無料で試算できます。" />
+<meta property="og:url" content="https://wankodo.github.io/mobility-simulator/gasoline.html" />
+<meta property="og:image" content="https://wankodo.github.io/mobility-simulator/ogp.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://wankodo.github.io/mobility-simulator/ogp.png" />
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3970535652265626" crossorigin="anonymous"></script>
+<style id="design-polish-3">
+  button, .seg button{
+    transition: box-shadow .12s ease, transform .05s ease, filter .15s ease;
+  }
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "@id": "https://wankodo.github.io/mobility-simulator/gasoline.html#app",
+  "url": "https://wankodo.github.io/mobility-simulator/gasoline.html",
+  "name": "ガソリン代計算シミュレーター",
+  "description": "走行距離・燃費・ガソリン単価から、往復のガソリン代・使用量・1人あたり・通勤の月額年額まで無料で試算できます。",
+  "applicationCategory": "TravelApplication",
+  "operatingSystem": "Webブラウザ",
+  "inLanguage": "ja",
+  "isFree": true,
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "JPY" },
+  "isPartOf": { "@id": "https://wankodo.github.io/mobility-simulator/#website" }
+}
+</script>
+<link rel="stylesheet" href="site-unified.css?v=17" />
+<script>
+(function () {
+  var PIC = {
+    "🚗": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11l1.5-4.5A2 2 0 0 1 8.4 5h7.2a2 2 0 0 1 1.9 1.5L19 11"/><path d="M3 11h18v6h-2.6"/><path d="M3 17h2.6"/><circle cx="7.5" cy="17" r="1.8"/><circle cx="16.5" cy="17" r="1.8"/><path d="M9.3 17h5.4"/></svg>',
+    "🚕": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9.6" y="2.6" width="4.8" height="2.2" rx="0.6"/><path d="M5 12l1.5-4.2A2 2 0 0 1 8.4 6.4h7.2a2 2 0 0 1 1.9 1.4L19 12"/><path d="M3 12h18v5.5h-2.6"/><path d="M3 17.5h2.6"/><circle cx="7.5" cy="17.5" r="1.8"/><circle cx="16.5" cy="17.5" r="1.8"/><path d="M9.3 17.5h5.4"/></svg>',
+    "🚙": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 15l1.6-5.2A2 2 0 0 1 7.5 8.4h9a2 2 0 0 1 1.9 1.4L20 15"/><path d="M3 15h18v3.2H3z"/><circle cx="7.4" cy="19" r="1.5"/><circle cx="16.6" cy="19" r="1.5"/></svg>',
+    "⛽": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v16"/><path d="M3 21h14"/><rect x="7.2" y="5.8" width="5.6" height="4.2" rx="0.6"/><path d="M15 10l2.1 2.1a2 2 0 0 1 .6 1.4V18a1.9 1.9 0 0 0 3.8 0v-6.8a2 2 0 0 0-.6-1.4L18.6 7.5"/></svg>',
+    "🅿": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2.5"/><path d="M9.5 16.8V7.2h3.4a2.9 2.9 0 0 1 0 5.8H9.5"/></svg>',
+    "🛣": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21L10 3"/><path d="M19 21L14 3"/><path d="M12 18.6v-2.2"/><path d="M12 13.6v-2.2"/><path d="M12 8.6V6.4"/></svg>',
+    "🚃": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3.5" width="14" height="13" rx="2.5"/><path d="M5 10.3h14"/><path d="M9 13.9h.01M15 13.9h.01" stroke-width="2.6"/><path d="M8.5 20.5l2-4"/><path d="M15.5 20.5l-2-4"/><path d="M7 20.5h10"/></svg>',
+    "🎫": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8.6a2.4 2.4 0 0 0 0 2.8V15a1.6 1.6 0 0 0 1.6 1.6h12.8A1.6 1.6 0 0 0 20 15v-3.6a2.4 2.4 0 0 1 0-2.8V7A1.6 1.6 0 0 0 18.4 5.4H5.6A1.6 1.6 0 0 0 4 7z"/><path d="M13.8 6.2v1.7M13.8 10.2v1.7M13.8 14.2v1.6"/></svg>',
+    "🧰": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="9" width="18" height="10" rx="1.6"/><path d="M9 9V7a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/><path d="M3 13.6h18"/><rect x="10.3" y="12.3" width="3.4" height="2.6" rx="0.5"/></svg>',
+    "🧺": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.6 10.2h14.8l-1.5 7.9a2 2 0 0 1-2 1.6H8.1a2 2 0 0 1-2-1.6z"/><path d="M8.6 10.2L12 4.6l3.4 5.6"/><path d="M3 10.2h18"/><path d="M9.2 13.8v2.4M12 13.8v2.4M14.8 13.8v2.4"/></svg>',
+    "📍": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-6.6-5.5-6.6-10.3a6.6 6.6 0 0 1 13.2 0C18.6 15.5 12 21 12 21z"/><circle cx="12" cy="10.4" r="2.3"/></svg>',
+    "🐾": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="12" cy="15.8" rx="4.4" ry="3.6"/><circle cx="5.8" cy="10.8" r="1.8"/><circle cx="9.3" cy="7.8" r="1.9"/><circle cx="14.7" cy="7.8" r="1.9"/><circle cx="18.2" cy="10.8" r="1.8"/></svg>'
+  };
+  var KEYS = Object.keys(PIC);
+  function makePic(ch) {
+    var s = document.createElement("span");
+    s.className = "ido-pic";
+    s.dataset.emoji = ch;
+    s.innerHTML = PIC[ch];
+    return s;
+  }
+  function swapIn(root) {
+    if (!root || root.nodeType !== 1) return;
+    var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+      acceptNode: function (n) {
+        if (!n.nodeValue) return NodeFilter.FILTER_REJECT;
+        var p = n.parentElement;
+        if (!p) return NodeFilter.FILTER_REJECT;
+        var tag = p.tagName;
+        if (tag === "SCRIPT" || tag === "STYLE" || tag === "TEXTAREA") return NodeFilter.FILTER_REJECT;
+        if (p.closest(".ido-pic")) return NodeFilter.FILTER_REJECT;
+        for (var i = 0; i < KEYS.length; i++) if (n.nodeValue.indexOf(KEYS[i]) >= 0) return NodeFilter.FILTER_ACCEPT;
+        return NodeFilter.FILTER_REJECT;
+      }
+    });
+    var nodes = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+    nodes.forEach(function (n) {
+      var text = n.nodeValue;
+      var frag = document.createDocumentFragment();
+      var buf = "";
+      for (var i = 0; i < text.length; i++) {
+        var matched = null;
+        for (var k = 0; k < KEYS.length; k++) {
+          if (text.startsWith(KEYS[k], i)) { matched = KEYS[k]; break; }
+        }
+        if (matched) {
+          if (buf) { frag.appendChild(document.createTextNode(buf)); buf = ""; }
+          frag.appendChild(makePic(matched));
+          i += matched.length - 1;
+          if (text.charCodeAt(i + 1) === 0xFE0F) i++;
+        } else {
+          buf += text[i];
+        }
+      }
+      if (buf) frag.appendChild(document.createTextNode(buf));
+      if (n.parentNode) n.parentNode.replaceChild(frag, n);
+    });
+  }
+  function swapOut(root) {
+    root.querySelectorAll(".ido-pic").forEach(function (s) {
+      s.replaceWith(document.createTextNode(s.dataset.emoji || ""));
+    });
+  }
+  var mo = null;
+  function applyIcons() {
+    if (!document.body) return;
+    var isAndy = (document.documentElement.dataset.theme || "kuma") === "andy";
+    if (mo) { mo.disconnect(); mo = null; }
+    if (isAndy) {
+      swapIn(document.body);
+      mo = new MutationObserver(function (muts) {
+        muts.forEach(function (m) {
+          m.addedNodes.forEach(function (nd) { if (nd.nodeType === 1) swapIn(nd); });
+        });
+      });
+      mo.observe(document.body, { childList: true, subtree: true });
+    } else {
+      swapOut(document.body);
+    }
+  }
+  try {
+    var t = localStorage.getItem("ido_theme_v1");
+    if (t === "andy" || t === "kuma") document.documentElement.dataset.theme = t;
+  } catch (e) {}
+  document.addEventListener("DOMContentLoaded", function () {
+    var btns = document.querySelectorAll("[data-ido-theme]");
+    function sync() {
+      var cur = document.documentElement.dataset.theme || "kuma";
+      btns.forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.idoTheme === cur)); });
+    }
+    btns.forEach(function (b) {
+      b.addEventListener("click", function () {
+        document.documentElement.dataset.theme = b.dataset.idoTheme;
+        try { localStorage.setItem("ido_theme_v1", b.dataset.idoTheme); } catch (e) {}
+        sync();
+        applyIcons();
+      });
+    });
+    sync();
+    applyIcons();
+  });
+})();
+</script>
+</head>
+<body>
+<header class="ido-sitebar"><a class="ido-brand" href="index.html" aria-label="移動シミュレーター トップへ"><span class="ido-brand-mark" aria-hidden="true">移</span><span class="ido-brand-text"><small>MOBILITY SIMULATOR</small></span></a><div class="ido-category-nav" role="navigation" aria-label="カテゴリ"><a href="index.html">トップ</a><a href="car.html" class="is-current" aria-current="page">車系</a><a href="rail.html">電車系</a><a href="useful.html">便利系</a></div><div class="ido-theme-switch" role="group" aria-label="表示モード切替"><button type="button" data-ido-theme="kuma" aria-pressed="true">熊八モード</button><button type="button" data-ido-theme="andy" aria-pressed="false">Andyモード</button></div></header>
+
+<main>
+<div class="ido-toolnav" role="navigation" aria-label="車系ツール"><span class="ido-toolnav-label">車系ツール</span><a href="car.html">車系トップ</a><a href="timescar.html">🚗 タイムズカー</a><a href="highway.html">🛣️ 高速料金</a><a href="gasoline.html">⛽ ガソリン代</a><a href="ev.html">⚡ EV電気代</a><a href="parking.html">🅿️ 駐車場</a><a href="taxi.html">🚕 タクシー</a><a href="owncar.html">⚖️ マイカー比較</a><a href="rental.html" aria-current="page">🚙 レンタカー</a></div>
+
+  <div class="title-panel ido-hero">
+    <span class="badge">レンタカー</span>
+    <h1>🚙 レンタカー料金の目安</h1>
+    <p>大手レンタカー各社の公式料金表をもとにした、一般料金の目安です。クラスと利用時間、補償とオプションを選ぶだけで、支払額の目安が出ます。計算はブラウザの中だけで完結します。</p>
+  </div>
+
+  <section class="panel">
+    <h2>条件</h2>
+    <div class="field">
+      <label class="lab" for="classSel">クラス</label>
+      <div class="numrow"><select id="classSel" style="flex:1;min-width:0;font:inherit;font-size:15px;font-weight:700;padding:12px 10px;border:1.5px solid var(--line);border-radius:12px;background:#fbfcfe;color:var(--ink);">
+        <option value="0">軽自動車（N-BOX・ワゴンR・タントなど）</option>
+        <option value="1" selected>コンパクト（フィット・ヤリス・ノートなど）</option>
+        <option value="2">中型（カローラ・プリウス・MAZDA3など）</option>
+        <option value="3">SUV（ヤリスクロス・ヴェゼル・CX-5など）</option>
+        <option value="4">ミニバン（ノア・セレナ・ステップワゴンなど）</option>
+        <option value="5">大型ミニバン（アルファード・ヴェルファイアなど）</option>
+      </select></div>
+    </div>
+    <div class="field">
+      <label class="lab" for="hours">利用時間</label>
+      <div class="numrow"><input type="number" id="hours" inputmode="decimal" min="1" step="1" value="24" /><span class="unit">時間</span></div>
+      <p class="hint">6時間まで／12時間まで／24時間まで／以降24時間ごとの料金表で計算します。端数の時間は次の区分に切り上げます。</p>
+    </div>
+    <div class="field">
+      <label class="lab">時期</label>
+      <div class="seg" id="segSeason"><span class="plate"></span>
+        <button type="button" data-v="normal" class="on">通常期</button>
+        <button type="button" data-v="busy">ハイシーズン</button>
+      </div>
+      <p class="hint">ハイシーズン（GW・お盆・年末年始など）は基本料金が約1.2倍になる想定です。</p>
+    </div>
+    <div class="field">
+      <label class="lab">補償</label>
+      <div class="seg" id="segHosho"><span class="plate"></span>
+        <button type="button" data-v="0">なし</button>
+        <button type="button" data-v="1100" class="on">免責補償</button>
+        <button type="button" data-v="2200">ワイド補償</button>
+      </div>
+      <p class="hint">免責補償は1,100円／24時間、ワイド補償（免責＋NOC補償）は2,200円／24時間が大手の標準的な目安です。</p>
+    </div>
+    <div class="field">
+      <label class="lab" for="onewaySel">乗り捨て（返却店舗）</label>
+      <div class="numrow"><select id="onewaySel" style="flex:1;min-width:0;font:inherit;font-size:15px;font-weight:700;padding:12px 10px;border:1.5px solid var(--line);border-radius:12px;background:#fbfcfe;color:var(--ink);">
+        <option value="0" selected>同じ店舗に返す（なし）</option>
+        <option value="3300">同一都道府県内（目安3,300円）</option>
+        <option value="11000">近距離・隣県など（目安11,000円）</option>
+        <option value="22000">長距離（目安22,000円）</option>
+      </select></div>
+      <p class="hint">乗り捨て料金は各社とも距離制で、金額表は公開されていません。同一都道府県内は無料の会社もあります。</p>
+    </div>
+    <div class="field">
+      <label class="lab">オプション</label>
+      <label class="optrow"><input type="checkbox" id="opChild" /><span><span class="t">チャイルドシート</span><span class="d" style="display:block;">1台あたり約1,100円（利用期間中）です。</span></span></label>
+      <label class="optrow"><input type="checkbox" id="opStudless" /><span><span class="t">スタッドレスタイヤ</span><span class="d" style="display:block;">約2,200円／24時間です。雪の時期は標準装備の地域もあります。</span></span></label>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>試算結果</h2>
+    <div class="result-big">
+      <div class="cap">レンタカー料金の目安（合計）</div>
+      <div class="amt" id="totalAmt">¥—</div>
+    </div>
+    <div class="result-grid">
+      <div class="cell"><div class="k">基本料金（時期を反映）</div><div class="v" id="baseAmt">—</div></div>
+      <div class="cell"><div class="k">補償</div><div class="v" id="hoshoAmt">—</div></div>
+      <div class="cell"><div class="k">オプション・乗り捨て</div><div class="v" id="optAmt">—</div></div>
+      <div class="cell"><div class="k">1日あたり</div><div class="v" id="perDay">—</div></div>
+      <div class="cell"><div class="k">利用時間</div><div class="v" id="hoursLab">—</div></div>
+      <div class="cell"><div class="k">クラス</div><div class="v" id="classLab">—</div></div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>計算のしかたと注意</h2>
+    <ul class="note">
+      <li>料金はトヨタ・ニッポン・オリックス・タイムズ・日産レンタカーの公式料金表（2026年11月15日確認）をもとに、一般料金・通常期・税込の中央値付近に寄せた目安です。会員割引・キャンペーン・早期割引は含みません。</li>
+      <li>格安系は同じクラスでも大きく安くなります（例：ニコニコレンタカーの軽自動車は24時間5,390円）。</li>
+      <li>ハイシーズンは基本料金×1.2で計算しています（タイムズカーレンタルの実率が根拠で、他社も同程度の割増が通例です）。</li>
+      <li>ガソリン代は含みません（満タン返しが基本です）。実際の料金は会社・店舗・地域で変わるので、予約前に各社の公式料金を確認してください。</li>
+    </ul>
+  </section>
+
+    <p class="pp-footer"><button type="button" class="pp-link" data-pp-open>プライバシーポリシー</button></p>
+</main>
+<footer class="ido-site-footer ido-footer-with-bar">
+  <p>本ページは非公式の個人ツールです。表示される金額は各社の公式料金表をもとにした目安であり、実際の料金は各事業者の公式情報をご確認ください。</p>
+  <p>制作：andy（わんこ堂）× 熊八 🐾（Muse Spark）</p>
+</footer>
+
+<div class="stickybar">
+  <span class="lab">レンタカー料金の目安</span>
+  <span class="amt" id="stickyPrice">¥—</span>
+  <span class="sub" id="stickyRoute">—</span>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  var RATES = [
+    { name: "軽自動車", r6: 6200, r12: 6600, r24: 8600, ext: 7000 },
+    { name: "コンパクト", r6: 6500, r12: 7200, r24: 9000, ext: 7500 },
+    { name: "中型", r6: 8000, r12: 9500, r24: 11000, ext: 9500 },
+    { name: "SUV", r6: 9500, r12: 11000, r24: 13000, ext: 11000 },
+    { name: "ミニバン", r6: 15000, r12: 17000, r24: 22000, ext: 17000 },
+    { name: "大型ミニバン", r6: 19000, r12: 24000, r24: 30000, ext: 21000 }
+  ];
+  var season = "normal";
+  var hoshoRate = 1100;
+
+  function yen(n) { return "¥" + Math.round(n).toLocaleString("ja-JP"); }
+  function num(id) {
+    var v = parseFloat(document.getElementById(id).value);
+    return isNaN(v) ? 0 : v;
+  }
+  function set(id, text) { document.getElementById(id).textContent = text; }
+
+  function baseFor(cls, hours) {
+    var full = Math.floor(hours / 24);
+    var rem = hours - full * 24;
+    if (full === 0) {
+      if (hours <= 6) return cls.r6;
+      if (hours <= 12) return cls.r12;
+      return cls.r24;
+    }
+    var base = cls.r24 + (full - 1) * cls.ext;
+    if (rem > 0) {
+      if (rem <= 6) base += cls.r6;
+      else if (rem <= 12) base += cls.r12;
+      else base += cls.ext;
+    }
+    return base;
+  }
+
+  function calc() {
+    var cls = RATES[parseInt(document.getElementById("classSel").value, 10) || 0];
+    var hours = Math.max(1, num("hours"));
+    var days = Math.ceil(hours / 24);
+    var base = baseFor(cls, hours) * (season === "busy" ? 1.2 : 1);
+    var hosho = hoshoRate * days;
+    var opt = num("onewaySel");
+    if (document.getElementById("opChild").checked) opt += 1100;
+    if (document.getElementById("opStudless").checked) opt += 2200 * days;
+    var total = base + hosho + opt;
+    var full = Math.floor(hours / 24);
+    var rem = hours - full * 24;
+    var hoursText = full === 0 ? (hours + "時間") : (rem === 0 ? (full + "日") : (full + "日＋" + rem + "時間"));
+    set("totalAmt", yen(total));
+    set("baseAmt", yen(base));
+    set("hoshoAmt", yen(hosho));
+    set("optAmt", yen(opt));
+    set("perDay", yen(total / days));
+    set("hoursLab", hoursText);
+    set("classLab", cls.name);
+    set("stickyPrice", yen(total));
+    set("stickyRoute", cls.name + " ／ " + hoursText);
+  }
+
+  function wireSeg(id, onChange) {
+    var seg = document.getElementById(id);
+    var plate = seg.querySelector(".plate");
+    var btns = Array.prototype.slice.call(seg.querySelectorAll("button"));
+    function move() {
+      var on = seg.querySelector("button.on");
+      if (on) { plate.style.left = on.offsetLeft + "px"; plate.style.width = on.offsetWidth + "px"; }
+    }
+    btns.forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        btns.forEach(function (x) { x.classList.remove("on"); });
+        btn.classList.add("on");
+        move();
+        onChange(btn.getAttribute("data-v"));
+      });
+    });
+    window.addEventListener("resize", move);
+    window.addEventListener("load", move);
+    move();
+  }
+  wireSeg("segSeason", function (v) { season = v; calc(); });
+  wireSeg("segHosho", function (v) { hoshoRate = parseInt(v, 10) || 0; calc(); });
+
+  ["classSel", "hours", "onewaySel"].forEach(function (id) {
+    document.getElementById(id).addEventListener("input", calc);
+    document.getElementById(id).addEventListener("change", calc);
+  });
+  ["opChild", "opStudless"].forEach(function (id) {
+    document.getElementById(id).addEventListener("change", calc);
+  });
+  calc();
+})();</script>
+<script>window.IDO_BASKET={kind:"rental"};</script>
+<script>
+/* ===== 移動シミュレーター 行程カゴ（共通部品） ===== */
+(function () {
+  "use strict";
+  var KEY = "ido_itinerary_v1";
+  var CFG = window.IDO_BASKET || { kind: "portal" };
+  function load() {
+    try {
+      var raw = localStorage.getItem(KEY);
+      var arr = raw ? JSON.parse(raw) : [];
+      return Array.isArray(arr) ? arr : [];
+    } catch (e) { return []; }
+  }
+  function save(items) {
+    try { localStorage.setItem(KEY, JSON.stringify(items)); } catch (e) {}
+  }
+  function yen(n) { return "¥" + Math.round(n).toLocaleString("ja-JP"); }
+  function parseAmt(text) {
+    if (!text) return null;
+    var digits = String(text).replace(/[^0-9]/g, "");
+    if (!digits) return null;
+    var v = parseInt(digits, 10);
+    return isNaN(v) ? null : v;
+  }
+  function elText(id) {
+    var el = document.getElementById(id);
+    return el ? el.textContent.trim() : "";
+  }
+  function extract() {
+    if (CFG.kind === "rental") {
+      var a = parseAmt(elText("totalAmt"));
+      if (a === null) return null;
+      var route = elText("stickyRoute");
+      return { kind: "rental", label: "レンタカー " + (route && route !== "—" ? route : ""), amount: a, unit: "台分" };
+    }
+    return null;
+  }
+  function total(items) {
+    return items.reduce(function (s, it) { return s + it.amount * (it.qty || 1); }, 0);
+  }
+  if (CFG.kind !== "portal") {
+    var box = document.createElement("div");
+    box.id = "ido-basket-widget";
+    box.style.cssText = "position:fixed;right:12px;bottom:92px;z-index:9999;background:#12283f;color:#fff;border-radius:12px;padding:10px 12px;box-shadow:0 6px 20px rgba(0,0,0,.3);font-family:system-ui,-apple-system,sans-serif;font-size:13px;max-width:78vw;";
+    box.innerHTML =
+      '<div id="ido-basket-status" style="margin-bottom:8px;color:#cfe2f3;">行程カゴ：0件／¥0</div>' +
+      '<button id="ido-basket-add" type="button" style="background:#f2a81d;color:#12283f;border:0;border-radius:8px;padding:8px 12px;font-weight:800;cursor:pointer;">＋ 行程に追加</button> ' +
+      '<a href="index.html" style="color:#fff;text-decoration:underline;">カゴを見る</a>';
+    document.body.appendChild(box);
+    var status = document.getElementById("ido-basket-status");
+    function refresh() {
+      var items = load();
+      status.textContent = "行程カゴ：" + items.length + "件／" + yen(total(items));
+    }
+    refresh();
+    window.addEventListener("storage", function (e) { if (e.key === KEY) refresh(); });
+    document.getElementById("ido-basket-add").addEventListener("click", function () {
+      var got = extract();
+      if (!got) {
+        alert("まだ料金が出ていません。先に条件を選んで料金を表示してから追加してください。");
+        return;
+      }
+      var items = load();
+      got.id = Date.now();
+      got.qty = 1;
+      items.push(got);
+      save(items);
+      refresh();
+      status.textContent = "追加しました：" + got.label + " " + yen(got.amount);
+    });
+  }
+})();
+</script>
+<div class="pp-overlay" data-pp-overlay>
+  <div class="pp-dialog privacy-policy" role="dialog" aria-modal="true" aria-labelledby="ppTitle">
+    <div class="pp-scroll">
+      <h2 id="ppTitle">プライバシーポリシー</h2>
+      <p>当サイト「移動シミュレーター」は、個人を特定する情報を収集しません。</p>
+      <p><strong>入力データについて：</strong>計算ツールに入力した内容は、お使いの端末のブラウザの中だけで処理され、サーバーへ送信されることはありません。「行程カゴ」の内容は、お使いのブラウザの localStorage にのみ保存されます。</p>
+      <p><strong>広告について：</strong>当サイトは、第三者配信の広告サービス（Google AdSense）を利用する場合があります。広告配信事業者は、ユーザーの興味に応じた広告を表示するため Cookie を使用することがあります。パーソナライズ広告は、Google の「広告設定」から無効にできます。</p>
+      <p><strong>アクセス解析について：</strong>当サイトはアクセス解析ツールを使用していません。</p>
+      <p><strong>免責事項：</strong>計算結果は目安であり、実際の料金は各事業者の公式情報をご確認ください。当サイトの利用によって生じた損害について、運営者は責任を負いません。</p>
+      <p><strong>お問い合わせ：</strong>当サイトは個人運営のツールサイトです。</p>
+      <p>制定日：2026年11月15日</p>
+    </div>
+    <div class="pp-actions">
+      <div class="pp-btn-row">
+        <button type="button" class="pp-close-btn" data-pp-close>閉じる</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="policy-snippet.js"></script>
+</body>
+</html>
