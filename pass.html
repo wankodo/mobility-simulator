@@ -81,23 +81,17 @@ footer{text-align:center;color:var(--sub);font-size:12.5px;padding:10px 4vw 26px
 .basketbar button{font:inherit;font-size:15px;font-weight:800;color:#fff;background:var(--accent);border:0;border-radius:999px;padding:11px 22px;cursor:pointer;box-shadow:0 4px 10px rgba(179,84,30,.35);}
 .basketbar button:active{transform:scale(.98);}
 </style>
+<link rel="stylesheet" href="site-unified.css" />
 </head>
 <body>
-<header>
+<header class="ido-sitebar"><a class="ido-brand" href="index.html" aria-label="移動シミュレーター トップへ"><span class="ido-brand-mark" aria-hidden="true">移</span><span class="ido-brand-text">移動シミュレーター<small>MOBILITY SIMULATOR</small></span></a><div class="ido-category-nav" role="navigation" aria-label="カテゴリ"><a href="index.html">トップ</a><a href="car.html">車系</a><a href="rail.html" class="is-current" aria-current="page">電車系</a><a href="useful.html">便利系</a></div></header>
+
+<header class="ido-hero">
   <p class="eyebrow">移動シミュレーター</p>
   <h1>🎫 定期代お得度チェックシミュレーター</h1>
   <p class="lead">片道運賃と定期代を入れるだけで、定期券と都度払いのどちらがお得か、月に何日乗れば元が取れるかを試算できます。</p>
 </header>
-<nav class="gnav">
-  <a href="index.html">トップ</a>
-  <a href="train.html">🚃 電車・新幹線</a>
-  <a href="timescar.html">🚗 タイムズカー</a>
-  <a href="highway.html">🛣️ 高速料金</a>
-  <a href="gasoline.html">⛽ ガソリン代</a>
-  <a href="parking.html">🅿️ 駐車場</a>
-  <a href="taxi.html">🚕 タクシー</a>
-  <a href="pass.html" class="on">🎫 定期代</a>
-</nav>
+<div class="ido-toolnav" role="navigation" aria-label="電車系ツール"><span class="ido-toolnav-label">電車系ツール</span><a href="rail.html">電車系トップ</a><a href="train.html">🚃 電車・新幹線</a><a href="pass.html" aria-current="page">🎫 定期代</a></div>
 <main>
   <section class="card">
     <h2>定期券と都度払いの比較</h2>
@@ -169,7 +163,7 @@ footer{text-align:center;color:var(--sub);font-size:12.5px;padding:10px 4vw 26px
     </div>
   </details>
 </main>
-<footer>
+<footer class="ido-site-footer">
   <p>このページは個人が作成した非公式の計算ツールです。鉄道・バス事業者の公式ページではありません。実際の運賃・定期代は各事業者の公式情報をご確認ください。</p>
   <p>制作：andy（わんこ堂）× 熊八 🐾（Muse Spark）</p>
 </footer>

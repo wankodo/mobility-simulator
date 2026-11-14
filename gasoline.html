@@ -103,17 +103,15 @@
   "isPartOf": { "@id": "https://wankodo.github.io/mobility-simulator/#website" }
 }
 </script>
+<link rel="stylesheet" href="site-unified.css" />
 </head>
 <body>
-<nav class="top">
-  <a class="brand" href="index.html">移動シミュレーター</a>
-  <a href="train.html">電車・新幹線</a>
-  <a href="timescar.html">タイムズカー</a>
-  <a href="highway.html">高速道路</a>
-  <a class="here" href="gasoline.html">ガソリン代</a>
-</nav>
+<header class="ido-sitebar"><a class="ido-brand" href="index.html" aria-label="移動シミュレーター トップへ"><span class="ido-brand-mark" aria-hidden="true">移</span><span class="ido-brand-text">移動シミュレーター<small>MOBILITY SIMULATOR</small></span></a><div class="ido-category-nav" role="navigation" aria-label="カテゴリ"><a href="index.html">トップ</a><a href="car.html" class="is-current" aria-current="page">車系</a><a href="rail.html">電車系</a><a href="useful.html">便利系</a></div></header>
+
 <main>
-  <div class="title-panel">
+<div class="ido-toolnav" role="navigation" aria-label="車系ツール"><span class="ido-toolnav-label">車系ツール</span><a href="car.html">車系トップ</a><a href="timescar.html">🚗 タイムズカー</a><a href="highway.html">🛣️ 高速料金</a><a href="gasoline.html" aria-current="page">⛽ ガソリン代</a><a href="parking.html">🅿️ 駐車場</a><a href="taxi.html">🚕 タクシー</a></div>
+
+  <div class="title-panel ido-hero">
     <span class="badge">ガソリン代</span>
     <h1>⛽ ガソリン代計算シミュレーター</h1>
     <p>走行距離と燃費、ガソリンの単価を入れるだけで、ガソリン代の目安がその場で出ます。往復・割り勘・通勤の月額／年額まで対応。計算はブラウザの中だけで完結し、入力が送信されることはありません。</p>
@@ -228,7 +226,7 @@
     <p>表示される金額は公開資料と計算式に基づく試算であり、実際の料金を保証するものではありません。</p>
   </details>
 </main>
-<footer>
+<footer class="ido-site-footer ido-footer-with-bar">
   <p>本ページは非公式の個人ツールです。ガソリン価格は地域・店舗・時期により変動します。正確な価格は各店舗の表示をご確認ください。</p>
   <p>制作：andy（わんこ堂）× 熊八 🐾（Muse Spark）</p>
 </footer>

@@ -82,21 +82,17 @@ footer{text-align:center;color:var(--sub);font-size:12.5px;padding:10px 4vw 26px
 .basketbar button{font:inherit;font-size:15px;font-weight:800;color:#fff;background:var(--accent);border:0;border-radius:999px;padding:11px 22px;cursor:pointer;box-shadow:0 4px 10px rgba(179,84,30,.35);}
 .basketbar button:active{transform:scale(.98);}
 </style>
+<link rel="stylesheet" href="site-unified.css" />
 </head>
 <body>
-<header>
+<header class="ido-sitebar"><a class="ido-brand" href="index.html" aria-label="移動シミュレーター トップへ"><span class="ido-brand-mark" aria-hidden="true">移</span><span class="ido-brand-text">移動シミュレーター<small>MOBILITY SIMULATOR</small></span></a><div class="ido-category-nav" role="navigation" aria-label="カテゴリ"><a href="index.html">トップ</a><a href="car.html" class="is-current" aria-current="page">車系</a><a href="rail.html">電車系</a><a href="useful.html">便利系</a></div></header>
+
+<header class="ido-hero">
   <p class="eyebrow">移動シミュレーター</p>
   <h1>🅿️ 駐車場料金計算シミュレーター</h1>
   <p class="lead">駐車場の料金体系（基本料金・無料時間・最大料金）を入れるだけで、駐車料金を試算できます。周辺の駐車場を地図で探せる試作機能もつけました。</p>
 </header>
-<nav class="gnav">
-  <a href="index.html">トップ</a>
-  <a href="train.html">🚃 電車・新幹線</a>
-  <a href="timescar.html">🚗 タイムズカー</a>
-  <a href="highway.html">🛣️ 高速料金</a>
-  <a href="gasoline.html">⛽ ガソリン代</a>
-  <a href="parking.html" class="on">🅿️ 駐車場</a>
-</nav>
+<div class="ido-toolnav" role="navigation" aria-label="車系ツール"><span class="ido-toolnav-label">車系ツール</span><a href="car.html">車系トップ</a><a href="timescar.html">🚗 タイムズカー</a><a href="highway.html">🛣️ 高速料金</a><a href="gasoline.html">⛽ ガソリン代</a><a href="parking.html" aria-current="page">🅿️ 駐車場</a><a href="taxi.html">🚕 タクシー</a></div>
 <main>
   <section class="card">
     <h2>駐車料金の計算</h2>
@@ -218,7 +214,7 @@ footer{text-align:center;color:var(--sub);font-size:12.5px;padding:10px 4vw 26px
     </div>
   </details>
 </main>
-<footer>
+<footer class="ido-site-footer">
   <p>このページは個人が作成した非公式の計算ツールです。駐車場事業者の公式ページではありません。実際の料金は各駐車場の公式情報をご確認ください。</p>
   <p>制作：andy（わんこ堂）× 熊八 🐾（Muse Spark）</p>
 </footer>
