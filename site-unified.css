@@ -1151,6 +1151,15 @@ html[data-theme="andy"] .foldsec > summary {
   color: #aee9f5;
 }
 
+/* 引っ越しのオプション行（Andyモード）：白地に沈むのを防ぐ */
+html[data-theme="andy"] .optrow { background: rgba(8, 22, 34, .85); border-color: rgba(70, 217, 236, .28); }
+html[data-theme="andy"] .optrow .t { color: #eaf7fb; }
+html[data-theme="andy"] .optrow .d { color: #a9c9d9; }
+html[data-theme="andy"] .optrow input { accent-color: #46d9ec; }
+@media (hover: hover) {
+  html[data-theme="andy"] .optrow:hover { background: rgba(70, 217, 236, .22); }
+}
+
 /* カードのホバー：浮き上がる動きはそのまま、半強調の色を足す（Andyモード） */
 @media (hover: hover) {
   html[data-theme="andy"] a.card:hover {
