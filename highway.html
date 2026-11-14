@@ -362,7 +362,7 @@
         color:var(--muted); font-size:13px; text-decoration:underline; cursor:pointer;
       }
       .pp-overlay{
-        position:fixed; inset:0; z-index:60; display:none;
+        position:fixed; inset:0; z-index:10001; display:none;
         align-items:center; justify-content:center; padding:16px;
         background:rgba(8,18,30,.55);
       }
@@ -3395,8 +3395,20 @@
     box.innerHTML =
       '<div id="ido-basket-status" style="margin-bottom:8px;color:#cfe2f3;">行程カゴ：0件／¥0</div>' +
       '<button id="ido-basket-add" type="button" style="background:#f2a81d;color:#12283f;border:0;border-radius:8px;padding:8px 12px;font-weight:800;cursor:pointer;">＋ 行程に追加</button> ' +
-      '<a href="index.html" style="color:#fff;text-decoration:underline;">カゴを見る</a>';
+      '<a href="/" style="color:#fff;text-decoration:underline;">カゴを見る</a>';
     document.body.appendChild(box);
+
+    /* 同意ポップアップ表示中はカゴを隠す（ポップアップを確実に最前面にするため） */
+    function syncWidgetVisibility() {
+      var ov = document.querySelector(".pp-overlay");
+      var open = ov && (ov.classList.contains("open") || window.getComputedStyle(ov).display !== "none");
+      box.style.display = open ? "none" : "";
+    }
+    if (window.MutationObserver) {
+      new MutationObserver(syncWidgetVisibility).observe(document.body, { attributes: true, attributeFilter: ["class", "style"], subtree: true });
+    }
+    setInterval(syncWidgetVisibility, 500);
+    syncWidgetVisibility();
 
     var status = document.getElementById("ido-basket-status");
     function refresh() {
@@ -3479,7 +3491,6 @@
     window.addEventListener("storage", function (e) { if (e.key === KEY) render(); });
   }
 })();
-
 </script>
 </body>
 </html>
