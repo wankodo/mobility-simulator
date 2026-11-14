@@ -1151,6 +1151,16 @@ html[data-theme="andy"] .foldsec > summary {
   color: #aee9f5;
 }
 
+/* プライバシーポリシーのボタン：ホバー半強調（Andyモード） */
+@media (hover: hover) {
+  html[data-theme="andy"] .pp-close-btn:hover,
+  html[data-theme="andy"] .pp-decline-btn:hover {
+    background: rgba(70, 217, 236, .22);
+    color: #d9fbff;
+    box-shadow: inset 0 0 0 1px rgba(70, 217, 236, .45);
+  }
+}
+
 /* プライバシーポリシーの本文（Andyモード側） */
 html[data-theme="andy"] .privacy-policy p,
 html[data-theme="andy"] .privacy-policy li {
