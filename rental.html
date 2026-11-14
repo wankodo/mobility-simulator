@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<meta name="description" content="レンタカー料金の目安シミュレーター。クラス（軽・コンパクト・ミニバンなど）と利用時間、補償やオプションを選ぶだけで、大手レンタカーの一般料金をもとにした料金の目安を無料で試算できます。" />
-<title>移動シミュレーター｜レンタカー料金の目安シミュレーター</title>
+<meta name="description" content="レンタカー料金シミュレーター。トヨタ・ニッポン・オリックス・タイムズ・ニコニコの5社から会社とクラスを選び、割引・補償・オプションまで全部入りの支払総額を試算できます。各社の公式料金表に基づく計算です。" />
+<title>移動シミュレーター｜レンタカー料金シミュレーター（会社別・全部入り総額）</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg" />
 <style>
   :root { --navy:#12283f; --navy2:#0b1c2c; --amber:#f2a81d; --fuel:#16a34a; --fuel2:#22c55e; --ink:#1c2733; --mut:#5b6b7c; --bg:#edf1f5; --card:#fff; --line:#e1e8ef; }
@@ -74,6 +74,7 @@
   .optrow input { width:19px; height:19px; margin-top:2px; accent-color:var(--fuel); flex:none; }
   .optrow .t { font-weight:800; font-size:14.5px; color:var(--ink); }
   .optrow .d { color:var(--mut); font-size:12.5px; margin-top:2px; }
+  .seg button:disabled { opacity:.35; cursor:not-allowed; }
 </style>
 <link rel="canonical" href="https://wankodo.github.io/mobility-simulator/gasoline.html" />
 <meta property="og:type" content="website" />
@@ -225,27 +226,31 @@
 
   <div class="title-panel ido-hero">
     <span class="badge">レンタカー</span>
-    <h1>🚙 レンタカー料金の目安</h1>
-    <p>大手レンタカー各社の公式料金表をもとにした、一般料金の目安です。クラスと利用時間、補償とオプションを選ぶだけで、支払額の目安が出ます。計算はブラウザの中だけで完結します。</p>
+    <h1>🚙 レンタカー料金シミュレーター</h1>
+    <p>会社とクラスを選ぶと、各社の公式料金表をもとに、割引・補償・オプションまで全部入りの支払総額が出ます。各社の予約画面は基本料金だけを大きく見せることが多いので、ここでは最初から総額表示です。計算はブラウザの中だけで完結します。</p>
   </div>
 
   <section class="panel">
     <h2>条件</h2>
     <div class="field">
-      <label class="lab" for="classSel">クラス</label>
-      <div class="numrow"><select id="classSel" style="flex:1;min-width:0;font:inherit;font-size:15px;font-weight:700;padding:12px 10px;border:1.5px solid var(--line);border-radius:12px;background:#fbfcfe;color:var(--ink);">
-        <option value="0">軽自動車（N-BOX・ワゴンR・タントなど）</option>
-        <option value="1" selected>コンパクト（フィット・ヤリス・ノートなど）</option>
-        <option value="2">中型（カローラ・プリウス・MAZDA3など）</option>
-        <option value="3">SUV（ヤリスクロス・ヴェゼル・CX-5など）</option>
-        <option value="4">ミニバン（ノア・セレナ・ステップワゴンなど）</option>
-        <option value="5">大型ミニバン（アルファード・ヴェルファイアなど）</option>
+      <label class="lab" for="companySel">レンタカー会社</label>
+      <div class="numrow"><select id="companySel" style="flex:1;min-width:0;font:inherit;font-size:15px;font-weight:700;padding:12px 10px;border:1.5px solid var(--line);border-radius:12px;background:#fbfcfe;color:var(--ink);">
+        <option value="toyota" selected>トヨタレンタカー</option>
+        <option value="nippon">ニッポンレンタカー</option>
+        <option value="orix">オリックスレンタカー</option>
+        <option value="times">タイムズカーレンタル</option>
+        <option value="niconico">ニコニコレンタカー（格安系）</option>
       </select></div>
+      <p class="hint">日産レンタカーは一般料金の一覧表が公式に公開されていないため、未収録です。</p>
+    </div>
+    <div class="field">
+      <label class="lab" for="classSel">クラス</label>
+      <div class="numrow"><select id="classSel" style="flex:1;min-width:0;font:inherit;font-size:15px;font-weight:700;padding:12px 10px;border:1.5px solid var(--line);border-radius:12px;background:#fbfcfe;color:var(--ink);"></select></div>
     </div>
     <div class="field">
       <label class="lab" for="hours">利用時間</label>
       <div class="numrow"><input type="number" id="hours" inputmode="decimal" min="1" step="1" value="24" /><span class="unit">時間</span></div>
-      <p class="hint">6時間まで／12時間まで／24時間まで／以降24時間ごとの料金表で計算します。端数の時間は次の区分に切り上げます。</p>
+      <p class="hint">料金表の区分（6時間まで／12時間まで／24時間まで／以降24時間ごと）で計算します。端数の時間は次の区分に切り上げます。ニコニコレンタカーは12時間／24時間区分です。</p>
     </div>
     <div class="field">
       <label class="lab">時期</label>
@@ -253,16 +258,21 @@
         <button type="button" data-v="normal" class="on">通常期</button>
         <button type="button" data-v="busy">ハイシーズン</button>
       </div>
-      <p class="hint">ハイシーズン（GW・お盆・年末年始など）は基本料金が約1.2倍になる想定です。</p>
+      <p class="hint" id="seasonHint">ハイシーズン（GW・お盆・年末年始など）は基本料金が約1.2倍になる想定です（タイムズの実率が根拠。他社は目安）。</p>
+    </div>
+    <div class="field">
+      <label class="lab" for="discountSel" id="discountLab">割引</label>
+      <div class="numrow"><select id="discountSel" style="flex:1;min-width:0;font:inherit;font-size:15px;font-weight:700;padding:12px 10px;border:1.5px solid var(--line);border-radius:12px;background:#fbfcfe;color:var(--ink);"></select></div>
+      <p class="hint" id="discountHint"></p>
     </div>
     <div class="field">
       <label class="lab">補償</label>
       <div class="seg" id="segHosho"><span class="plate"></span>
         <button type="button" data-v="0">なし</button>
-        <button type="button" data-v="1100" class="on">免責補償</button>
-        <button type="button" data-v="2200">ワイド補償</button>
+        <button type="button" data-v="m" class="on">免責補償</button>
+        <button type="button" data-v="w">ワイド補償</button>
       </div>
-      <p class="hint">免責補償は1,100円／24時間、ワイド補償（免責＋NOC補償）は2,200円／24時間が大手の標準的な目安です。</p>
+      <p class="hint" id="hoshoHint"></p>
     </div>
     <div class="field">
       <label class="lab" for="onewaySel">乗り捨て（返却店舗）</label>
@@ -272,50 +282,51 @@
         <option value="11000">近距離・隣県など（目安11,000円）</option>
         <option value="22000">長距離（目安22,000円）</option>
       </select></div>
-      <p class="hint">乗り捨て料金は各社とも距離制で、金額表は公開されていません。同一都道府県内は無料の会社もあります。</p>
+      <p class="hint">乗り捨て料金は各社とも距離制で金額表は非公開のため、目安の金額です。同一都道府県内は無料の会社もあります。</p>
     </div>
     <div class="field">
       <label class="lab">オプション</label>
-      <label class="optrow"><input type="checkbox" id="opChild" /><span><span class="t">チャイルドシート</span><span class="d" style="display:block;">1台あたり約1,100円（利用期間中）です。</span></span></label>
-      <label class="optrow"><input type="checkbox" id="opStudless" /><span><span class="t">スタッドレスタイヤ</span><span class="d" style="display:block;">約2,200円／24時間です。雪の時期は標準装備の地域もあります。</span></span></label>
+      <label class="optrow"><input type="checkbox" id="opChild" /><span><span class="t">チャイルドシート</span><span class="d" style="display:block;">1台あたり約1,100円（利用期間中）の目安です。</span></span></label>
+      <label class="optrow"><input type="checkbox" id="opStudless" /><span><span class="t">スタッドレスタイヤ</span><span class="d" style="display:block;">約2,200円／24時間の目安です。雪の時期は標準装備の地域もあります。</span></span></label>
     </div>
   </section>
 
   <section class="panel">
-    <h2>試算結果</h2>
+    <h2>試算結果（全部入りの支払総額）</h2>
     <div class="result-big">
-      <div class="cap">レンタカー料金の目安（合計）</div>
+      <div class="cap">支払総額（基本料金＋補償＋オプション）</div>
       <div class="amt" id="totalAmt">¥—</div>
     </div>
     <div class="result-grid">
-      <div class="cell"><div class="k">基本料金（時期を反映）</div><div class="v" id="baseAmt">—</div></div>
+      <div class="cell"><div class="k">基本料金（割引・時期の前）</div><div class="v" id="baseRawAmt">—</div></div>
+      <div class="cell"><div class="k">割引・料金区分の差額</div><div class="v" id="discAmt">—</div></div>
+      <div class="cell"><div class="k">基本料金（支払い分）</div><div class="v" id="baseAmt">—</div></div>
       <div class="cell"><div class="k">補償</div><div class="v" id="hoshoAmt">—</div></div>
       <div class="cell"><div class="k">オプション・乗り捨て</div><div class="v" id="optAmt">—</div></div>
       <div class="cell"><div class="k">1日あたり</div><div class="v" id="perDay">—</div></div>
-      <div class="cell"><div class="k">利用時間</div><div class="v" id="hoursLab">—</div></div>
-      <div class="cell"><div class="k">クラス</div><div class="v" id="classLab">—</div></div>
     </div>
   </section>
 
   <section class="panel">
     <h2>計算のしかたと注意</h2>
     <ul class="note">
-      <li>料金はトヨタ・ニッポン・オリックス・タイムズ・日産レンタカーの公式料金表（2026年11月15日確認）をもとに、一般料金・通常期・税込の中央値付近に寄せた目安です。会員割引・キャンペーン・早期割引は含みません。</li>
-      <li>格安系は同じクラスでも大きく安くなります（例：ニコニコレンタカーの軽自動車は24時間5,390円）。</li>
-      <li>ハイシーズンは基本料金×1.2で計算しています（タイムズカーレンタルの実率が根拠で、他社も同程度の割増が通例です）。</li>
-      <li>ガソリン代は含みません（満タン返しが基本です）。実際の料金は会社・店舗・地域で変わるので、予約前に各社の公式料金を確認してください。</li>
+      <li>料金データ確認日：2026年11月15日。金額は各社の公式料金表（一般料金・通常期・税込）に基づきます。出典：<a href="https://rent.toyota.co.jp/service/charge/priceList.aspx?tab=B" target="_blank" rel="noopener">トヨタレンタカー料金表</a>／<a href="https://www.nipponrentacar.co.jp/info/pdf/202512.pdf" target="_blank" rel="noopener">ニッポンレンタカー料金表PDF</a>／<a href="https://car.orix.co.jp/price/price_compact.html" target="_blank" rel="noopener">オリックスレンタカー料金表</a>／<a href="https://rental.timescar.jp/agreement/pdf/fare_list.pdf" target="_blank" rel="noopener">タイムズカーレンタル料金表PDF</a>／<a href="http://www.2525r.com/sp-price/09.php" target="_blank" rel="noopener">ニコニコレンタカー料金表</a>。年1回ペースで見直しています。</li>
+      <li>収録クラスは各社の主要クラスのみです。料金は出発店舗の地域で変わる場合があります（特にトヨタ）。</li>
+      <li>割引は全社とも基本料金のみに適用され、補償・オプションにはかかりません。「最大◯%」の割引はクラス・店舗で率が下がる場合があるため、目安として計算しています。</li>
+      <li>ニッポンの「安心コース」とオリックスの「レンタカー安心パック（RAP）」は金額の仕組みが異なるため、この計算のワイド補償では扱っていません。各社の予約画面で確認してください。</li>
+      <li>ガソリン代は含みません（満タン返しが基本です）。実際の料金は予約前に各社の公式サイトで確認してください。</li>
     </ul>
   </section>
 
     <p class="pp-footer"><button type="button" class="pp-link" data-pp-open>プライバシーポリシー</button></p>
 </main>
 <footer class="ido-site-footer ido-footer-with-bar">
-  <p>本ページは非公式の個人ツールです。表示される金額は各社の公式料金表をもとにした目安であり、実際の料金は各事業者の公式情報をご確認ください。</p>
+  <p>本ページは非公式の個人ツールです。各社とは関係のない個人運営の計算ツールであり、実際の料金は各事業者の公式情報をご確認ください。</p>
   <p>制作：andy（わんこ堂）× 熊八 🐾（Muse Spark）</p>
 </footer>
 
 <div class="stickybar">
-  <span class="lab">レンタカー料金の目安</span>
+  <span class="lab">レンタカー支払総額</span>
   <span class="amt" id="stickyPrice">¥—</span>
   <span class="sub" id="stickyRoute">—</span>
 </div>
@@ -323,16 +334,127 @@
 <script>
 (function () {
   "use strict";
-  var RATES = [
-    { name: "軽自動車", r6: 6200, r12: 6600, r24: 8600, ext: 7000 },
-    { name: "コンパクト", r6: 6500, r12: 7200, r24: 9000, ext: 7500 },
-    { name: "中型", r6: 8000, r12: 9500, r24: 11000, ext: 9500 },
-    { name: "SUV", r6: 9500, r12: 11000, r24: 13000, ext: 11000 },
-    { name: "ミニバン", r6: 15000, r12: 17000, r24: 22000, ext: 17000 },
-    { name: "大型ミニバン", r6: 19000, r12: 24000, r24: 30000, ext: 21000 }
-  ];
+  /* ===== 料金データ（年1回の見直しはこの表だけを直す） =====
+     rates: [6時間まで, 12時間まで, 24時間まで, 以降24時間ごと]
+     m: 免責補償／24時間, w: ワイド補償／24時間（nullは取扱なし）
+     出典はページ下部の「計算のしかたと注意」を参照。確認日 2026-11-15 */
+  var COMPANIES = {
+    toyota: {
+      name: "トヨタレンタカー",
+      hoshoNote: "免責補償1,100円／24時間、安心Wプラン（免責＋NOC免除）1,650円／24時間です。",
+      discountNote: "会員割引はWeb予約が条件です。C0・C1・W1クラスは割引の上限が10%です。特割GO!は会員限定・30日以上前の予約で、率は店舗・クラスで10〜30%と変わるため代表値20%で計算します。",
+      discounts: [
+        { label: "割引なし", rate: 0 },
+        { label: "トヨタレンタカーメンバー（Web予約）10%OFF", rate: 10 },
+        { label: "ゴールドメンバー（Web予約）20%OFF", rate: 20 },
+        { label: "特割GO!早割（30日以上前・代表値20%）", rate: 20 }
+      ],
+      classes: [
+        { name: "C0 軽自動車（タント・ピクシスエポック）", rates: [6160, 6600, 8580, 7260], m: 1100, w: 1650, cap10: true },
+        { name: "C1 コンパクト（ヤリス・ルーミー）", rates: [6160, 6600, 8580, 7260], m: 1100, w: 1650, cap10: true },
+        { name: "C2 中型（アクア・カローラ）", rates: [7150, 8250, 10120, 8250], m: 1100, w: 1650 },
+        { name: "C3 中型上級（プリウス・カローラツーリング）", rates: [8800, 9900, 12100, 9900], m: 1100, w: 1650 },
+        { name: "SUV1（ライズ・ヤリスクロス）", rates: [9130, 10450, 11440, 10450], m: 1100, w: 1650 },
+        { name: "SUV2（カローラクロス・C-HR）", rates: [10450, 12650, 16500, 12650], m: 1100, w: 1650 },
+        { name: "W1 コンパクトミニバン（シエンタ）", rates: [7700, 9900, 13200, 9900], m: 1100, w: 1650, cap10: true },
+        { name: "W2 ミニバン（ノア・ヴォクシー）", rates: [14300, 15400, 20900, 15400], m: 1100, w: 1650 },
+        { name: "W3 大型ミニバン（アルファード）", rates: [17050, 22000, 27500, 18700], m: 1100, w: 1650 }
+      ]
+    },
+    nippon: {
+      name: "ニッポンレンタカー",
+      hoshoNote: "CDW（免責補償）1,100円／日です。安心コース（CDW＋NOCを料金に含む別コース）は仕組みが異なるため、ここでは扱いません。",
+      discountNote: "会員割引・早割はすべて併用不可で、最も安いものを1つ選ぶ仕組みです。会員割引は軽クラスが約5%（ハイシーズンは対象外）、ハイシーズンは約5%になります。早割は会員限定・ネット予約・ネットクレジット決済限定で、率は「最大」表記の目安です。",
+      discounts: [
+        { label: "割引なし", rate: 0 },
+        { label: "メンバーズクラブ会員 最大10%OFF", rate: "member" },
+        { label: "ゴールド会員 最大20%OFF", rate: 20 },
+        { label: "早割14（14日前まで）約20%OFF", rate: 20 },
+        { label: "早割30（30日前まで）最大30%OFF", rate: 30 },
+        { label: "早割45（45日前まで）最大40%OFF", rate: 40 }
+      ],
+      classes: [
+        { name: "軽コンパクト（ワゴンR・ムーヴ）", rates: [6380, 6380, 8250, 7040], m: 1100, w: null, kei: true },
+        { name: "軽ラージ（N-BOX・ルークス）", rates: [6490, 7150, 8910, 7150], m: 1100, w: null, kei: true },
+        { name: "スタンダード コンパクト（フィット・ヤリス）", rates: [6490, 7150, 8910, 7150], m: 1100, w: null },
+        { name: "スタンダード ラージ（カローラ）", rates: [7700, 8910, 10670, 8910], m: 1100, w: null },
+        { name: "スタンダードプラス（ヤリスクロス・ノートe-POWER）", rates: [7920, 9240, 11000, 9240], m: 1100, w: null },
+        { name: "SUV（ヤリスクロス・ライズ）", rates: [8690, 10120, 12100, 10120], m: 1100, w: null },
+        { name: "コンパクトミニバン（シエンタ ハイブリッド）", rates: [10670, 13090, 16610, 13090], m: 1100, w: null },
+        { name: "ミニバン（ヴォクシー・セレナ／7人）", rates: [15400, 16610, 22550, 16610], m: 1100, w: null },
+        { name: "プレミアムワゴン（アルファード）", rates: [29370, 37840, 47300, 32120], m: 1100, w: null }
+      ]
+    },
+    orix: {
+      name: "オリックスレンタカー",
+      hoshoNote: "免責補償はクラスにより1,100円または2,200円／24時間です。レンタカー安心パック（RAP）は金額に幅があるため、ここでは扱いません。",
+      discountNote: "プライムメンバーズクラブの会員割引とウェブ割引（+5%）は合算できます。早予約30プラン（30日前まで・30%OFF）は会員割引と併用できません。",
+      discounts: [
+        { label: "割引なし", rate: 0 },
+        { label: "スタンダードメンバー 5%OFF", rate: 5 },
+        { label: "スタンダード＋ウェブ割引 10%OFF", rate: 10 },
+        { label: "ゴールドメンバー 10%OFF", rate: 10 },
+        { label: "ゴールド＋ウェブ割引 15%OFF", rate: 15 },
+        { label: "プラチナメンバー 15%OFF", rate: 15 },
+        { label: "プラチナ＋ウェブ割引 20%OFF", rate: 20 },
+        { label: "早予約30プラン（30日前まで）30%OFF", rate: 30 }
+      ],
+      classes: [
+        { name: "KSS 軽（ワゴンR・デイズ）", rates: [6160, 6160, 8250, 6160], m: 1100, w: null },
+        { name: "KS 軽（N-BOX・タント）", rates: [7150, 7150, 9240, 7150], m: 1100, w: null },
+        { name: "SA コンパクト（フィット・ノート）", rates: [7150, 7920, 9900, 7920], m: 1100, w: null },
+        { name: "A スタンダード（ヤリス1.5・MAZDA2）", rates: [8360, 9570, 11550, 9570], m: 1100, w: null },
+        { name: "EVC EV（リーフ）", rates: [10120, 11330, 14300, 11330], m: 1100, w: null },
+        { name: "RB SUV（ヤリスクロス）", rates: [8910, 10120, 12100, 10120], m: 1100, w: null },
+        { name: "RD SUV（エクストレイル・CX-3）", rates: [10670, 12980, 16500, 12980], m: 1100, w: null },
+        { name: "WS コンパクトミニバン（フリード・シエンタ）", rates: [9570, 10780, 13090, 10780], m: 1100, w: null },
+        { name: "WA ミニバン（ノア・セレナ）", rates: [15510, 16720, 22660, 16720], m: 1100, w: null },
+        { name: "WE 大型ミニバン（アルファード）", rates: [20240, 28600, 34540, 26180], m: 2200, w: null }
+      ]
+    },
+    times: {
+      name: "タイムズカーレンタル",
+      hoshoNote: "免責補償コースはクラスにより1,100〜2,200円／24時間。安心補償コースは免責補償に＋1,100円／24時間です。",
+      discountNote: "タイムズクラブ会員（入会金・年会費無料）の割引です。シーズン料金にも同じ率が適用されます。他の割引とは併用できません。定常的な早割制度はありません。",
+      discounts: [
+        { label: "割引なし", rate: 0 },
+        { label: "タイムズクラブ会員・Web予約 20%OFF", rate: 20 },
+        { label: "タイムズクラブ会員・電話/店頭 10%OFF", rate: 10 }
+      ],
+      classes: [
+        { name: "K-0 軽（フレア・N-BOX・ハスラー）", rates: [5313, 6451, 7590, 6732], m: 1100, w: 2200 },
+        { name: "C-1 コンパクト（MAZDA2・フィット）", rates: [6198, 7590, 8855, 7920], m: 1100, w: 2200 },
+        { name: "C-2・M-2（ヤリス・アクア・MAZDA3）", rates: [7590, 9108, 10752, 9504], m: 1100, w: 2200 },
+        { name: "C-3・M-3（プリウス・MAZDA6）", rates: [8855, 10752, 12650, 11220], m: 1430, w: 2530 },
+        { name: "W-1 コンパクトミニバン（シエンタ・フリード）", rates: [8981, 11005, 12903, 11484], m: 1430, w: 2530 },
+        { name: "O-2 SUV（ヤリスクロス・C-HR）", rates: [9740, 11891, 13915, 12408], m: 1430, w: 2530 },
+        { name: "W-4・O-4 ミニバン（セレナ・ノア）", rates: [15939, 19354, 22770, 20196], m: 1430, w: 2530 },
+        { name: "W-5・F-5 大型（アルファード）", rates: [22137, 26944, 31625, 28116], m: 2200, w: 3300 }
+      ]
+    },
+    niconico: {
+      name: "ニコニコレンタカー",
+      hoshoNote: "免責補償プラスはクラスにより1,650円または2,200円／24時間、パーフェクト補償は2,200円または2,750円／24時間です。大手と補償の範囲が異なる場合があります。",
+      discountNote: "ニコニコは%割引ではなく、一般／会員（ニコレンメイト）／アプリ（ニコパス）の料金表が分かれています。ここでは料金表そのものを切り替えます。",
+      discountLabel: "料金区分",
+      discounts: [
+        { label: "一般料金", rate: "gen" },
+        { label: "会員料金（ニコレンメイト）", rate: "mem" },
+        { label: "アプリ料金（ニコパス）", rate: "app" }
+      ],
+      classes: [
+        { name: "K 軽自動車（N-BOX・タント）", gen: [3630, 5390], mem: [3300, 5170], app: [2420, 4840], m: 1650, w: 2200, busyAdd: 550 },
+        { name: "S コンパクト（アクア・ヤリス）", gen: [3740, 5610], mem: [3410, 5390], app: [2525, 5060], m: 1650, w: 2200, busyAdd: 550 },
+        { name: "G 中型（カローラツーリングHV・CX-30）", gen: [6710, 8360], mem: [6160, 7590], app: [5720, 7260], m: 1650, w: 2200, busyAdd: 550 },
+        { name: "SUV（XVなど）", gen: [9020, 10780], mem: [8580, 10230], app: [8030, 9680], m: 2200, w: 2750, busyAdd: 1100 },
+        { name: "F1 ミニバン（ノアなど）", gen: [11660, 15180], mem: [10890, 14080], app: [10340, 13530], m: 2200, w: 2750, busyAdd: 1100 },
+        { name: "F2 高級ミニバン（アルファードなど）", gen: [14960, 18150], mem: [14190, 17050], app: [13640, 16500], m: 2200, w: 2750, busyAdd: 1100 }
+      ]
+    }
+  };
+
   var season = "normal";
-  var hoshoRate = 1100;
+  var hoshoSel = "m";
 
   function yen(n) { return "¥" + Math.round(n).toLocaleString("ja-JP"); }
   function num(id) {
@@ -340,78 +462,160 @@
     return isNaN(v) ? 0 : v;
   }
   function set(id, text) { document.getElementById(id).textContent = text; }
+  function company() { return COMPANIES[document.getElementById("companySel").value]; }
+  function cls() {
+    var c = company();
+    var i = parseInt(document.getElementById("classSel").value, 10) || 0;
+    return c.classes[Math.min(i, c.classes.length - 1)];
+  }
 
-  function baseFor(cls, hours) {
+  function baseFromRates(rates, hours) {
     var full = Math.floor(hours / 24);
     var rem = hours - full * 24;
     if (full === 0) {
-      if (hours <= 6) return cls.r6;
-      if (hours <= 12) return cls.r12;
-      return cls.r24;
+      if (hours <= 6) return rates[0];
+      if (hours <= 12) return rates[1];
+      return rates[2];
     }
-    var base = cls.r24 + (full - 1) * cls.ext;
+    var base = rates[2] + (full - 1) * rates[3];
     if (rem > 0) {
-      if (rem <= 6) base += cls.r6;
-      else if (rem <= 12) base += cls.r12;
-      else base += cls.ext;
+      if (rem <= 6) base += rates[0];
+      else if (rem <= 12) base += rates[1];
+      else base += rates[3];
     }
+    return base;
+  }
+  function baseNico(table, hours) {
+    var full = Math.floor(hours / 24);
+    var rem = hours - full * 24;
+    if (full === 0) return hours <= 12 ? table[0] : table[1];
+    var base = full * table[1];
+    if (rem > 0) base += rem <= 12 ? table[0] : table[1];
     return base;
   }
 
   function calc() {
-    var cls = RATES[parseInt(document.getElementById("classSel").value, 10) || 0];
+    var comp = company();
+    var cl = cls();
     var hours = Math.max(1, num("hours"));
     var days = Math.ceil(hours / 24);
-    var base = baseFor(cls, hours) * (season === "busy" ? 1.2 : 1);
+    var isNico = !!cl.gen;
+    var discOpt = comp.discounts[parseInt(document.getElementById("discountSel").value, 10) || 0];
+
+    var baseGen, baseApplied;
+    if (isNico) {
+      baseGen = baseNico(cl.gen, hours);
+      baseApplied = baseNico(cl[discOpt.rate], hours);
+      if (season === "busy") { baseGen += cl.busyAdd; baseApplied += cl.busyAdd; }
+    } else {
+      baseGen = baseFromRates(cl.rates, hours);
+      if (season === "busy") baseGen = baseGen * 1.2;
+      var rate = discOpt.rate;
+      if (rate === "member") {
+        rate = cl.kei ? (season === "busy" ? 0 : 5) : (season === "busy" ? 5 : 10);
+      }
+      if (cl.cap10 && rate > 10) rate = 10;
+      baseApplied = baseGen * (1 - rate / 100);
+    }
+    var disc = baseGen - baseApplied;
+
+    var hoshoRate = hoshoSel === "m" ? cl.m : (hoshoSel === "w" ? cl.w : 0);
+    if (hoshoRate === null || hoshoRate === undefined) hoshoRate = 0;
     var hosho = hoshoRate * days;
+
     var opt = num("onewaySel");
     if (document.getElementById("opChild").checked) opt += 1100;
     if (document.getElementById("opStudless").checked) opt += 2200 * days;
-    var total = base + hosho + opt;
-    var full = Math.floor(hours / 24);
-    var rem = hours - full * 24;
-    var hoursText = full === 0 ? (hours + "時間") : (rem === 0 ? (full + "日") : (full + "日＋" + rem + "時間"));
+
+    var total = baseApplied + hosho + opt;
     set("totalAmt", yen(total));
-    set("baseAmt", yen(base));
+    set("baseRawAmt", yen(baseGen));
+    set("discAmt", disc > 0 ? "−" + yen(disc) : "¥0");
+    set("baseAmt", yen(baseApplied));
     set("hoshoAmt", yen(hosho));
     set("optAmt", yen(opt));
     set("perDay", yen(total / days));
-    set("hoursLab", hoursText);
-    set("classLab", cls.name);
     set("stickyPrice", yen(total));
-    set("stickyRoute", cls.name + " ／ " + hoursText);
+    set("stickyRoute", comp.name + " ／ " + cl.name.split("（")[0]);
   }
 
+  function fillClasses() {
+    var comp = company();
+    var sel = document.getElementById("classSel");
+    sel.innerHTML = "";
+    comp.classes.forEach(function (c, i) {
+      var o = document.createElement("option");
+      o.value = i;
+      o.textContent = c.name;
+      sel.appendChild(o);
+    });
+    var dsel = document.getElementById("discountSel");
+    dsel.innerHTML = "";
+    comp.discounts.forEach(function (d, i) {
+      var o = document.createElement("option");
+      o.value = i;
+      o.textContent = d.label;
+      dsel.appendChild(o);
+    });
+    set("discountLab", comp.discountLabel || "割引");
+    set("discountHint", comp.discountNote || "");
+    set("hoshoHint", comp.hoshoNote || "");
+    set("seasonHint", comp === COMPANIES.niconico
+      ? "ニコニコの繁忙期は加算方式のため、目安として1回あたり550円（SUV・ミニバンは1,100円）を加算します（公式料金表では未確認の情報に基づく目安）。"
+      : "ハイシーズン（GW・お盆・年末年始など）は基本料金が約1.2倍になる想定です（タイムズの実率が根拠。他社は目安）。");
+    syncHoshoSeg();
+  }
+
+  function syncHoshoSeg() {
+    var cl = cls();
+    var wBtn = document.querySelector('#segHosho button[data-v="w"]');
+    if (cl.w === null || cl.w === undefined) {
+      wBtn.disabled = true;
+      if (hoshoSel === "w") {
+        hoshoSel = "m";
+        document.querySelectorAll("#segHosho button").forEach(function (b) {
+          b.classList.toggle("on", b.getAttribute("data-v") === "m");
+        });
+        movePlate(document.getElementById("segHosho"));
+      }
+    } else {
+      wBtn.disabled = false;
+    }
+  }
+
+  function movePlate(seg) {
+    var plate = seg.querySelector(".plate");
+    var on = seg.querySelector("button.on");
+    if (on && plate) { plate.style.left = on.offsetLeft + "px"; plate.style.width = on.offsetWidth + "px"; }
+  }
   function wireSeg(id, onChange) {
     var seg = document.getElementById(id);
-    var plate = seg.querySelector(".plate");
     var btns = Array.prototype.slice.call(seg.querySelectorAll("button"));
-    function move() {
-      var on = seg.querySelector("button.on");
-      if (on) { plate.style.left = on.offsetLeft + "px"; plate.style.width = on.offsetWidth + "px"; }
-    }
     btns.forEach(function (btn) {
       btn.addEventListener("click", function () {
+        if (btn.disabled) return;
         btns.forEach(function (x) { x.classList.remove("on"); });
         btn.classList.add("on");
-        move();
+        movePlate(seg);
         onChange(btn.getAttribute("data-v"));
       });
     });
-    window.addEventListener("resize", move);
-    window.addEventListener("load", move);
-    move();
+    window.addEventListener("resize", function () { movePlate(seg); });
+    window.addEventListener("load", function () { movePlate(seg); });
+    movePlate(seg);
   }
   wireSeg("segSeason", function (v) { season = v; calc(); });
-  wireSeg("segHosho", function (v) { hoshoRate = parseInt(v, 10) || 0; calc(); });
+  wireSeg("segHosho", function (v) { hoshoSel = v; calc(); });
 
-  ["classSel", "hours", "onewaySel"].forEach(function (id) {
+  document.getElementById("companySel").addEventListener("change", function () { fillClasses(); calc(); });
+  ["classSel", "discountSel", "hours", "onewaySel"].forEach(function (id) {
     document.getElementById(id).addEventListener("input", calc);
-    document.getElementById(id).addEventListener("change", calc);
+    document.getElementById(id).addEventListener("change", function () { if (id === "classSel") syncHoshoSeg(); calc(); });
   });
   ["opChild", "opStudless"].forEach(function (id) {
     document.getElementById(id).addEventListener("change", calc);
   });
+  fillClasses();
   calc();
 })();</script>
 <script>window.IDO_BASKET={kind:"rental"};</script>
