@@ -409,10 +409,50 @@
   var root = document.getElementById("ido-basket-root");
   if (root) {
     var persons = 1;
+    function freeFormHtml() {
+      return '<div style="margin-top:16px;padding-top:14px;border-top:1px dashed #c9d4de;">' +
+        '<div style="font-weight:800;margin-bottom:8px;">手入力で追加</div>' +
+        '<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">' +
+        '<input id="ido-free-label" type="text" placeholder="項目名（例：お土産代）" style="flex:1;min-width:150px;padding:8px;">' +
+        '<input id="ido-free-amount" type="number" min="1" step="1" inputmode="numeric" placeholder="金額（円）" style="width:120px;padding:8px;">' +
+        '<button type="button" class="bkt-btn bkt-share" id="ido-free-add">カゴに入れる</button></div>' +
+        '<p style="color:#5b6b7c;font-size:12.5px;line-height:1.7;margin:8px 0 0;">ツールにない費用（駐車場の実額、飲食代など）も、そのまま行程に入れられます。</p></div>';
+    }
+    function wireFree(keepLabel, keepAmt) {
+      var nl = document.getElementById("ido-free-label");
+      var na = document.getElementById("ido-free-amount");
+      if (nl) nl.value = keepLabel || "";
+      if (na) na.value = keepAmt || "";
+      var fadd = document.getElementById("ido-free-add");
+      if (!fadd) return;
+      fadd.addEventListener("click", function () {
+        var labEl = document.getElementById("ido-free-label");
+        var amtEl = document.getElementById("ido-free-amount");
+        var amt = parseInt(amtEl && amtEl.value, 10);
+        if (!amt || amt <= 0) { alert("金額を入れてください。"); return; }
+        var lab = ((labEl && labEl.value) || "").trim() || "手入力の項目";
+        var items4 = load();
+        items4.push({ id: Date.now(), kind: "free", label: lab, amount: amt, unit: "手入力", qty: 1 });
+        save(items4);
+        if (labEl) labEl.value = "";
+        if (amtEl) amtEl.value = "";
+        render();
+      });
+      [nl, na].forEach(function (inp) {
+        if (inp) inp.addEventListener("keydown", function (e) {
+          if (e.key === "Enter") { e.preventDefault(); fadd.click(); }
+        });
+      });
+    }
     function render() {
       var items = load();
+      var keepLabelEl = document.getElementById("ido-free-label");
+      var keepAmtEl = document.getElementById("ido-free-amount");
+      var keepLabel = keepLabelEl ? keepLabelEl.value : "";
+      var keepAmt = keepAmtEl ? keepAmtEl.value : "";
       if (!items.length) {
-        root.innerHTML = '<p style="color:#5b6b7c;line-height:1.8;margin:0;">まだ何も入っていません。各シミュレーターで料金を出して「＋ 行程に追加」を押すと、ここに積み上がって合計が出ます。</p>';
+        root.innerHTML = '<p style="color:#5b6b7c;line-height:1.8;margin:0;">まだ何も入っていません。各シミュレーターで料金を出して「＋ 行程に追加」を押すと、ここに積み上がって合計が出ます。下の「手入力で追加」から直接入れることもできます。</p>' + freeFormHtml();
+        wireFree(keepLabel, keepAmt);
         return;
       }
       var html = "";
@@ -436,6 +476,7 @@
         '<input id="ido-persons" type="number" min="1" max="99" value="' + persons + '" style="width:64px;padding:6px;"> 人で割ると ' +
         "<strong style='color:#1c2733;'" + (persons >= 2 ? " class='ido-split-hot'" : "") + ">1人あたり " + yen(per) + "</strong>（端数切り上げ）</div>" +
         '<div style="margin-top:10px;"><button type="button" class="bkt-btn" id="ido-clear">カゴを空にする</button> <button type="button" class="bkt-btn bkt-share" id="ido-share">試算結果を共有</button></div>';
+      html += freeFormHtml();
       root.innerHTML = html;
 
       root.querySelectorAll("button[data-act]").forEach(function (b) {
@@ -496,6 +537,7 @@
           navigator.share({ text: text }).catch(function (e) { if (!e || e.name !== "AbortError") fallback(); });
         } else fallback();
       });
+      wireFree(keepLabel, keepAmt);
     }
     function escapeHtml(s) {
       return String(s).replace(/[&<>"']/g, function (c) {
