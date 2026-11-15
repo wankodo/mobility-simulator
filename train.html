@@ -275,7 +275,7 @@
   }
 }
 </script>
-<link rel="stylesheet" href="site-unified.css?v=19" />
+<link rel="stylesheet" href="site-unified.css?v=20" />
 <script>
 (function () {
   var PIC = {
@@ -387,7 +387,7 @@
 <header class="ido-sitebar"><a class="ido-brand" href="index.html" aria-label="移動シミュレーター トップへ"><span class="ido-brand-mark" aria-hidden="true">移</span><span class="ido-brand-text"><small>MOBILITY SIMULATOR</small></span></a><div class="ido-category-nav" role="navigation" aria-label="カテゴリ"><a href="index.html">トップ</a><a href="car.html">車系</a><a href="rail.html" class="is-current" aria-current="page">電車系</a><a href="useful.html">便利系</a></div><div class="ido-theme-switch" role="group" aria-label="表示モード切替"><button type="button" data-ido-theme="kuma" aria-pressed="true">熊八モード</button><button type="button" data-ido-theme="andy" aria-pressed="false">Andyモード</button></div></header>
 
 <div class="wrap">
-      <div class="ido-toolnav" role="navigation" aria-label="電車系ツール"><span class="ido-toolnav-label">電車系ツール</span><a href="rail.html">電車系トップ</a><a href="train.html" aria-current="page">🚃 電車・新幹線</a><a href="pass.html">🎫 定期代</a></div>
+      <div class="ido-toolnav" role="navigation" aria-label="電車系ツール"><span class="ido-toolnav-label">電車系ツール</span><a href="rail.html">電車系トップ</a><a href="train.html" aria-current="page"><span class="ido-pic pic-dual" data-emoji="🚃"><span class="pic-e">🚃</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3.5" width="14" height="13" rx="2.5"/><path d="M5 10.3h14"/><path d="M9 13.9h.01M15 13.9h.01" stroke-width="2.6"/><path d="M8.5 20.5l2-4"/><path d="M15.5 20.5l-2-4"/><path d="M7 20.5h10"/></svg></span> 電車・新幹線</a><a href="pass.html"><span class="ido-pic pic-dual" data-emoji="🎫"><span class="pic-e">🎫</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8.6a2.4 2.4 0 0 0 0 2.8V15a1.6 1.6 0 0 0 1.6 1.6h12.8A1.6 1.6 0 0 0 20 15v-3.6a2.4 2.4 0 0 1 0-2.8V7A1.6 1.6 0 0 0 18.4 5.4H5.6A1.6 1.6 0 0 0 4 7z"/><path d="M13.8 6.2v1.7M13.8 10.2v1.7M13.8 14.2v1.6"/></svg></span> 定期代</a></div>
 <header class="ido-hero ido-train-hero"><h1>電車・新幹線シミュレーター</h1>
       <p class="sub">全国のJR各社（北海道・東日本・東海・西日本・四国・九州）・新幹線各線・各地の大手私鉄と地下鉄を収録した時刻表検索。いまの時刻から「次の電車」と運賃・特急料金を計算します。長距離路線は主要駅中心の収録で、途中駅の一部を省略しています（収録路線の一覧は、ページ下部の折り畳み「収録路線一覧・駅データ・データの出典」にまとめています）。</p></header>
       <div class="clockbar">
@@ -419,7 +419,7 @@
           </div>
         </div>
         <div class="georow" style="margin-top:10px">
-          <button class="btn-sub" id="geoBtn" type="button">📍 現在地から近い駅を出発駅にする</button>
+          <button class="btn-sub" id="geoBtn" type="button"><span class="ido-pic pic-dual" data-emoji="📍"><span class="pic-e">📍</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-6.6-5.5-6.6-10.3a6.6 6.6 0 0 1 13.2 0C18.6 15.5 12 21 12 21z"/><circle cx="12" cy="10.4" r="2.3"/></svg></span> 現在地から近い駅を出発駅にする</button>
           <span class="geostatus" id="geoMsg" role="status"></span>
         </div>
         <div class="geomsg" id="geoNote" hidden>位置情報はこの端末の中だけで使い、外部に送信しません。候補駅から選ぶと出発駅にセットされます。</div>

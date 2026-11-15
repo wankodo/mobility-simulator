@@ -1339,3 +1339,8 @@ html[data-theme="andy"] #ido-basket-root #ido-persons {
     color: #eafcff;
   }
 }
+
+/* 静的ピクトグラム（絵文字と線画を両方埋め込み、CSSで切替。ちらつき防止） */
+.pic-dual svg { display: none; }
+html[data-theme="andy"] .pic-dual svg { display: block; }
+html[data-theme="andy"] .pic-e { display: none; }
