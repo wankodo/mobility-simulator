@@ -458,7 +458,7 @@
   }
 }
 </script>
-<link rel="stylesheet" href="site-unified.css?v=17" />
+<link rel="stylesheet" href="site-unified.css?v=18" />
 <script>
 (function () {
   var PIC = {
@@ -681,7 +681,6 @@
             <p class="hint">ETC割引は、ETC無線走行が条件です。NEXCOの深夜割引は0〜4時の走行・全区間30%引き、休日割引は土日祝・軽自動車等と普通車のみで、対象は地方部区間の料金に対する30%引きです（本ページでは入口通過時刻で判定します）。首都高は休日割引がなく深夜割引は0〜4時・20%引き、外環道は深夜割引30%のみ、圏央道には時間帯割引がありません。首都高・外環道はETCなし（現金）では距離によらず上限料金になります。阪神高速は深夜割引（0〜4時・20%）のみ、名古屋高速はETC夜間割引（22〜24時・10%）のみです。沖縄道には深夜・休日割引はなく、ETC料金は特別措置による割引後の額です。アクアラインとみちのく有料道路はETC料金が通常料金より安くなっています。福岡高速・北九州高速・広島高速4号線・百石道路・第二みちのく有料道路はETCでも同額です。京葉道路は、宮野木JCT以西ではETC車の「地域内利用」に限り据え置きの特別料金になりますが、首都高と連続利用した場合はETC車でも通常料金になります（以東はETC・現金同額）。本四高速はETC平日料金の計算方式で計算し、現金料金とETC休日料金は未対応です。広島高速1〜3号線のETC時間帯割引（最大10%）は未対応です。第4段階で追加した地域有料道路は、いずれもETC・現金同額で時間帯割引はありません（衣浦豊田道路はETC自体が利用できず現金・回数券のみ、常陸那珂有料道路のETCは東水戸道路との通り抜け時のみ、逗葉新道はETCGO対応です）。第4段階後半の日光宇都宮道路・播但連絡道路もIC間料金表の料金でETC・現金同額です（播但連絡道路のETC割引は未対応）。第二阪奈道路は計算式による距離制で、激変緩和で据え置かれている区間では実際の料金より高くなる場合があります。第5段階で追加した南阪奈道路・堺泉北有料道路は、NEXCO西日本のIC間料金表の額（非ETC車の最大料金ベース）で計算し、ETC車は激変緩和の上限額の適用により表示より安くなる場合があります。福岡前原有料道路は区間料金制でETC・現金同額です。三浦縦貫道路はETC自体が利用できず、現金・交通系ICカード・ETCGOでの支払いになります。指宿スカイラインは区間ごとにETC料金と通常料金が異なり（ETCは山田料金所・中山料金所をETCで通過した場合のみ適用）、谷山IC〜頴娃IC間は全車種100円です（料金徴収は7〜19時のみで夜間は無料ですが、本ページでは時刻によらず100円で計算します）。</p>
           </details>
 
-          <button type="button" class="calc-btn" id="calcBtn">料金を計算する</button>
         </section>
 
         <!-- ======== result ======== -->
@@ -2856,7 +2855,6 @@
       hourSel.addEventListener("change", calculate);
       $("etcCheck").addEventListener("change", calculate);
       $("roundCheck").addEventListener("change", calculate);
-      $("calcBtn").addEventListener("click", calculate);
 
       /* ================= 地図で目的地に近いICを探すためのマップリンク =================
          各種マップのリンクはパラメータなしの「素のマップ」を開く固定リンク
@@ -3629,7 +3627,7 @@
   /* --- カゴ管理（トップページ） --- */
   var root = document.getElementById("ido-basket-root");
   if (root) {
-    var persons = 2;
+    var persons = 1;
     function render() {
       var items = load();
       if (!items.length) {
@@ -3655,7 +3653,7 @@
       html += '<div style="padding:14px 0 2px;font-size:16px;">総合計 <strong style="font-size:22px;">' + yen(sum) + "</strong></div>" +
         '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;color:#5b6b7c;">割り勘：' +
         '<input id="ido-persons" type="number" min="1" max="99" value="' + persons + '" style="width:64px;padding:6px;"> 人で割ると ' +
-        "<strong style='color:#1c2733;'>1人あたり " + yen(per) + "</strong>（端数切り上げ）</div>" +
+        "<strong style='color:#1c2733;'" + (persons >= 2 ? " class='ido-split-hot'" : "") + ">1人あたり " + yen(per) + "</strong>（端数切り上げ）</div>" +
         '<div style="margin-top:10px;"><button type="button" id="ido-clear" style="padding:6px 12px;">カゴを空にする</button></div>';
       root.innerHTML = html;
 

@@ -82,7 +82,7 @@ footer{text-align:center;color:var(--sub);font-size:12.5px;padding:10px 4vw 26px
 .basketbar button{font:inherit;font-size:15px;font-weight:800;color:#fff;background:var(--accent);border:0;border-radius:999px;padding:11px 22px;cursor:pointer;box-shadow:0 4px 10px rgba(179,84,30,.35);}
 .basketbar button:active{transform:scale(.98);}
 </style>
-<link rel="stylesheet" href="site-unified.css?v=17" />
+<link rel="stylesheet" href="site-unified.css?v=18" />
 <script>
 (function () {
   var PIC = {
@@ -293,8 +293,7 @@ footer{text-align:center;color:var(--sub);font-size:12.5px;padding:10px 4vw 26px
     <h2>周辺の駐車場マップ（試作）</h2>
     <p class="sub">オープンな地図データ「OpenStreetMap」に登録されている駐車場を表示します。試作版のため、表示できるのは検索した場所の周辺だけです。登録されていない駐車場は出ませんし、料金情報が付いている駐車場は一部だけです。</p>
     <div class="maptools">
-      <input type="text" id="placeQ" placeholder="場所を検索（例：前橋駅、新宿駅）" />
-      <button type="button" id="placeGo">検索</button>
+      <input type="text" id="placeQ" placeholder="場所を入力してEnter（例：前橋駅、新宿駅）" />
       <button type="button" id="geoBtn" class="ghost">現在地</button>
       <select class="sel" id="radiusSel" style="flex:0 0 auto;"><option value="" selected>選択してください</option>
         <option value="500">半径500m</option>
@@ -494,7 +493,9 @@ footer{text-align:center;color:var(--sub);font-size:12.5px;padding:10px 4vw 26px
     loadParking();
   }
   $("radiusSel").addEventListener("change", loadParking);
-  $("placeGo").addEventListener("click", function () {
+  $("placeQ").addEventListener("keydown", function (e) {
+    if (e.key !== "Enter") return;
+    e.preventDefault();
     var q = $("placeQ").value.trim();
     if (!q || !map) return;
     $("mapStatus").textContent = "場所を検索中…";

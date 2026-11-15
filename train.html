@@ -274,7 +274,7 @@
   }
 }
 </script>
-<link rel="stylesheet" href="site-unified.css?v=17" />
+<link rel="stylesheet" href="site-unified.css?v=18" />
 <script>
 (function () {
   var PIC = {
@@ -477,7 +477,6 @@
             </div>
           </div>
         </div>
-        <button class="btn-main" id="searchBtn" type="button">検索する</button>
         <div class="note">時刻表は各路線の標準的な発車パターンと標準所要時間から生成した<strong>目安</strong>です。実際の運行時刻・臨時列車・遅延は反映されません。運賃・特急料金はJRの公表運賃表と計算ルールによる試算で、改定や特定区間の特例により実際と数十円前後異なる場合があります。</div>
       </div>
 
@@ -485,10 +484,10 @@
       <h2>検索結果 <span style="font-size:12px;color:var(--ink2);font-weight:400" id="resultSub">— 次の電車から順に表示</span></h2>
       <div class="sortbar">
         <div class="seg" id="sortSeg" role="group" aria-label="検索結果の並び替え">
-          <button type="button" data-sort="dep" class="on">発車が早い順</button>
+          <button type="button" data-sort="dep">発車が早い順</button>
           <button type="button" data-sort="arr">到着が早い順</button>
           <button type="button" data-sort="fare">料金が安い順</button>
-          <button type="button" data-sort="xfer">乗換が少ない順</button>
+          <button type="button" data-sort="xfer" class="on">乗換が少ない順</button>
         </div>
       </div>
       <div class="pagenav">
@@ -2910,7 +2909,7 @@ function limitedExpressFare(cls, km){
 <script>
 /* ================= 検索エンジン ================= */
 const $ = id => document.getElementById(id);
-const state = { cat:"local", seat:"reserved", trip:"oneway", persons:1, lastResults:null, lastQuery:null, ttLine:"tk", ttDir:1, dataLine:"tk", sort:"dep", mode:"normal", via:"", allCandidates:[], listAll:[], context:"upcoming", page:0, anchorAbs:0, pageSize:5 };
+const state = { cat:"local", seat:"reserved", trip:"oneway", persons:1, lastResults:null, lastQuery:null, ttLine:"tk", ttDir:1, dataLine:"tk", sort:"xfer", mode:"normal", via:"", allCandidates:[], listAll:[], context:"upcoming", page:0, anchorAbs:0, pageSize:5 };
 const CAT_LABEL = { local:"在来線", limited:"有料特急", shinkansen:"新幹線" };
 const CAT_DESC = {
   local: "<strong>在来線タブ</strong>：全国のJR在来線と私鉄・地下鉄の普通・快速・急行など、運賃のみで乗れる列車を表示します。会社をまたぐ乗換では運賃を会社ごとに計算して合算します。乗換3回までの経路を優先して探し、見つからない場合は乗換の多い長距離経路（本州から鹿児島まで在来線のみ、など。乗換最大50回まで）も自動で検索します。一部の路線は主要駅中心の収録です。",
@@ -4128,6 +4127,7 @@ function renderResults(){
   $("fbRoute").textContent = q.from + " → " + q.to + (q.via ? "（" + q.via + "経由）" : "") + " ／ " + (state.context === "last" ? "終電 " : state.context === "prev" ? "前の便 " : "次の電車 ") + fmt(first.dep) + "発 → " + fmt(first.arr) + "着" + (state.trip === "round" ? " ／ 往復" : "");
   $("fbTotal").textContent = yen(grand);
   $("fbPer").textContent = state.persons > 1 ? "1人あたり " + yen(total1) + "（割り勘）" : "1人分";
+  $("fbPer").classList.toggle("ido-split-hot", state.persons > 1);
   updatePageNav();
   updateCountdowns();
 }
@@ -4511,7 +4511,7 @@ $("catTabs").addEventListener("click", e => {
 /* ================= 初期化・イベント ================= */
 $("catDesc").innerHTML = CAT_DESC[state.cat];
 fillStationSelects();
-/* 日付・時刻は空欄スタート（andy の指定）。現在時刻ボタンで setNow() が入る */
+/* 日付・時刻は開いた時点で現在時刻が入った状態にする（andy の指定） */
 function onTtLine(k){ state.ttLine = k; renderLineChips($("ttLineChips"), k, onTtLine); fillTtStations(); renderTimetable(); }
 renderLineChips($("ttLineChips"), state.ttLine, onTtLine);
 fillTtStations();
@@ -4521,9 +4521,9 @@ renderAllLineList();
 tickClock();
 setInterval(tickClock, 1000);
 setInterval(updateCountdowns, 1000);
+setNow();
 doSearch();
 
-$("searchBtn").addEventListener("click", doSearch);
 attachStationSearch("fromSearch", "fromResults", "fromSel");
 attachStationSearch("toSearch", "toResults", "toSel");
 attachStationSearch("viaSearch", "viaResults", "viaSel", { allowClear: true });
@@ -4711,7 +4711,7 @@ $("ttDirSeg").addEventListener("click", e => {
   /* --- カゴ管理（トップページ） --- */
   var root = document.getElementById("ido-basket-root");
   if (root) {
-    var persons = 2;
+    var persons = 1;
     function render() {
       var items = load();
       if (!items.length) {
@@ -4737,7 +4737,7 @@ $("ttDirSeg").addEventListener("click", e => {
       html += '<div style="padding:14px 0 2px;font-size:16px;">総合計 <strong style="font-size:22px;">' + yen(sum) + "</strong></div>" +
         '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;color:#5b6b7c;">割り勘：' +
         '<input id="ido-persons" type="number" min="1" max="99" value="' + persons + '" style="width:64px;padding:6px;"> 人で割ると ' +
-        "<strong style='color:#1c2733;'>1人あたり " + yen(per) + "</strong>（端数切り上げ）</div>" +
+        "<strong style='color:#1c2733;'" + (persons >= 2 ? " class='ido-split-hot'" : "") + ">1人あたり " + yen(per) + "</strong>（端数切り上げ）</div>" +
         '<div style="margin-top:10px;"><button type="button" id="ido-clear" style="padding:6px 12px;">カゴを空にする</button></div>';
       root.innerHTML = html;
 

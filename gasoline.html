@@ -103,7 +103,7 @@
   "isPartOf": { "@id": "https://wankodo.github.io/mobility-simulator/#website" }
 }
 </script>
-<link rel="stylesheet" href="site-unified.css?v=17" />
+<link rel="stylesheet" href="site-unified.css?v=18" />
 <script>
 (function () {
   var PIC = {
@@ -291,7 +291,7 @@
     </div>
     <div class="field">
       <label class="lab" for="people">割り勘する人数</label>
-      <div class="numrow"><input type="number" id="people" inputmode="numeric" min="1" step="1" /><span class="unit">人</span></div>
+      <div class="numrow"><input type="number" id="people" inputmode="numeric" min="1" step="1" value="1" /><span class="unit">人</span></div>
     </div>
     <div class="field">
       <label class="lab" for="perWeek">週に何回走るか（月額・年額の計算用）</label>
@@ -379,6 +379,7 @@
   var moveFuel = setupSeg("segFuel", "fuel", function (v) {
     document.getElementById("price").value = PRICES[v];
   });
+  document.getElementById("price").value = PRICES[state.fuel];
 
   function calc() {
     var coreMissing = ["dist", "fuelEff", "price"].some(function (id) { return document.getElementById(id).value.trim() === ""; });
@@ -386,6 +387,7 @@
       document.getElementById("tripLabel").textContent = state.trip === "round" ? "往復" : "片道";
       document.getElementById("gasTotal").textContent = "¥—";
       ["resLiters", "resPerKm", "resPerPerson", "resMonthly", "resYearly", "resDist"].forEach(function (id) { document.getElementById(id).textContent = "—"; });
+      document.getElementById("resPerPerson").classList.remove("ido-split-hot");
       document.getElementById("stickyPrice").textContent = "¥—";
       document.getElementById("stickyRoute").textContent = "未入力";
       return;
@@ -403,6 +405,7 @@
     document.getElementById("resLiters").textContent = liters.toFixed(2) + " L";
     document.getElementById("resPerKm").textContent = totalDist > 0 ? yen(cost / totalDist) : "—";
     document.getElementById("resPerPerson").textContent = document.getElementById("people").value.trim() === "" ? "—" : yen(Math.ceil(cost / people));
+    document.getElementById("resPerPerson").classList.toggle("ido-split-hot", document.getElementById("people").value.trim() !== "" && people >= 2);
     document.getElementById("resMonthly").textContent = document.getElementById("perWeek").value.trim() === "" ? "—" : yen(cost * perWeek * 52 / 12);
     document.getElementById("resYearly").textContent = document.getElementById("perWeek").value.trim() === "" ? "—" : yen(cost * perWeek * 52);
     document.getElementById("resDist").textContent = totalDist.toLocaleString("ja-JP") + " km";

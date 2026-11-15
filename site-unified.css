@@ -1266,3 +1266,7 @@ html[data-theme="andy"] .cattab.on {
     box-shadow: inset 0 0 0 1px rgba(70, 217, 236, .45);
   }
 }
+
+/* 割り勘（2人以上）の1人あたり金額の強調 */
+.ido-split-hot { color: #b45309 !important; font-weight: 800; font-size: 1.3em; }
+html[data-theme="andy"] .ido-split-hot { color: #ffcf4d !important; text-shadow: 0 0 8px rgba(255, 207, 77, .45); }

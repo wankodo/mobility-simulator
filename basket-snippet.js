@@ -34,14 +34,34 @@
       var a = parseAmt(elText("totalAmount"));
       if (a === null) return null;
       var plan = elText("planName");
-      return { kind: "timescar", label: "タイムズカー" + (plan && plan !== "—" ? "（" + plan + "）" : ""), amount: a, unit: "台分" };
+      var det = [];
+      var bl = document.getElementById("breakdownList");
+      if (bl) {
+        var dts = bl.querySelectorAll("dt");
+        var dds = bl.querySelectorAll("dd");
+        for (var bi = 0; bi < dts.length && bi < dds.length && det.length < 8; bi++) {
+          var bk = dts[bi].textContent.trim();
+          var bv = dds[bi].textContent.trim();
+          if (bk && bv && bv !== "—") det.push(bk + " " + bv);
+        }
+      }
+      var dur = elText("metaDuration");
+      if (dur && dur !== "—") det.push("所要時間 " + dur);
+      var ret = elText("metaReturn");
+      if (ret && ret !== "—") det.push("返却予定 " + ret);
+      return { kind: "timescar", label: "タイムズカー" + (plan && plan !== "—" ? "（" + plan + "）" : ""), amount: a, unit: "台分", details: det };
     }
     if (CFG.kind === "highway") {
       var h = parseAmt(elText("stickyMainPrice"));
       if (h === null) return null;
       var route = elText("stickyRoute");
       var cap = elText("stickyMainCap");
-      return { kind: "highway", label: "高速 " + (route && route !== "—" ? route : "") + (cap ? "／" + cap : ""), amount: h, unit: "台分" };
+      var det = [];
+      var mt = elText("stickyMeta");
+      if (mt && mt.indexOf("選ん") === -1 && mt.indexOf("表示されます") === -1 && mt.indexOf("見つかりません") === -1) det.push(mt);
+      var nm = elText("stickyNormal");
+      if (nm && nm !== "—") det.push("通常料金（割引なし） " + nm);
+      return { kind: "highway", label: "高速 " + (route && route !== "—" ? route : "") + (cap ? "／" + cap : ""), amount: h, unit: "台分", details: det };
     }
     if (CFG.kind === "train") {
       var bar = document.getElementById("farebar");
@@ -49,7 +69,13 @@
       var t = parseAmt(elText("fbTotal"));
       if (t === null) return null;
       var r = elText("fbRoute");
-      return { kind: "train", label: "電車 " + (r && r !== "—" ? r : ""), amount: t, unit: "人分（人数はページ側で設定）" };
+      var det = [];
+      var per = elText("fbPer");
+      if (per && per.indexOf("あたり") !== -1) det.push(per);
+      return { kind: "train", label: "電車 " + (r && r !== "—" ? r : ""), amount: t, unit: "人分（人数はページ側で設定）", details: det };
+    }
+    if (CFG.label && CFG.amount) {
+      return { kind: CFG.kind, label: CFG.label, amount: CFG.amount, unit: CFG.unit || "回分", details: CFG.details || [] };
     }
     return null;
   }
@@ -107,7 +133,7 @@
   /* --- カゴ管理（トップページ） --- */
   var root = document.getElementById("ido-basket-root");
   if (root) {
-    var persons = 2;
+    var persons = 1;
     function render() {
       var items = load();
       if (!items.length) {
@@ -116,8 +142,13 @@
       }
       var html = "";
       items.forEach(function (it, i) {
+        var det = "";
+        if (it.details && it.details.length) {
+          det = '<ul style="margin:6px 0 2px;padding-left:18px;color:#5b6b7c;font-size:12.5px;line-height:1.75;">' +
+            it.details.map(function (d) { return "<li>" + escapeHtml(d) + "</li>"; }).join("") + "</ul>";
+        }
         html += '<div style="display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;padding:10px 0;border-bottom:1px solid #e3e9ef;">' +
-          '<span style="flex:1;min-width:180px;">' + escapeHtml(it.label) + '<br><small style="color:#5b6b7c;">単価 ' + yen(it.amount) + "／" + escapeHtml(it.unit || "") + "</small></span>" +
+          '<span style="flex:1;min-width:180px;">' + escapeHtml(it.label) + '<br><small style="color:#5b6b7c;">単価 ' + yen(it.amount) + "／" + escapeHtml(it.unit || "") + "</small>" + det + "</span>" +
           '<span>× <button type="button" data-act="dec" data-i="' + i + '" style="padding:2px 9px;">−</button> ' + (it.qty || 1) +
           ' <button type="button" data-act="inc" data-i="' + i + '" style="padding:2px 9px;">＋</button></span>' +
           '<strong style="min-width:90px;text-align:right;">' + yen(it.amount * (it.qty || 1)) + "</strong>" +
@@ -128,7 +159,7 @@
       html += '<div style="padding:14px 0 2px;font-size:16px;">総合計 <strong style="font-size:22px;">' + yen(sum) + "</strong></div>" +
         '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;color:#5b6b7c;">割り勘：' +
         '<input id="ido-persons" type="number" min="1" max="99" value="' + persons + '" style="width:64px;padding:6px;"> 人で割ると ' +
-        "<strong style='color:#1c2733;'>1人あたり " + yen(per) + "</strong>（端数切り上げ）</div>" +
+        "<strong style='color:#1c2733;'" + (persons >= 2 ? " class='ido-split-hot'" : "") + ">1人あたり " + yen(per) + "</strong>（端数切り上げ）</div>" +
         '<div style="margin-top:10px;"><button type="button" id="ido-clear" style="padding:6px 12px;">カゴを空にする</button></div>';
       root.innerHTML = html;
 

@@ -81,7 +81,7 @@ footer{text-align:center;color:var(--sub);font-size:12.5px;padding:10px 4vw 26px
 .basketbar button{font:inherit;font-size:15px;font-weight:800;color:#fff;background:var(--accent);border:0;border-radius:999px;padding:11px 22px;cursor:pointer;box-shadow:0 4px 10px rgba(179,84,30,.35);}
 .basketbar button:active{transform:scale(.98);}
 </style>
-<link rel="stylesheet" href="site-unified.css?v=17" />
+<link rel="stylesheet" href="site-unified.css?v=18" />
 <script>
 (function () {
   var PIC = {
@@ -231,16 +231,16 @@ footer{text-align:center;color:var(--sub);font-size:12.5px;padding:10px 4vw 26px
       </div>
       <div class="field">
         <label class="lab" for="timeSec">時間距離併用の換算</label>
-        <div class="numrow"><select class="sel" id="timeSec"><option value="" selected>選択してください</option>
+        <div class="numrow"><select class="sel" id="timeSec"><option value="">選択してください</option>
           <option value="60">60秒ごとに加算1回分</option>
           <option value="75">75秒ごとに加算1回分</option>
           <option value="85">85秒ごとに加算1回分</option>
-          <option value="90">90秒ごとに加算1回分</option>
+          <option value="90" selected>90秒ごとに加算1回分</option>
           <option value="95">95秒ごとに加算1回分</option>
           <option value="105">105秒ごとに加算1回分</option>
           <option value="120">120秒ごとに加算1回分</option>
         </select></div>
-        <p class="hint">秒数は地区で違います。特別区・武三地区は85秒（確認済み）。それ以外の地区は目安として90秒を初期値にしています。</p>
+        <p class="hint">秒数は地区で違います。特別区・武三地区は85秒（確認済み）です。初期値は目安として90秒が入っています。</p>
       </div>
       <div class="field">
         <label class="lab" for="nightSel">時間帯</label>
@@ -268,8 +268,8 @@ footer{text-align:center;color:var(--sub);font-size:12.5px;padding:10px 4vw 26px
       </div>
       <div class="field">
         <label class="lab" for="people">割り勘の人数</label>
-        <div class="numrow"><select class="sel" id="people"><option value="" selected>選択してください</option>
-          <option value="1">1人</option>
+        <div class="numrow"><select class="sel" id="people"><option value="">選択してください</option>
+          <option value="1" selected>1人</option>
           <option value="2">2人</option>
           <option value="3">3人</option>
           <option value="4">4人</option>
@@ -439,6 +439,7 @@ footer{text-align:center;color:var(--sub);font-size:12.5px;padding:10px 4vw 26px
   function calc() {
     if (areaSel.value === "" || $("distKm").value.trim() === "" || (areaSel.value === "custom" && ["cBase", "cBaseM", "cAdd", "cAddM"].some(function (id) { return $(id).value.trim() === ""; }))) {
       ["totalYen", "rMeter", "rBase", "rDist", "rLow", "rNight", "rPickup", "rToll", "rPer", "barAmount"].forEach(function (id) { $(id).textContent = "—"; });
+      $("rPer").classList.remove("ido-split-hot");
       if (areaSel.value === "") $("areaInfo").textContent = "";
       window.IDO_BASKET.amount = 0;
       window.IDO_BASKET.label = "";
@@ -467,6 +468,7 @@ footer{text-align:center;color:var(--sub);font-size:12.5px;padding:10px 4vw 26px
     $("rPickup").textContent = yen(pickup);
     $("rToll").textContent = yen(toll);
     $("rPer").textContent = $("people").value === "" ? "—" : yen(Math.ceil(total / people)) + "（" + people + "人）";
+    $("rPer").classList.toggle("ido-split-hot", people >= 2);
     $("barAmount").textContent = yen(total);
     if (areaSel.value === "custom") {
       $("areaInfo").textContent = "カスタム運賃表で計算しています。";
@@ -489,6 +491,7 @@ footer{text-align:center;color:var(--sub);font-size:12.5px;padding:10px 4vw 26px
     var t = table();
     $("customBox").style.display = areaSel.value === "custom" ? "block" : "none";
     if (t.sec) $("timeSec").value = String(t.sec);
+    else if (areaSel.value !== "custom") $("timeSec").value = "90";
     calc();
   });
   ["distKm", "tollYen", "cBase", "cBaseM", "cAdd", "cAddM"].forEach(function (id) {
