@@ -1270,3 +1270,72 @@ html[data-theme="andy"] .cattab.on {
 /* 割り勘（2人以上）の1人あたり金額の強調 */
 .ido-split-hot { color: #b45309 !important; font-weight: 800; font-size: 1.3em; }
 html[data-theme="andy"] .ido-split-hot { color: #ffcf4d !important; text-shadow: 0 0 8px rgba(255, 207, 77, .45); }
+
+/* 行程カゴのボタン類（他ページのボタンに合わせたデザイン） */
+#ido-basket-root button.bkt-qty,
+#ido-basket-root button.bkt-del,
+#ido-basket-root button.bkt-btn {
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ido-navy-800);
+  background: #fff;
+  border: 1.5px solid var(--ido-line);
+  border-radius: 999px;
+  padding: 6px 13px;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(10, 31, 51, .14);
+}
+#ido-basket-root button.bkt-qty { min-width: 34px; padding: 4px 0; text-align: center; }
+#ido-basket-root button.bkt-share {
+  border: 0;
+  color: #14273c;
+  background: linear-gradient(180deg, var(--ido-amber-2), var(--ido-amber));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .42), inset 0 -3px 0 rgba(0, 0, 0, .16), 0 8px 16px -8px rgba(0, 0, 0, .35);
+  font-weight: 900;
+  padding: 8px 18px;
+}
+#ido-basket-root #ido-persons {
+  font: inherit;
+  font-weight: 700;
+  color: var(--ido-ink);
+  background: #fff;
+  border: 1.5px solid var(--ido-line);
+  border-radius: 10px;
+}
+@media (hover:hover) {
+  #ido-basket-root button.bkt-qty:hover,
+  #ido-basket-root button.bkt-del:hover,
+  #ido-basket-root button.bkt-btn:hover { background: #f2f7fb; }
+  #ido-basket-root button.bkt-share:hover { filter: brightness(1.05); }
+}
+html[data-theme="andy"] #ido-basket-root button.bkt-qty,
+html[data-theme="andy"] #ido-basket-root button.bkt-del,
+html[data-theme="andy"] #ido-basket-root button.bkt-btn {
+  background: rgba(8, 22, 34, .85);
+  color: #d9fbff;
+  border-color: rgba(70, 217, 236, .5);
+  border-radius: 3px;
+  box-shadow: none;
+}
+html[data-theme="andy"] #ido-basket-root button.bkt-share {
+  background: rgba(70, 217, 236, .16);
+  color: #ffcf4d;
+  border: 1px solid rgba(70, 217, 236, .65);
+  box-shadow: none;
+}
+html[data-theme="andy"] #ido-basket-root #ido-persons {
+  background: rgba(8, 22, 34, .85);
+  color: #eaf7fb;
+  border-color: rgba(70, 217, 236, .5);
+  border-radius: 3px;
+}
+@media (hover:hover) {
+  html[data-theme="andy"] #ido-basket-root button.bkt-qty:hover,
+  html[data-theme="andy"] #ido-basket-root button.bkt-del:hover,
+  html[data-theme="andy"] #ido-basket-root button.bkt-btn:hover,
+  html[data-theme="andy"] #ido-basket-root button.bkt-share:hover {
+    background: rgba(70, 217, 236, .22);
+    color: #eafcff;
+  }
+}
