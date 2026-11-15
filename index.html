@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="ja">
 <head>
+<script>try{var _t=localStorage.getItem("ido_theme_v1");if(_t==="andy"||_t==="kuma")document.documentElement.dataset.theme=_t;}catch(e){}</script>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="description" content="移動にかかる料金を無料で試算できるツール集。タイムズカー・高速道路（全231路線）・電車（全452路線）に加え、ガソリン代・EV電気代・駐車場・タクシー・定期代・マイカー比較・レンタカー・引っ越し費用まで。行程カゴで1日の移動合計と割り勘が出せます。" />
@@ -461,14 +462,27 @@
         var items3 = load();
         if (!items3.length) return;
         var sum3 = total(items3);
-        var lines = ["【移動の行程カゴ】"];
+        var lines = ["【移動の行程カゴ】", ""];
         items3.forEach(function (it) {
           var q = it.qty || 1;
-          lines.push("・" + it.label + "　" + yen(it.amount * q) + (q > 1 ? "（" + yen(it.amount) + " ×" + q + "）" : ""));
-          (it.details || []).forEach(function (d) { lines.push("　- " + d); });
+          var parts = String(it.label).split(" ／ ");
+          lines.push("・" + parts[0]);
+          for (var pi = 1; pi < parts.length; pi++) {
+            lines.push("　" + parts[pi].replace(/^(次の電車|前の電車|終電)\s*/, ""));
+          }
+          lines.push("　小計" + yen(it.amount * q) + (q > 1 ? "（" + yen(it.amount) + " ×" + q + "）" : ""));
+          if (it.details && it.details.length) {
+            lines.push("　内訳");
+            it.details.forEach(function (d) { lines.push("　- " + d); });
+          }
+          lines.push("");
         });
         lines.push("総合計 " + yen(sum3));
-        if (persons >= 2) lines.push("割り勘（" + persons + "人）：1人あたり " + yen(Math.ceil(sum3 / Math.max(1, persons))));
+        if (persons >= 2) {
+          lines.push("");
+          lines.push("割り勘（" + persons + "人）");
+          lines.push("1人あたり " + yen(Math.ceil(sum3 / Math.max(1, persons))));
+        }
         var text = lines.join("\n");
         function fallback() {
           if (navigator.clipboard && navigator.clipboard.writeText) {
