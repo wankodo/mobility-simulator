@@ -264,7 +264,7 @@
       <input type="search" id="toolSearchBox" placeholder="ツールを検索（例：タロット、高速、奨学金）" autocomplete="off" aria-label="ツールを検索">
       <div class="ts-suggest" id="toolSuggest" hidden></div>
     </div>
-    <p class="ts-note">移動・お金・占いの全44ツールから探せます。入力しなくても、タップすれば一覧が出ます。</p>
+    <p class="ts-note">移動・お金・占いの全45ツールから探せます。入力しなくても、タップすれば一覧が出ます。</p>
   </section>
 
   <div class="cards">
@@ -609,7 +609,7 @@
   </div>
 </div>
 <script>
-/* ===== 全ツール検索プルダウン（移動・お金・占い 全44ツール） =====
+/* ===== 全ツール検索プルダウン（移動・お金・占い 全45ツール） =====
    どのサイトのトップでもプルダウンに全ツールを出す、という共通ルールの移動系版。
    ツールを足すときは TOOLS に1行追加するだけ（保険系もここへ足す）。 */
 (function () {
@@ -657,8 +657,8 @@
       desc: "借りる前に、毎月の返還額・返還総額・利息・完済時の年齢が分かります。返済中の見直しにも使えます。",
       keywords: "奨学金 学費 学生 借金 返済 JASSO 日本学生支援機構 ローン 利息 大学 専門学校 進学 返還" },
     { site: "uranai", name: "タロット1枚引き", cat: "タロット", url: URN + "tarot.html",
-      desc: "今日の1枚を引いて、カードからのメッセージを受け取ります。正位置・逆位置つき。",
-      keywords: "タロット 占い ワンオラクル 今日の運勢 カード 大アルカナ 正位置 逆位置" },
+      desc: "今日の1枚引きとケルト十字（10枚引き）が楽しめます。",
+      keywords: "タロット 占い ワンオラクル 今日の運勢 カード 大アルカナ 正位置 逆位置 ケルト十字" },
     { site: "uranai", name: "おみくじ", cat: "神社", url: URN + "omikuji.html",
       desc: "大吉から凶までの運勢と、今日のひとことが出ます。毎日の運試しに。",
       keywords: "おみくじ 神社 運勢 大吉 吉 凶 くじ 初詣 お参り 運試し" },
@@ -748,7 +748,10 @@
       keywords: "水晶 クリスタル" },
     { site: "uranai", name: "花占い", cat: "花", url: URN + "hana.html",
       desc: "花びらを1枚ずつちぎって占う、昔ながらの花占いです。",
-      keywords: "花占い 好き嫌い" }
+      keywords: "花占い 好き嫌い" },
+    { site: "uranai", name: "ペンデュラム占い", cat: "ペンデュラム", url: URN + "pendulum.html",
+      desc: "振り子に二択の質問を問いかける占いです。",
+      keywords: "ペンデュラム ダウジング 二択" }
   ];
 
   var boxEl = document.getElementById("toolSearchBox");
