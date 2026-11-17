@@ -85,6 +85,19 @@ details.src-box summary { cursor:pointer; font-weight:700; font-size:14px; color
 @media (max-width:560px){.venue-list { columns:1;}}
 .warn-box { background:#fff7e6; border:1.5px solid #f2a81d; border-radius:14px; padding:14px 16px; margin-top:14px;}
 .warn-box p,.warn-box li { color:#6b5410;}
+.quick-steps { display:grid; gap:12px; margin-top:6px;}
+.quick-step { display:flex; gap:14px; align-items:flex-start; background:#f4f8fc; border:1.5px solid #d7e4f2; border-radius:14px; padding:14px 16px;}
+.quick-step .qs-num { flex:none; width:42px; height:42px; border-radius:50%; background:linear-gradient(180deg,var(--amber),#f28c13); color:#12283f; font-weight:900; font-size:21px; display:flex; align-items:center; justify-content:center;}
+.quick-step .qs-body { color:var(--mut); line-height:1.75; font-size:15px;}
+.quick-step .qs-body strong { color:var(--ink); font-size:16.5px;}
+.howto-h3 { margin:22px 0 8px; font-size:16px; font-weight:800; color:var(--ink); border-left:6px solid var(--amber); padding-left:10px;}
+.copy-zone { background:#12283f; color:#fff; border-radius:16px; padding:20px; margin-top:14px;}
+.copy-zone p { color:#d7e4f2; margin:0 0 12px; line-height:1.8; font-size:14px;}
+.copy-zone p strong { color:#fff;}
+button.copy-btn { display:inline-block; background:linear-gradient(180deg,#ffb020,#f28c13); color:#12283f; font-weight:900; border:none; padding:14px 26px; border-radius:999px; font-size:16px; cursor:pointer; box-shadow:0 6px 16px rgba(0,0,0,.3); font-family:inherit;}
+button.copy-btn:active { transform:translateY(1px);}
+.copy-done { display:none; margin-left:12px; font-weight:800; color:#8be89b; font-size:14px;}
+textarea.bm-code { width:100%; margin-top:14px; background:#0b1c2c; color:#d7e4f2; border:1px solid #33506e; border-radius:12px; padding:12px; font-size:11px; line-height:1.5; height:92px; font-family:ui-monospace,Menlo,Consolas,monospace; word-break:break-all;}
 </style>
 <link rel="canonical" href="https://wankodo.github.io/mobility-simulator/menkyo.html" />
 <meta property="og:type" content="website" />
@@ -223,19 +236,48 @@ details.src-box summary { cursor:pointer; font-weight:700; font-size:14px; color
 </div>
 
 <section class="box">
+<h2>使い方（3ステップ）</h2>
+<div class="quick-steps">
+<div class="quick-step"><div class="qs-num">1</div><div class="qs-body"><strong>公式予約サイトでログインする</strong><br><a href="https://license-renew.tokyo-madoguchi-yoyaku.com/police-pref-tokyo/index_000.html" target="_blank" rel="noopener">警視庁運転免許手続予約サイト</a>を開き、いつも通りご自身で手続を進めて、空き状況カレンダーのページを表示します。</div></div>
+<div class="quick-step"><div class="qs-num">2</div><div class="qs-body"><strong>用意したブックマークを実行する</strong><br>このページのコードを登録したブックマークを、カレンダーのページを開いた状態で実行します。ブックマークの登録は最初の1回だけです（登録方法は下の「ブックマークの登録方法」へ）。</div></div>
+<div class="quick-step"><div class="qs-num">3</div><div class="qs-body"><strong>会場ごとの空き一覧が重なって表示される</strong><br>各会場のカレンダーを読み取り、画面の上にまとめた表が重なって表示されます。数字は空いている予約枠の数です。</div></div>
+</div>
+</section>
+
+<section class="box">
 <h2>このツールについて</h2>
 <p>警視庁の運転免許手続予約サイトでは、空き状況カレンダーは<strong>会場を1つずつ選んで</strong>見る仕組みになっています。このツールは、ログイン済みの公式サイトのページでブックマークレットを実行すると、会場ごとのカレンダーを順番に読み取り、<strong>1つの表にまとめて表示</strong>する試作品です。</p>
 <p><strong>個人情報の扱い：</strong>予約用IDなどの情報は、お使いのブラウザの中だけで扱われます。このブックマークレットは、公式サイトと<strong>同じドメイン内</strong>のページを読むだけで、外部のサーバーへ情報を送信する処理は一切入っていません。ソースコードを下に全文公開していますので、実行前に中身を確認できます。</p>
 </section>
 
 <section class="box">
-<h2>使い方</h2>
+<h2>ブックマークの登録方法</h2>
+<p>最初に1回だけ、このページのコードをブラウザのブックマークに登録します。スマートフォン向けの手順を先に載せています。</p>
+<div class="copy-zone">
+<p><strong>まず、コードをコピーしてください</strong><br>下のボタンを押すと、ブックマークに登録するためのコード（ブックマークレット）がコピーされます。</p>
+<button type="button" class="copy-btn" id="bm-copy-btn">コードをコピー</button><span class="copy-done" id="bm-copy-done">コピーしました</span>
+<textarea class="bm-code" id="bm-code" readonly aria-label="ブックマークレットのコード"></textarea>
+<p style="margin-top:10px;">ボタンでコピーできない場合は、上の欄の文字列を長押し（タップ）で全選択してコピーしてください。コードは「javascript:」で始まる長い文字列です。1文字も変えず、そのまま使います。</p>
+</div>
+<h3 class="howto-h3">iPhone（Safari）の場合</h3>
 <ol class="steps">
-<li>下のボタンを<strong>ブックマークバーへドラッグ</strong>して登録します（スマートフォンの場合は、下のソースコードをコピーしてブックマークのURL欄に貼り付けてください）。</li>
-<li><a href="https://license-renew.tokyo-madoguchi-yoyaku.com/police-pref-tokyo/index_000.html" target="_blank" rel="noopener">警視庁運転免許手続予約サイト</a>を開き、いつも通り<strong>ご自身で</strong>手続を開始して、空き状況カレンダーのページまで進みます。</li>
-<li>カレンダーが表示された状態で、登録したブックマークレットをクリックします。</li>
-<li>画面の上に、会場ごとの空き状況をまとめた表が重なって表示されます。数字は空いている予約枠の数です。</li>
+<li>上の<strong>「コードをコピー」</strong>ボタンで、コードをコピーします。</li>
+<li>Safariで<strong>このページをブックマークに追加</strong>します。共有ボタン（四角から矢印が出たマーク）を押し、「ブックマークを追加」を選んで保存します。名前は「空きまとめ」など、短くて分かりやすいものにしておくと後の手順が楽です。</li>
+<li>Safariの<strong>ブックマークを開き、「編集」</strong>を押して、今作ったブックマークを選びます。</li>
+<li><strong>URL欄の内容を全部消して、コピーしたコードを貼り付け</strong>て保存します。</li>
+<li>使い方：公式予約サイトでログインしてカレンダーを表示した状態で、<strong>ブックマークを開いて「空きまとめ」をタップ</strong>すると実行されます。</li>
+<li>もう一つの実行方法：公式サイトを開いた状態で、<strong>アドレスバーにブックマーク名（例：空きまとめ）と入力</strong>すると候補に表示されるので、それをタップしても実行できます。</li>
 </ol>
+<h3 class="howto-h3">Android（Chrome）の場合</h3>
+<ol class="steps">
+<li>上の<strong>「コードをコピー」</strong>ボタンで、コードをコピーします。</li>
+<li>Chromeで<strong>このページをブックマーク</strong>します（アドレスバーの☆、またはメニューの「スター」）。</li>
+<li>メニューの<strong>「ブックマーク」から今のブックマークを開き、「編集」</strong>を押します。</li>
+<li><strong>URL欄の内容を全部消して、コピーしたコードを貼り付け</strong>て保存します。</li>
+<li>使い方：公式予約サイトでログインしてカレンダーを表示した状態で、<strong>アドレスバーにブックマーク名を入力し、候補に出てきたものをタップ</strong>すると実行されます（ブックマークの一覧からタップしただけでは実行されないことがあるため、この方法が確実です）。</li>
+</ol>
+<h3 class="howto-h3">パソコンの場合</h3>
+<p>下のボタンをブックマークバーへドラッグして登録します。登録後は、公式サイトのカレンダーページでそのブックマークをクリックすると実行されます。</p>
 <div class="bm-install">
 <p>このボタンをブックマークバーへドラッグしてください</p>
 <a class="bm-btn" href="javascript:%28function%20%28%29%20%7B%20%22use%20strict%22%3B%20var%20ROOT_ID%20%3D%20%22mk-agg-root%22%3B%20var%20VENUES%20%3D%20%5B%22%E5%BA%9C%E4%B8%AD%E9%81%8B%E8%BB%A2%E5%85%8D%E8%A8%B1%E8%A9%A6%E9%A8%93%E5%A0%B4%22%2C%20%22%E9%AE%AB%E6%B4%B2%E9%81%8B%E8%BB%A2%E5%85%8D%E8%A8%B1%E8%A9%A6%E9%A8%93%E5%A0%B4%22%2C%20%22%E6%B1%9F%E6%9D%B1%E9%81%8B%E8%BB%A2%E5%85%8D%E8%A8%B1%E8%A9%A6%E9%A8%93%E5%A0%B4%22%2C%20%22%E7%A5%9E%E7%94%B0%E9%81%8B%E8%BB%A2%E5%85%8D%E8%A8%B1%E6%9B%B4%E6%96%B0%E3%82%BB%E3%83%B3%E3%82%BF%E3%83%BC%22%2C%20%22%E6%96%B0%E5%AE%BF%E9%81%8B%E8%BB%A2%E5%85%8D%E8%A8%B1%E6%9B%B4%E6%96%B0%E3%82%BB%E3%83%B3%E3%82%BF%E3%83%BC%22%2C%20%22%E7%94%B0%E5%9C%92%E8%AA%BF%E5%B8%83%E8%AD%A6%E5%AF%9F%E7%BD%B2%22%2C%20%22%E4%B8%96%E7%94%B0%E8%B0%B7%E8%AD%A6%E5%AF%9F%E7%BD%B2%22%2C%20%22%E6%88%90%E5%9F%8E%E8%AD%A6%E5%AF%9F%E7%BD%B2%22%2C%20%22%E6%9D%BF%E6%A9%8B%E8%AD%A6%E5%AF%9F%E7%BD%B2%22%2C%20%22%E7%9F%B3%E7%A5%9E%E4%BA%95%E8%AD%A6%E5%AF%9F%E7%BD%B2%22%2C%20%22%E4%B8%8B%E8%B0%B7%E8%AD%A6%E5%AF%9F%E7%BD%B2%22%2C%20%22%E7%AB%B9%E3%81%AE%E5%A1%9A%E8%AD%A6%E5%AF%9F%E7%BD%B2%22%2C%20%22%E6%9C%AC%E6%89%80%E8%AD%A6%E5%AF%9F%E7%BD%B2%22%2C%20%22%E7%AB%8B%E5%B7%9D%E8%AD%A6%E5%AF%9F%E7%BD%B2%22%2C%20%22%E9%9D%92%E6%A2%85%E8%AD%A6%E5%AF%9F%E7%BD%B2%22%2C%20%22%E9%AB%98%E5%B0%BE%E8%AD%A6%E5%AF%9F%E7%BD%B2%22%2C%20%22%E7%94%BA%E7%94%B0%E8%AD%A6%E5%AF%9F%E7%BD%B2%22%5D%3B%20function%20venueOf%28text%29%20%7B%20if%20%28%21text%29%20return%20null%3B%20var%20t%20%3D%20String%28text%29.replace%28%2F%5B%5Cs%E3%80%80%5D%2B%2Fg%2C%20%22%22%29%3B%20for%20%28var%20i%20%3D%200%3B%20i%20%3C%20VENUES.length%3B%20i%2B%2B%29%20%7B%20if%20%28t.indexOf%28VENUES%5Bi%5D.replace%28%2F%5B%5Cs%E3%80%80%5D%2B%2Fg%2C%20%22%22%29%29%20%3E%3D%200%29%20return%20VENUES%5Bi%5D%3B%20%7D%20return%20null%3B%20%7D%20function%20monthLabel%28doc%29%20%7B%20var%20t%20%3D%20doc%20%26%26%20doc.body%20%3F%20doc.body.textContent%20%7C%7C%20%22%22%20%3A%20%22%22%3B%20var%20m%20%3D%20t.match%28%2F%28%5Cd%7B4%7D%29%E5%B9%B4%5Cs%2A%28%5Cd%7B1%2C2%7D%29%E6%9C%88%2F%29%3B%20if%20%28m%29%20return%20m%5B1%5D%20%2B%20%22%E5%B9%B4%22%20%2B%20m%5B2%5D%20%2B%20%22%E6%9C%88%22%3B%20var%20m2%20%3D%20t.match%28%2F%28%5Cd%7B1%2C2%7D%29%E6%9C%88%E3%81%AE%E7%A9%BA%E3%81%8D%7C%28%5Cd%7B1%2C2%7D%29%E6%9C%88%E5%88%86%2F%29%3B%20if%20%28m2%29%20return%20%28m2%5B1%5D%20%7C%7C%20m2%5B2%5D%29%20%2B%20%22%E6%9C%88%22%3B%20return%20%22%22%3B%20%7D%20function%20cellText%28c%29%20%7B%20var%20parts%20%3D%20%5B%5D%3B%20%28function%20walk%28node%29%20%7B%20var%20kids%20%3D%20node.childNodes%3B%20for%20%28var%20i%20%3D%200%3B%20i%20%3C%20kids.length%3B%20i%2B%2B%29%20%7B%20var%20n%20%3D%20kids%5Bi%5D%3B%20if%20%28n.nodeType%20%3D%3D%3D%203%29%20%7B%20var%20t%20%3D%20n.textContent.replace%28%2F%5B%5Cs%E3%80%80%5D%2B%2Fg%2C%20%22%20%22%29.trim%28%29%3B%20if%20%28t%29%20parts.push%28t%29%3B%20%7D%20else%20if%20%28n.nodeType%20%3D%3D%3D%201%29%20%7B%20if%20%28n.tagName%20%3D%3D%3D%20%22BR%22%29%20parts.push%28%22%20%22%29%3B%20else%20walk%28n%29%3B%20%7D%20%7D%20%7D%29%28c%29%3B%20return%20parts.join%28%22%20%22%29%3B%20%7D%20function%20parseCalendar%28doc%29%20%7B%20var%20tables%20%3D%20doc.querySelectorAll%28%22table%22%29%3B%20var%20best%20%3D%20null%3B%20for%20%28var%20ti%20%3D%200%3B%20ti%20%3C%20tables.length%3B%20ti%2B%2B%29%20%7B%20var%20cells%20%3D%20tables%5Bti%5D.querySelectorAll%28%22td%22%29%3B%20var%20map%20%3D%20%7B%7D%3B%20var%20days%20%3D%200%3B%20var%20slots%20%3D%200%3B%20cells.forEach%28function%20%28c%29%20%7B%20var%20raw%20%3D%20cellText%28c%29%3B%20var%20dm%20%3D%20raw.match%28%2F%5E%28%5Cd%7B1%2C2%7D%29%28%3F%21%5Cd%29%2F%29%3B%20if%20%28%21dm%29%20return%3B%20var%20day%20%3D%20parseInt%28dm%5B1%5D%2C%2010%29%3B%20if%20%28day%20%3C%201%20%7C%7C%20day%20%3E%2031%29%20return%3B%20if%20%28day%20in%20map%29%20return%3B%20var%20rest%20%3D%20raw.slice%28dm%5B0%5D.length%29.trim%28%29%3B%20var%20status%20%3D%20%22%22%3B%20var%20nm%20%3D%20rest.match%28%2F%28%5Cd%2B%29%5Cs%2A%E4%BA%BA%2F%29%20%7C%7C%20rest.match%28%2F%E6%AE%8B%E3%82%8A%5Cs%2A%28%5Cd%2B%29%5Cs%2A%E6%9E%A0%2F%29%20%7C%7C%20rest.match%28%2F%5E%28%5Cd%2B%29%24%2F%29%3B%20if%20%28nm%29%20%7B%20status%20%3D%20nm%5B1%5D%3B%20slots%2B%2B%3B%20%7D%20else%20if%20%28rest.indexOf%28%22%E2%97%8B%22%29%20%3E%3D%200%20%7C%7C%20rest.indexOf%28%22%E2%97%AF%22%29%20%3E%3D%200%29%20status%20%3D%20%22%E2%97%8B%22%3B%20else%20if%20%28rest.indexOf%28%22%E2%96%B3%22%29%20%3E%3D%200%29%20status%20%3D%20%22%E2%96%B3%22%3B%20else%20if%20%28rest.indexOf%28%22%C3%97%22%29%20%3E%3D%200%20%7C%7C%20rest.indexOf%28%22%E2%9C%95%22%29%20%3E%3D%200%29%20status%20%3D%20%22%C3%97%22%3B%20else%20if%20%28rest%29%20status%20%3D%20rest.slice%280%2C%208%29%3B%20map%5Bday%5D%20%3D%20status%3B%20days%2B%2B%3B%20%7D%29%3B%20if%20%28days%20%3E%3D%2015%20%26%26%20%28%21best%20%7C%7C%20slots%20%3E%20best.slots%29%29%20best%20%3D%20%7B%20map%3A%20map%2C%20slots%3A%20slots%20%7D%3B%20%7D%20return%20best%3B%20%7D%20function%20currentVenue%28doc%29%20%7B%20var%20sels%20%3D%20doc.querySelectorAll%28%22select%22%29%3B%20for%20%28var%20i%20%3D%200%3B%20i%20%3C%20sels.length%3B%20i%2B%2B%29%20%7B%20var%20opt%20%3D%20sels%5Bi%5D.options%5Bsels%5Bi%5D.selectedIndex%5D%3B%20var%20v%20%3D%20opt%20%3F%20venueOf%28opt.textContent%29%20%3A%20null%3B%20if%20%28v%29%20return%20v%3B%20%7D%20var%20heads%20%3D%20doc.querySelectorAll%28%22h1%2C%20h2%2C%20h3%22%29%3B%20for%20%28var%20j%20%3D%200%3B%20j%20%3C%20heads.length%3B%20j%2B%2B%29%20%7B%20var%20hv%20%3D%20venueOf%28heads%5Bj%5D.textContent%29%3B%20if%20%28hv%29%20return%20hv%3B%20%7D%20return%20venueOf%28doc.title%29%3B%20%7D%20function%20venueLinks%28doc%29%20%7B%20var%20out%20%3D%20%5B%5D%3B%20var%20seen%20%3D%20%7B%7D%3B%20var%20anchors%20%3D%20doc.querySelectorAll%28%22a%5Bhref%5D%22%29%3B%20anchors.forEach%28function%20%28a%29%20%7B%20var%20v%20%3D%20venueOf%28a.textContent%20%7C%7C%20%22%22%29%3B%20if%20%28%21v%20%7C%7C%20seen%5Bv%5D%29%20return%3B%20var%20href%20%3D%20a.getAttribute%28%22href%22%29%3B%20if%20%28%21href%20%7C%7C%20href.charAt%280%29%20%3D%3D%3D%20%22%23%22%29%20return%3B%20var%20u%3B%20try%20%7B%20u%20%3D%20new%20URL%28href%2C%20location.href%29%3B%20%7D%20catch%20%28e%29%20%7B%20return%3B%20%7D%20if%20%28u.origin%20%21%3D%3D%20location.origin%29%20return%3B%20seen%5Bv%5D%20%3D%201%3B%20if%20%28u.href%20%3D%3D%3D%20location.href%29%20return%3B%20out.push%28%7B%20venue%3A%20v%2C%20url%3A%20u.href%20%7D%29%3B%20%7D%29%3B%20return%20out%3B%20%7D%20function%20el%28tag%2C%20text%2C%20style%29%20%7B%20var%20e%20%3D%20document.createElement%28tag%29%3B%20if%20%28text%20%21%3D%20null%29%20e.textContent%20%3D%20text%3B%20if%20%28style%29%20e.setAttribute%28%22style%22%2C%20style%29%3B%20return%20e%3B%20%7D%20function%20showOverlay%28build%29%20%7B%20var%20old%20%3D%20document.getElementById%28ROOT_ID%29%3B%20if%20%28old%29%20old.remove%28%29%3B%20var%20root%20%3D%20el%28%22div%22%2C%20null%2C%20%22position%3Afixed%3Btop%3A10px%3Bleft%3A10px%3Bright%3A10px%3Bz-index%3A2147483647%3Bbackground%3A%23ffffff%3Bcolor%3A%231c2733%3Bborder%3A2px%20solid%20%2312283f%3Bborder-radius%3A12px%3Bbox-shadow%3A0%2012px%2040px%20rgba%280%2C0%2C0%2C.35%29%3Bpadding%3A14px%2016px%3Bmax-height%3A88vh%3Boverflow%3Aauto%3Bfont-family%3Asans-serif%3Bfont-size%3A14px%3Bline-height%3A1.6%3B%22%29%3B%20root.id%20%3D%20ROOT_ID%3B%20var%20head%20%3D%20el%28%22div%22%2C%20null%2C%20%22display%3Aflex%3Bjustify-content%3Aspace-between%3Balign-items%3Acenter%3Bgap%3A10px%3Bmargin-bottom%3A8px%3B%22%29%3B%20head.appendChild%28el%28%22strong%22%2C%20%22%E5%85%8D%E8%A8%B1%E6%9B%B4%E6%96%B0%20%E7%A9%BA%E3%81%8D%E7%8A%B6%E6%B3%81%E3%81%BE%E3%81%A8%E3%82%81%EF%BC%88%E3%83%86%E3%82%B9%E3%83%88%E7%89%88%EF%BC%89%22%2C%20%22font-size%3A16px%3B%22%29%29%3B%20var%20close%20%3D%20el%28%22button%22%2C%20%22%E9%96%89%E3%81%98%E3%82%8B%22%2C%20%22font%3Ainherit%3Bpadding%3A4px%2012px%3Bborder%3A1px%20solid%20%2312283f%3Bborder-radius%3A8px%3Bbackground%3A%23f2a81d%3Bcursor%3Apointer%3Bfont-weight%3A700%3B%22%29%3B%20close.addEventListener%28%22click%22%2C%20function%20%28%29%20%7B%20root.remove%28%29%3B%20%7D%29%3B%20head.appendChild%28close%29%3B%20root.appendChild%28head%29%3B%20build%28root%29%3B%20document.body.appendChild%28root%29%3B%20return%20root%3B%20%7D%20function%20failMessage%28root%2C%20extra%29%20%7B%20root.appendChild%28el%28%22p%22%2C%20%22%E3%82%AB%E3%83%AC%E3%83%B3%E3%83%80%E3%83%BC%E3%82%92%E8%AA%AD%E3%81%BF%E5%8F%96%E3%82%8C%E3%81%BE%E3%81%9B%E3%82%93%E3%81%A7%E3%81%97%E3%81%9F%E3%80%82%22%2C%20%22font-weight%3A700%3Bcolor%3A%23b00020%3B%22%29%29%3B%20root.appendChild%28el%28%22p%22%2C%20%22%E3%81%93%E3%81%AE%E3%83%84%E3%83%BC%E3%83%AB%E3%81%AF%E3%83%86%E3%82%B9%E3%83%88%E7%89%88%E3%81%A7%E3%80%81%E5%AE%9F%E9%9A%9B%E3%81%AE%E4%BA%88%E7%B4%84%E3%82%B5%E3%82%A4%E3%83%88%E3%81%AE%E7%94%BB%E9%9D%A2%E6%A7%8B%E9%80%A0%E3%81%AB%E3%82%88%E3%81%A3%E3%81%A6%E3%81%AF%E5%8B%95%E4%BD%9C%E3%81%97%E3%81%AA%E3%81%84%E5%A0%B4%E5%90%88%E3%81%8C%E3%81%82%E3%82%8A%E3%81%BE%E3%81%99%E3%80%82%E3%81%8A%E6%89%8B%E6%95%B0%E3%81%A7%E3%81%99%E3%81%8C%E3%80%81%E7%A9%BA%E3%81%8D%E7%8A%B6%E6%B3%81%E3%81%AF%E5%85%AC%E5%BC%8F%E3%82%B5%E3%82%A4%E3%83%88%E3%81%AE%E3%80%8C%E7%A9%BA%E3%81%8D%E7%8A%B6%E6%B3%81%E3%82%AB%E3%83%AC%E3%83%B3%E3%83%80%E3%83%BC%E3%80%8D%E3%81%A7%E4%BC%9A%E5%A0%B4%E3%81%94%E3%81%A8%E3%81%AB%E3%81%94%E7%A2%BA%E8%AA%8D%E3%81%8F%E3%81%A0%E3%81%95%E3%81%84%E3%80%82%22%20%2B%20%28extra%20%7C%7C%20%22%22%29%29%29%3B%20%7D%20function%20renderTable%28root%2C%20results%2C%20linkCount%29%20%7B%20root.appendChild%28el%28%22p%22%2C%20%22%E6%95%B0%E5%AD%97%E3%81%AF%E7%A9%BA%E3%81%84%E3%81%A6%E3%81%84%E3%82%8B%E4%BA%88%E7%B4%84%E6%9E%A0%E3%81%AE%E6%95%B0%E3%81%A7%E3%81%99%E3%80%82%E7%A9%BA%E6%AC%84%E3%81%AF%E8%AA%AD%E3%81%BF%E5%8F%96%E3%82%8C%E3%81%AA%E3%81%8B%E3%81%A3%E3%81%9F%E6%97%A5%E3%80%81%C3%97%E3%81%AF%E7%A9%BA%E3%81%8D%E3%81%AA%E3%81%97%E3%81%A8%E3%81%97%E3%81%A6%E8%AA%AD%E3%81%BF%E5%8F%96%E3%81%A3%E3%81%9F%E6%97%A5%E3%81%A7%E3%81%99%E3%80%82%E6%9C%80%E6%96%B0%E3%81%AE%E7%8A%B6%E6%B3%81%E3%81%A8%E4%BA%88%E7%B4%84%E3%81%AF%E5%85%AC%E5%BC%8F%E3%82%B5%E3%82%A4%E3%83%88%E3%81%A7%E3%81%94%E7%A2%BA%E8%AA%8D%E3%81%8F%E3%81%A0%E3%81%95%E3%81%84%E3%80%82%22%2C%20%22margin%3A4px%200%2010px%3B%22%29%29%3B%20if%20%28results.length%20%3D%3D%3D%201%20%26%26%20linkCount%20%3D%3D%3D%200%29%20%7B%20root.appendChild%28el%28%22p%22%2C%20%22%E4%BB%96%E3%81%AE%E4%BC%9A%E5%A0%B4%E3%81%B8%E3%81%AE%E5%88%87%E3%82%8A%E6%9B%BF%E3%81%88%E3%83%AA%E3%83%B3%E3%82%AF%E3%81%8C%E8%A6%8B%E3%81%A4%E3%81%8B%E3%82%89%E3%81%AA%E3%81%8B%E3%81%A3%E3%81%9F%E3%81%9F%E3%82%81%E3%80%81%E8%A1%A8%E7%A4%BA%E4%B8%AD%E3%81%AE%E4%BC%9A%E5%A0%B4%E5%88%86%E3%81%A0%E3%81%91%E3%82%92%E8%A1%A8%E7%A4%BA%E3%81%97%E3%81%A6%E3%81%84%E3%81%BE%E3%81%99%E3%80%82%22%2C%20%22margin%3A4px%200%2010px%3Bcolor%3A%23b00020%3Bfont-weight%3A700%3B%22%29%29%3B%20%7D%20var%20daySet%20%3D%20%7B%7D%3B%20results.forEach%28function%20%28r%29%20%7B%20Object.keys%28r.map%29.forEach%28function%20%28d%29%20%7B%20daySet%5Bd%5D%20%3D%201%3B%20%7D%29%3B%20%7D%29%3B%20var%20days%20%3D%20Object.keys%28daySet%29.map%28Number%29.sort%28function%20%28a%2C%20b%29%20%7B%20return%20a%20-%20b%3B%20%7D%29%3B%20var%20table%20%3D%20el%28%22table%22%2C%20null%2C%20%22border-collapse%3Acollapse%3Bwidth%3A100%25%3Bfont-size%3A12px%3B%22%29%3B%20var%20thead%20%3D%20el%28%22thead%22%29%3B%20var%20trh%20%3D%20el%28%22tr%22%29%3B%20trh.appendChild%28el%28%22th%22%2C%20%22%E4%BC%9A%E5%A0%B4%22%2C%20%22border%3A1px%20solid%20%23c9d4e0%3Bpadding%3A4px%206px%3Bbackground%3A%23eef3f8%3Btext-align%3Aleft%3Bwhite-space%3Anowrap%3B%22%29%29%3B%20trh.appendChild%28el%28%22th%22%2C%20%22%E6%9C%88%22%2C%20%22border%3A1px%20solid%20%23c9d4e0%3Bpadding%3A4px%206px%3Bbackground%3A%23eef3f8%3Bwhite-space%3Anowrap%3B%22%29%29%3B%20days.forEach%28function%20%28d%29%20%7B%20trh.appendChild%28el%28%22th%22%2C%20String%28d%29%2C%20%22border%3A1px%20solid%20%23c9d4e0%3Bpadding%3A4px%203px%3Bbackground%3A%23eef3f8%3Btext-align%3Acenter%3B%22%29%29%3B%20%7D%29%3B%20thead.appendChild%28trh%29%3B%20table.appendChild%28thead%29%3B%20var%20tbody%20%3D%20el%28%22tbody%22%29%3B%20results.forEach%28function%20%28r%29%20%7B%20var%20tr%20%3D%20el%28%22tr%22%29%3B%20tr.appendChild%28el%28%22td%22%2C%20r.venue%2C%20%22border%3A1px%20solid%20%23c9d4e0%3Bpadding%3A4px%206px%3Bwhite-space%3Anowrap%3Bfont-weight%3A700%3B%22%29%29%3B%20tr.appendChild%28el%28%22td%22%2C%20r.month%20%7C%7C%20%22%22%2C%20%22border%3A1px%20solid%20%23c9d4e0%3Bpadding%3A4px%206px%3Bwhite-space%3Anowrap%3B%22%29%29%3B%20days.forEach%28function%20%28d%29%20%7B%20var%20v%20%3D%20r.map%5Bd%5D%3B%20tr.appendChild%28el%28%22td%22%2C%20v%20%3D%3D%20null%20%7C%7C%20v%20%3D%3D%3D%20%22%22%20%3F%20%22%22%20%3A%20v%2C%20%22border%3A1px%20solid%20%23c9d4e0%3Bpadding%3A4px%203px%3Btext-align%3Acenter%3B%22%29%29%3B%20%7D%29%3B%20tbody.appendChild%28tr%29%3B%20%7D%29%3B%20table.appendChild%28tbody%29%3B%20root.appendChild%28table%29%3B%20%7D%20function%20sleep%28ms%29%20%7B%20return%20new%20Promise%28function%20%28r%29%20%7B%20setTimeout%28r%2C%20ms%29%3B%20%7D%29%3B%20%7D%20async%20function%20main%28%29%20%7B%20var%20root%20%3D%20showOverlay%28function%20%28r%29%20%7B%20r.appendChild%28el%28%22p%22%2C%20%22%E8%AA%AD%E3%81%BF%E5%8F%96%E3%82%8A%E4%B8%AD%E3%81%A7%E3%81%99%E2%80%A6%EF%BC%88%E4%BC%9A%E5%A0%B4%E3%81%94%E3%81%A8%E3%81%AB%E9%A0%86%E7%95%AA%E3%81%AB%E8%AA%AD%E3%81%BF%E3%81%BE%E3%81%99%EF%BC%89%22%29%29%3B%20%7D%29%3B%20var%20results%20%3D%20%5B%5D%3B%20var%20cur%20%3D%20parseCalendar%28document%29%3B%20if%20%28cur%29%20results.push%28%7B%20venue%3A%20currentVenue%28document%29%20%7C%7C%20%22%E8%A1%A8%E7%A4%BA%E4%B8%AD%E3%81%AE%E4%BC%9A%E5%A0%B4%22%2C%20month%3A%20monthLabel%28document%29%2C%20map%3A%20cur.map%20%7D%29%3B%20var%20links%20%3D%20venueLinks%28document%29%3B%20for%20%28var%20i%20%3D%200%3B%20i%20%3C%20links.length%20%26%26%20i%20%3C%2020%3B%20i%2B%2B%29%20%7B%20try%20%7B%20var%20res%20%3D%20await%20fetch%28links%5Bi%5D.url%2C%20%7B%20credentials%3A%20%22same-origin%22%20%7D%29%3B%20if%20%28res.ok%29%20%7B%20var%20html%20%3D%20await%20res.text%28%29%3B%20var%20doc%20%3D%20new%20DOMParser%28%29.parseFromString%28html%2C%20%22text%2Fhtml%22%29%3B%20var%20cal%20%3D%20parseCalendar%28doc%29%3B%20if%20%28cal%29%20results.push%28%7B%20venue%3A%20links%5Bi%5D.venue%2C%20month%3A%20monthLabel%28doc%29%2C%20map%3A%20cal.map%20%7D%29%3B%20%7D%20%7D%20catch%20%28e%29%20%7B%20%2F%2A%20skip%20this%20venue%20%2A%2F%20%7D%20await%20sleep%28300%29%3B%20%7D%20var%20fresh%20%3D%20showOverlay%28function%20%28%29%20%7B%7D%29%3B%20if%20%28results.length%20%3D%3D%3D%200%29%20%7B%20failMessage%28fresh%29%3B%20return%3B%20%7D%20renderTable%28fresh%2C%20results%2C%20links.length%29%3B%20%7D%20main%28%29.catch%28function%20%28%29%20%7B%20showOverlay%28function%20%28r%29%20%7B%20failMessage%28r%29%3B%20%7D%29%3B%20%7D%29%3B%20%7D%29%28%29%3B">免許更新 空きまとめ（テスト版）</a>
@@ -426,6 +468,36 @@ details.src-box summary { cursor:pointer; font-weight:700; font-size:14px; color
 })();</pre>
 </details>
 </section>
+<script>
+(function () {
+  var btn = document.getElementById("bm-copy-btn");
+  var done = document.getElementById("bm-copy-done");
+  var area = document.getElementById("bm-code");
+  var link = document.querySelector("a.bm-btn");
+  if (!area || !link) return;
+  var code = link.getAttribute("href") || "";
+  area.value = code;
+  function showDone() {
+    if (!done) return;
+    done.style.display = "inline";
+    setTimeout(function () { done.style.display = "none"; }, 3000);
+  }
+  function fallbackCopy() {
+    area.focus();
+    area.select();
+    try { document.execCommand("copy"); showDone(); } catch (e) { /* 選択状態のままにして手動コピーを促す */ }
+  }
+  if (btn) {
+    btn.addEventListener("click", function () {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(code).then(showDone, fallbackCopy);
+      } else {
+        fallbackCopy();
+      }
+    });
+  }
+})();
+</script>
 
 <section class="box">
 <h2>対象の会場</h2>
