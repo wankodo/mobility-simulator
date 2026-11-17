@@ -240,6 +240,7 @@
   .ts-badge-mob { background:#12283f; color:#fff; }
   .ts-badge-money { background:#f2a81d; color:#231a00; }
   .ts-badge-uranai { background:#6d28d9; color:#fff; }
+  .ts-badge-ins { background:#0f766e; color:#fff; }
   /* Andyモード：プルダウンの面と文字が闇に沈まないように */
   html[data-theme="andy"] .ts-suggest { background:#081625; border-color:rgba(110,205,230,.42);
     box-shadow:0 0 0 1px rgba(110,205,230,.08), 0 18px 38px -12px rgba(0,0,0,.85); }
@@ -264,7 +265,7 @@
       <input type="search" id="toolSearchBox" placeholder="ツールを検索（例：タロット、高速、奨学金）" autocomplete="off" aria-label="ツールを検索">
       <div class="ts-suggest" id="toolSuggest" hidden></div>
     </div>
-    <p class="ts-note">移動・お金・占いの全45ツールから探せます。入力しなくても、タップすれば一覧が出ます。</p>
+    <p class="ts-note">移動・お金・占い・保険の全49ツールから探せます。入力しなくても、タップすれば一覧が出ます。</p>
   </section>
 
   <div class="cards">
@@ -609,13 +610,14 @@
   </div>
 </div>
 <script>
-/* ===== 全ツール検索プルダウン（移動・お金・占い 全45ツール） =====
+/* ===== 全ツール検索プルダウン（移動・お金・占い・保険 全49ツール） =====
    どのサイトのトップでもプルダウンに全ツールを出す、という共通ルールの移動系版。
    ツールを足すときは TOOLS に1行追加するだけ（保険系もここへ足す）。 */
 (function () {
   "use strict";
   var MONEY = "https://wankodo.github.io/money-tools/";
   var URN = "https://wankodo.github.io/uranai/";
+  var INSURL = "https://wankodo.github.io/insurance/";
   var TOOLS = [
     { site: "mob", name: "タイムズカー料金シミュレーター", cat: "車", url: "timescar.html",
       desc: "カーシェアの利用料金を、利用時間と走行距離から試算します。",
@@ -751,7 +753,20 @@
       keywords: "花占い 好き嫌い" },
     { site: "uranai", name: "ペンデュラム占い", cat: "ペンデュラム", url: URN + "pendulum.html",
       desc: "振り子に二択の質問を問いかける占いです。",
-      keywords: "ペンデュラム ダウジング 二択" }
+      keywords: "ペンデュラム ダウジング 二択" },
+    { site: "ins", name: "医療保険比較", cat: "医療保険", url: INSURL + "medical.html",
+      desc: "年齢・性別で医療保険・がん保険19商品の月額保険料を比較します。",
+      keywords: "医療保険 がん保険 保険料 比較" },
+    { site: "ins", name: "自動車保険比較", cat: "自動車保険", url: INSURL + "car.html",
+      desc: "各社公式の保険料モデルケースを条件で絞り込んで比較します。",
+      keywords: "自動車保険 任意保険 保険料 モデルケース" },
+    { site: "ins", name: "任意継続 vs 国保", cat: "健康保険", url: INSURL + "continuation.html",
+      desc: "退職後の任意継続と国民健康保険の保険料を比較します。",
+      keywords: "任意継続 国民健康保険 国保 退職" },
+    { site: "ins", name: "社会保険料計算", cat: "社会保険", url: INSURL + "social.html",
+      desc: "給与と賞与から社会保険料の本人・会社負担を計算します。",
+      keywords: "社会保険料 健康保険 厚生年金 雇用保険" }
+
   ];
 
   var boxEl = document.getElementById("toolSearchBox");
@@ -762,6 +777,7 @@
   function badgeHtml(site) {
     if (site === "mob") return '<span class="ts-badge ts-badge-mob">移動</span>';
     if (site === "uranai") return '<span class="ts-badge ts-badge-uranai">占い</span>';
+    if (site === "ins") return '<span class="ts-badge ts-badge-ins">保険</span>';
     return '<span class="ts-badge ts-badge-money">お金</span>';
   }
 
