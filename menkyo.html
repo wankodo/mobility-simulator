@@ -1,0 +1,496 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<script>try{var _t=localStorage.getItem("ido_theme_v1");if(_t==="andy"||_t==="kuma")document.documentElement.dataset.theme=_t;if(_t==="andy"){var _s=document.createElement("style");_s.textContent=":root[data-theme=\"andy\"] {\n  color-scheme: dark;\n\n  --ido-navy-950: #02070d;\n  --ido-navy-900: #04101c;\n  --ido-navy-800: #071a2b;\n  --ido-navy-700: #0b2a42;\n  --ido-amber: #46d9ec;\n  --ido-amber-2: #8ff2ff;\n  --ido-sky: #46d9ec;\n  --ido-ink: #d8f1f6;\n  --ido-muted: #a9c9d9;\n  --ido-line: rgba(110, 205, 230, .32);\n  --ido-bg: #04090f;\n  --ido-card: rgba(8, 22, 34, .88);\n  --ido-shadow: 0 0 0 1px rgba(110, 205, 230, .05), 0 18px 38px -18px rgba(0, 0, 0, .85);\n  --ido-radius: 10px;\n\n  --navy: #04101c;\n  --navy2: #02070d;\n  --navy-2: #071a2b;\n  --amber: #46d9ec;\n  --ink: #d8f1f6;\n  --mut: #a9c9d9;\n  --muted: #a9c9d9;\n  --sub: #a9c9d9;\n  --ink2: #a9c9d9;\n  --ink-soft: #a9c9d9;\n  --bg: #04090f;\n  --paper: #04090f;\n  --card: rgba(8, 22, 34, .88);\n  --panel: rgba(8, 22, 34, .88);\n  --surface: rgba(8, 22, 34, .92);\n  --surface-2: rgba(13, 34, 52, .92);\n  --line: rgba(110, 205, 230, .32);\n  --chip: rgba(70, 217, 236, .14);\n  --accent: #46d9ec;\n  --green: #46d9ec;\n  --green-deep: #04101c;\n  --green-soft: rgba(70, 217, 236, .12);\n  --fuel: #46d9ec;\n  --fuel2: #8ff2ff;\n  --teal: #46d9ec;\n  --good: #3ddc97;\n  --good-bg: rgba(61, 220, 151, .14);\n  --red: #ff5252;\n  --seg-on: linear-gradient(180deg, #8ff2ff, #46d9ec);\n}\nhtml[data-theme=\"andy\"] body {\n  background:\n    radial-gradient(900px 480px at 85% -120px, rgba(70, 217, 236, .13), rgba(70, 217, 236, 0) 60%),\n    radial-gradient(700px 500px at -10% 110%, rgba(255, 154, 61, .05), rgba(255, 154, 61, 0) 60%),\n    repeating-linear-gradient(0deg, rgba(140, 230, 255, .022) 0 1px, transparent 1px 4px),\n    linear-gradient(rgba(110, 205, 230, .045) 1px, transparent 1px),\n    linear-gradient(90deg, rgba(110, 205, 230, .045) 1px, transparent 1px),\n    linear-gradient(180deg, #030a12, #04090f);\n  background-size: auto, auto, auto, 52px 52px, 52px 52px, auto;\n}\nhtml[data-theme=\"andy\"]{background:#04090f}";document.head.appendChild(_s);}}catch(e){}</script>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="description" content="【テスト版】警視庁の運転免許更新予約サイトで、複数会場の空き状況カレンダーを1つの表にまとめて見るためのブックマークレット試作品です。動作未検証です。" />
+<title>移動シミュレーター｜免許更新の予約空きまとめ【テスト中】</title>
+<style>
+  :root { --navy:#12283f; --navy2:#0b1c2c; --amber:#f2a81d; --ink:#1c2733; --mut:#5b6b7c; --bg:#edf1f5; --card:#fff; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:system-ui,-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif; color:var(--ink);
+         background:linear-gradient(180deg,#e8eef4 0%,#f2f5f8 320px,#edf1f5 100%); }
+  header.site { position:relative; overflow:hidden; color:#fff; padding:40px 18px 34px;
+    background:linear-gradient(120deg,var(--navy2) 0%,var(--navy) 55%,#1d3d5c 100%); }
+  header.site::before { content:""; position:absolute; inset:0; pointer-events:none;
+    background:
+      radial-gradient(560px 260px at 88% -40px, rgba(242,168,29,.35), rgba(242,168,29,0) 70%),
+      radial-gradient(700px 320px at -10% 120%, rgba(47,127,208,.30), rgba(47,127,208,0) 70%); }
+  header.site::after { content:""; position:absolute; inset:0; pointer-events:none; opacity:.05;
+    background:repeating-linear-gradient(115deg,#fff 0 1px,transparent 1px 14px); }
+  header.site .brand { position:relative; font-size:13px; letter-spacing:.34em; color:var(--amber); font-weight:800; margin:0 0 10px; }
+  header.site h1 { position:relative; margin:0; font-size:clamp(32px,7vw,46px); font-weight:900; letter-spacing:.02em; text-shadow:0 2px 14px rgba(0,0,0,.25); }
+  header.site p.lead { position:relative; margin:12px 0 0; color:#d7e4f2; max-width:720px; line-height:1.8; }
+  main { max-width:960px; margin:0 auto; padding:26px 16px 40px; }
+  .cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:18px; }
+  a.card { position:relative; display:block; background:var(--card); border-radius:20px; padding:24px 22px 20px; text-decoration:none; color:var(--ink);
+           border:1px solid #e1e8ef; box-shadow:0 3px 14px rgba(18,40,63,.07), 0 14px 30px -18px rgba(18,40,63,.25);
+           transition:transform .18s ease, box-shadow .18s ease; overflow:hidden; }
+  a.card::before { content:""; position:absolute; top:0; left:0; right:0; height:6px; background:var(--acc,#ccc); }
+  a.card:hover { transform:translateY(-4px); box-shadow:0 8px 22px rgba(18,40,63,.12), 0 22px 38px -18px rgba(18,40,63,.35); }
+  a.card:focus-visible { outline:3px solid var(--amber); outline-offset:2px; }
+  a.card.train { --acc:linear-gradient(90deg,#12b981,#0d8a63); --tint:#e3f7ef; }
+  a.card.car { --acc:linear-gradient(90deg,#ffb020,#f28c13); --tint:#fdf1de; }
+  a.card.highway { --acc:linear-gradient(90deg,#3f9be0,#2f6fd0); --tint:#e4f0fb; }
+  a.card.gas { --acc:linear-gradient(90deg,#f97316,#ea580c); --tint:#fdeee3; }
+  a.card.park { --acc:linear-gradient(90deg,#2e9e8f,#2e7d74); --tint:#e2f2ef; }
+  a.card.taxi { --acc:linear-gradient(90deg,#eab308,#ca8a04); --tint:#fdf6dd; }
+  a.card.pass { --acc:linear-gradient(90deg,#12b981,#0d8a63); --tint:#e3f7ef; }
+  a.card .ic { display:flex; align-items:center; justify-content:center; width:56px; height:56px; border-radius:16px;
+               background:var(--tint,#eef2f6); font-size:30px; margin-bottom:14px; }
+  a.card h2 { margin:0 0 8px; font-size:20px; font-weight:800; letter-spacing:.01em; }
+  a.card p { margin:0; color:var(--mut); line-height:1.75; font-size:14px; }
+  a.card .go { display:inline-flex; align-items:center; gap:6px; margin-top:16px; font-weight:800; color:var(--navy);
+               background:#f4f7fa; border:1px solid #e1e8ef; padding:7px 14px; border-radius:999px; font-size:13px;
+               transition:background .18s ease, gap .18s ease; }
+  a.card:hover .go { background:#fdf1de; gap:10px; }
+  section.box { background:var(--card); border-radius:20px; padding:22px; margin-top:20px;
+                border:1px solid #e1e8ef; box-shadow:0 3px 14px rgba(18,40,63,.06); }
+  section.box h2 { margin:0 0 10px; font-size:18px; font-weight:800; display:flex; align-items:center; gap:10px; }
+  section.box h2::before { content:""; width:9px; height:20px; border-radius:3px; background:linear-gradient(180deg,var(--amber),#f28c13); flex:none; }
+  section.box p, section.box li { color:var(--mut); line-height:1.8; font-size:14px; }
+  footer { max-width:960px; margin:0 auto; padding:0 16px 36px; color:var(--mut); font-size:13px; line-height:1.8; }
+
+  a.card.catcar { --acc:linear-gradient(90deg,#ffb020,#f28c13); --tint:#fdf1de; }
+  a.card.catrail { --acc:linear-gradient(90deg,#12b981,#0d8a63); --tint:#e3f7ef; }
+  a.card.catuseful { --acc:linear-gradient(90deg,#3f9be0,#2f6fd0); --tint:#e4f0fb; }
+  a.card.moving { --acc:linear-gradient(90deg,#f43f5e,#e11d48); --tint:#fde8ec; }
+  .backlink { display:inline-block; margin:0 0 14px; font-weight:700; color:var(--navy); text-decoration:none; }
+</style>
+<style>
+.test-banner { background:#b00020; color:#fff; border-radius:16px; padding:18px 20px; margin:0 0 20px;
+box-shadow:0 6px 20px rgba(176,0,32,.35); border:3px solid #7a0016;}
+.test-banner.tb-title { font-size:clamp(22px,5vw,30px); font-weight:900; letter-spacing:.08em; margin:0 0 8px;}
+.test-banner p { margin:0; line-height:1.8; font-size:14px; color:#ffe9ec;}
+.test-banner strong { color:#fff;}
+.bm-install { background:#12283f; color:#fff; border-radius:16px; padding:20px; margin-top:14px; text-align:center;}
+.bm-install p { color:#d7e4f2; margin:0 0 12px; line-height:1.8; font-size:14px;}
+a.bm-btn { display:inline-block; background:linear-gradient(180deg,#ffb020,#f28c13); color:#12283f; font-weight:900;
+text-decoration:none; padding:14px 22px; border-radius:999px; font-size:16px; cursor:grab;
+box-shadow:0 6px 16px rgba(0,0,0,.3);}
+a.bm-btn:active { cursor:grabbing;}
+.steps { counter-reset: step; padding-left:0; list-style:none;}
+.steps li { position:relative; padding-left:44px; margin:10px 0; color:var(--mut); line-height:1.8; font-size:14px;}
+.steps li::before { counter-increment: step; content: counter(step); position:absolute; left:0; top:2px;
+width:30px; height:30px; border-radius:50%; background:linear-gradient(180deg,var(--amber),#f28c13);
+color:#12283f; font-weight:900; display:flex; align-items:center; justify-content:center; font-size:15px;}
+.steps li strong { color:var(--ink);}
+pre.bm-src { background:#0b1c2c; color:#d7e4f2; border-radius:12px; padding:14px; overflow:auto;
+font-size:11.5px; line-height:1.55; max-height:320px; white-space:pre-wrap; word-break:break-all;}
+details.src-box { margin-top:12px;}
+details.src-box summary { cursor:pointer; font-weight:700; font-size:14px; color:var(--navy);}
+.venue-list { columns:2; column-gap:24px; padding-left:18px;}
+.venue-list li { break-inside:avoid;}
+@media (max-width:560px){.venue-list { columns:1;}}
+.warn-box { background:#fff7e6; border:1.5px solid #f2a81d; border-radius:14px; padding:14px 16px; margin-top:14px;}
+.warn-box p,.warn-box li { color:#6b5410;}
+</style>
+<link rel="canonical" href="https://wankodo.github.io/mobility-simulator/menkyo.html" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="移動シミュレーター" />
+<meta property="og:title" content="移動シミュレーター｜免許更新の予約空きまとめ【テスト中】" />
+<meta property="og:description" content="複数会場の空き状況カレンダーを1つの表にまとめるブックマークレットの試作品です。" />
+<meta property="og:url" content="https://wankodo.github.io/mobility-simulator/menkyo.html" />
+<meta property="og:image" content="https://wankodo.github.io/mobility-simulator/ogp.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<link rel="icon" type="image/svg+xml" href="favicon.svg" />
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3970535652265626" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="site-unified.css?v=20" />
+<script>
+(function () {
+  var PIC = {
+    "⏱": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 2.5h4"/><path d="M12 2.5v3"/><circle cx="12" cy="14" r="7.5"/><path d="M12 10.5V14l2.6 1.6"/></svg>',
+    "📦": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8l-9-5-9 5v8l9 5 9-5V8z"/><path d="M3 8l9 5 9-5"/><path d="M12 13v8"/></svg>',
+    "🚗": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11l1.5-4.5A2 2 0 0 1 8.4 5h7.2a2 2 0 0 1 1.9 1.5L19 11"/><path d="M3 11h18v6h-2.6"/><path d="M3 17h2.6"/><circle cx="7.5" cy="17" r="1.8"/><circle cx="16.5" cy="17" r="1.8"/><path d="M9.3 17h5.4"/></svg>',
+    "🚕": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9.6" y="2.6" width="4.8" height="2.2" rx="0.6"/><path d="M5 12l1.5-4.2A2 2 0 0 1 8.4 6.4h7.2a2 2 0 0 1 1.9 1.4L19 12"/><path d="M3 12h18v5.5h-2.6"/><path d="M3 17.5h2.6"/><circle cx="7.5" cy="17.5" r="1.8"/><circle cx="16.5" cy="17.5" r="1.8"/><path d="M9.3 17.5h5.4"/></svg>',
+    "⛽": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v16"/><path d="M3 21h14"/><rect x="7.2" y="5.8" width="5.6" height="4.2" rx="0.6"/><path d="M15 10l2.1 2.1a2 2 0 0 1 .6 1.4V18a1.9 1.9 0 0 0 3.8 0v-6.8a2 2 0 0 0-.6-1.4L18.6 7.5"/></svg>',
+    "🅿": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2.5"/><path d="M9.5 16.8V7.2h3.4a2.9 2.9 0 0 1 0 5.8H9.5"/></svg>',
+    "🛣": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21L10 3"/><path d="M19 21L14 3"/><path d="M12 18.6v-2.2"/><path d="M12 13.6v-2.2"/><path d="M12 8.6V6.4"/></svg>',
+    "🚃": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3.5" width="14" height="13" rx="2.5"/><path d="M5 10.3h14"/><path d="M9 13.9h.01M15 13.9h.01" stroke-width="2.6"/><path d="M8.5 20.5l2-4"/><path d="M15.5 20.5l-2-4"/><path d="M7 20.5h10"/></svg>',
+    "🎫": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8.6a2.4 2.4 0 0 0 0 2.8V15a1.6 1.6 0 0 0 1.6 1.6h12.8A1.6 1.6 0 0 0 20 15v-3.6a2.4 2.4 0 0 1 0-2.8V7A1.6 1.6 0 0 0 18.4 5.4H5.6A1.6 1.6 0 0 0 4 7z"/><path d="M13.8 6.2v1.7M13.8 10.2v1.7M13.8 14.2v1.6"/></svg>',
+    "🧰": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="9" width="18" height="10" rx="1.6"/><path d="M9 9V7a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/><path d="M3 13.6h18"/><rect x="10.3" y="12.3" width="3.4" height="2.6" rx="0.5"/></svg>',
+    "🧺": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.6 10.2h14.8l-1.5 7.9a2 2 0 0 1-2 1.6H8.1a2 2 0 0 1-2-1.6z"/><path d="M8.6 10.2L12 4.6l3.4 5.6"/><path d="M3 10.2h18"/><path d="M9.2 13.8v2.4M12 13.8v2.4M14.8 13.8v2.4"/></svg>',
+    "📍": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-6.6-5.5-6.6-10.3a6.6 6.6 0 0 1 13.2 0C18.6 15.5 12 21 12 21z"/><circle cx="12" cy="10.4" r="2.3"/></svg>',
+    "🐾": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="12" cy="15.8" rx="4.4" ry="3.6"/><circle cx="5.8" cy="10.8" r="1.8"/><circle cx="9.3" cy="7.8" r="1.9"/><circle cx="14.7" cy="7.8" r="1.9"/><circle cx="18.2" cy="10.8" r="1.8"/></svg>'
+  };
+  var KEYS = Object.keys(PIC);
+  function makePic(ch) {
+    var s = document.createElement("span");
+    s.className = "ido-pic";
+    s.dataset.emoji = ch;
+    s.innerHTML = PIC[ch];
+    return s;
+  }
+  function swapIn(root) {
+    if (!root || root.nodeType !== 1) return;
+    var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+      acceptNode: function (n) {
+        if (!n.nodeValue) return NodeFilter.FILTER_REJECT;
+        var p = n.parentElement;
+        if (!p) return NodeFilter.FILTER_REJECT;
+        var tag = p.tagName;
+        if (tag === "SCRIPT" || tag === "STYLE" || tag === "TEXTAREA") return NodeFilter.FILTER_REJECT;
+        if (p.closest(".ido-pic")) return NodeFilter.FILTER_REJECT;
+        for (var i = 0; i < KEYS.length; i++) if (n.nodeValue.indexOf(KEYS[i]) >= 0) return NodeFilter.FILTER_ACCEPT;
+        return NodeFilter.FILTER_REJECT;
+      }
+    });
+    var nodes = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+    nodes.forEach(function (n) {
+      var text = n.nodeValue;
+      var frag = document.createDocumentFragment();
+      var buf = "";
+      for (var i = 0; i < text.length; i++) {
+        var matched = null;
+        for (var k = 0; k < KEYS.length; k++) {
+          if (text.startsWith(KEYS[k], i)) { matched = KEYS[k]; break; }
+        }
+        if (matched) {
+          if (buf) { frag.appendChild(document.createTextNode(buf)); buf = ""; }
+          frag.appendChild(makePic(matched));
+          i += matched.length - 1;
+          if (text.charCodeAt(i + 1) === 0xFE0F) i++;
+        } else {
+          buf += text[i];
+        }
+      }
+      if (buf) frag.appendChild(document.createTextNode(buf));
+      if (n.parentNode) n.parentNode.replaceChild(frag, n);
+    });
+  }
+  function swapOut(root) {
+    root.querySelectorAll(".ido-pic").forEach(function (s) {
+      s.replaceWith(document.createTextNode(s.dataset.emoji || ""));
+    });
+  }
+  var mo = null;
+  function applyIcons() {
+    if (!document.body) return;
+    var isAndy = (document.documentElement.dataset.theme || "kuma") === "andy";
+    if (mo) { mo.disconnect(); mo = null; }
+    if (isAndy) {
+      swapIn(document.body);
+      mo = new MutationObserver(function (muts) {
+        muts.forEach(function (m) {
+          m.addedNodes.forEach(function (nd) { if (nd.nodeType === 1) swapIn(nd); });
+        });
+      });
+      mo.observe(document.body, { childList: true, subtree: true });
+    } else {
+      swapOut(document.body);
+    }
+  }
+  try {
+    var t = localStorage.getItem("ido_theme_v1");
+    if (t === "andy" || t === "kuma") document.documentElement.dataset.theme = t;
+  } catch (e) {}
+  document.addEventListener("DOMContentLoaded", function () {
+    var btns = document.querySelectorAll("[data-ido-theme]");
+    function sync() {
+      var cur = document.documentElement.dataset.theme || "kuma";
+      btns.forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.idoTheme === cur)); });
+    }
+    btns.forEach(function (b) {
+      b.addEventListener("click", function () {
+        document.documentElement.dataset.theme = b.dataset.idoTheme;
+        try { localStorage.setItem("ido_theme_v1", b.dataset.idoTheme); } catch (e) {}
+        sync();
+        applyIcons();
+      });
+    });
+    sync();
+    applyIcons();
+  });
+})();
+</script>
+</head>
+<body>
+<header class="ido-sitebar"><a class="ido-brand" href="index.html" aria-label="移動シミュレーター トップへ"><span class="ido-brand-mark" aria-hidden="true">移</span><span class="ido-brand-text"><small>MOBILITY SIMULATOR</small></span></a><div class="ido-category-nav" role="navigation" aria-label="カテゴリ"><a href="index.html">トップ</a><a href="car.html">車系</a><a href="rail.html">電車系</a><a href="useful.html" class="is-current" aria-current="page">便利系</a></div><div class="ido-theme-switch" role="group" aria-label="表示モード切替"><button type="button" data-ido-theme="kuma" aria-pressed="true">熊八モード</button><button type="button" data-ido-theme="andy" aria-pressed="false">Andyモード</button></div></header>
+
+<header class="site">
+<p class="brand">移動シミュレーター</p>
+<h1>免許更新の予約空きまとめ【テスト中】</h1>
+<p class="lead">公式の予約サイトで会場ごとに分かれている空き状況カレンダーを、1つの表にまとめて見るためのブックマークレット試作品です。</p>
+</header>
+<main>
+<a class="backlink" href="index.html">← トップへ戻る</a>
+
+<div class="test-banner" role="alert">
+<p class="tb-title">⚠ テスト中 ⚠</p>
+<p>このページは<strong>試作（テスト版）</strong>です。正式版ではありません。ブックマークレットは<strong>実際の予約サイトのログイン後画面では動作未検証</strong>で、画面の構造によっては正しく読み取れない場合があります。空き状況の最終確認と予約は、必ず公式サイトで行ってください。</p>
+</div>
+
+<section class="box">
+<h2>このツールについて</h2>
+<p>警視庁の運転免許手続予約サイトでは、空き状況カレンダーは<strong>会場を1つずつ選んで</strong>見る仕組みになっています。このツールは、ログイン済みの公式サイトのページでブックマークレットを実行すると、会場ごとのカレンダーを順番に読み取り、<strong>1つの表にまとめて表示</strong>する試作品です。</p>
+<p><strong>個人情報の扱い：</strong>予約用IDなどの情報は、お使いのブラウザの中だけで扱われます。このブックマークレットは、公式サイトと<strong>同じドメイン内</strong>のページを読むだけで、外部のサーバーへ情報を送信する処理は一切入っていません。ソースコードを下に全文公開していますので、実行前に中身を確認できます。</p>
+</section>
+
+<section class="box">
+<h2>使い方</h2>
+<ol class="steps">
+<li>下のボタンを<strong>ブックマークバーへドラッグ</strong>して登録します（スマートフォンの場合は、下のソースコードをコピーしてブックマークのURL欄に貼り付けてください）。</li>
+<li><a href="https://license-renew.tokyo-madoguchi-yoyaku.com/police-pref-tokyo/index_000.html" target="_blank" rel="noopener">警視庁運転免許手続予約サイト</a>を開き、いつも通り<strong>ご自身で</strong>手続を開始して、空き状況カレンダーのページまで進みます。</li>
+<li>カレンダーが表示された状態で、登録したブックマークレットをクリックします。</li>
+<li>画面の上に、会場ごとの空き状況をまとめた表が重なって表示されます。数字は空いている予約枠の数です。</li>
+</ol>
+<div class="bm-install">
+<p>このボタンをブックマークバーへドラッグしてください</p>
+<a class="bm-btn" href="javascript:%28function%20%28%29%20%7B%20%22use%20strict%22%3B%20var%20ROOT_ID%20%3D%20%22mk-agg-root%22%3B%20var%20VENUES%20%3D%20%5B%22%E5%BA%9C%E4%B8%AD%E9%81%8B%E8%BB%A2%E5%85%8D%E8%A8%B1%E8%A9%A6%E9%A8%93%E5%A0%B4%22%2C%20%22%E9%AE%AB%E6%B4%B2%E9%81%8B%E8%BB%A2%E5%85%8D%E8%A8%B1%E8%A9%A6%E9%A8%93%E5%A0%B4%22%2C%20%22%E6%B1%9F%E6%9D%B1%E9%81%8B%E8%BB%A2%E5%85%8D%E8%A8%B1%E8%A9%A6%E9%A8%93%E5%A0%B4%22%2C%20%22%E7%A5%9E%E7%94%B0%E9%81%8B%E8%BB%A2%E5%85%8D%E8%A8%B1%E6%9B%B4%E6%96%B0%E3%82%BB%E3%83%B3%E3%82%BF%E3%83%BC%22%2C%20%22%E6%96%B0%E5%AE%BF%E9%81%8B%E8%BB%A2%E5%85%8D%E8%A8%B1%E6%9B%B4%E6%96%B0%E3%82%BB%E3%83%B3%E3%82%BF%E3%83%BC%22%2C%20%22%E7%94%B0%E5%9C%92%E8%AA%BF%E5%B8%83%E8%AD%A6%E5%AF%9F%E7%BD%B2%22%2C%20%22%E4%B8%96%E7%94%B0%E8%B0%B7%E8%AD%A6%E5%AF%9F%E7%BD%B2%22%2C%20%22%E6%88%90%E5%9F%8E%E8%AD%A6%E5%AF%9F%E7%BD%B2%22%2C%20%22%E6%9D%BF%E6%A9%8B%E8%AD%A6%E5%AF%9F%E7%BD%B2%22%2C%20%22%E7%9F%B3%E7%A5%9E%E4%BA%95%E8%AD%A6%E5%AF%9F%E7%BD%B2%22%2C%20%22%E4%B8%8B%E8%B0%B7%E8%AD%A6%E5%AF%9F%E7%BD%B2%22%2C%20%22%E7%AB%B9%E3%81%AE%E5%A1%9A%E8%AD%A6%E5%AF%9F%E7%BD%B2%22%2C%20%22%E6%9C%AC%E6%89%80%E8%AD%A6%E5%AF%9F%E7%BD%B2%22%2C%20%22%E7%AB%8B%E5%B7%9D%E8%AD%A6%E5%AF%9F%E7%BD%B2%22%2C%20%22%E9%9D%92%E6%A2%85%E8%AD%A6%E5%AF%9F%E7%BD%B2%22%2C%20%22%E9%AB%98%E5%B0%BE%E8%AD%A6%E5%AF%9F%E7%BD%B2%22%2C%20%22%E7%94%BA%E7%94%B0%E8%AD%A6%E5%AF%9F%E7%BD%B2%22%5D%3B%20function%20venueOf%28text%29%20%7B%20if%20%28%21text%29%20return%20null%3B%20var%20t%20%3D%20String%28text%29.replace%28%2F%5B%5Cs%E3%80%80%5D%2B%2Fg%2C%20%22%22%29%3B%20for%20%28var%20i%20%3D%200%3B%20i%20%3C%20VENUES.length%3B%20i%2B%2B%29%20%7B%20if%20%28t.indexOf%28VENUES%5Bi%5D.replace%28%2F%5B%5Cs%E3%80%80%5D%2B%2Fg%2C%20%22%22%29%29%20%3E%3D%200%29%20return%20VENUES%5Bi%5D%3B%20%7D%20return%20null%3B%20%7D%20function%20monthLabel%28doc%29%20%7B%20var%20t%20%3D%20doc%20%26%26%20doc.body%20%3F%20doc.body.textContent%20%7C%7C%20%22%22%20%3A%20%22%22%3B%20var%20m%20%3D%20t.match%28%2F%28%5Cd%7B4%7D%29%E5%B9%B4%5Cs%2A%28%5Cd%7B1%2C2%7D%29%E6%9C%88%2F%29%3B%20if%20%28m%29%20return%20m%5B1%5D%20%2B%20%22%E5%B9%B4%22%20%2B%20m%5B2%5D%20%2B%20%22%E6%9C%88%22%3B%20var%20m2%20%3D%20t.match%28%2F%28%5Cd%7B1%2C2%7D%29%E6%9C%88%E3%81%AE%E7%A9%BA%E3%81%8D%7C%28%5Cd%7B1%2C2%7D%29%E6%9C%88%E5%88%86%2F%29%3B%20if%20%28m2%29%20return%20%28m2%5B1%5D%20%7C%7C%20m2%5B2%5D%29%20%2B%20%22%E6%9C%88%22%3B%20return%20%22%22%3B%20%7D%20function%20cellText%28c%29%20%7B%20var%20parts%20%3D%20%5B%5D%3B%20%28function%20walk%28node%29%20%7B%20var%20kids%20%3D%20node.childNodes%3B%20for%20%28var%20i%20%3D%200%3B%20i%20%3C%20kids.length%3B%20i%2B%2B%29%20%7B%20var%20n%20%3D%20kids%5Bi%5D%3B%20if%20%28n.nodeType%20%3D%3D%3D%203%29%20%7B%20var%20t%20%3D%20n.textContent.replace%28%2F%5B%5Cs%E3%80%80%5D%2B%2Fg%2C%20%22%20%22%29.trim%28%29%3B%20if%20%28t%29%20parts.push%28t%29%3B%20%7D%20else%20if%20%28n.nodeType%20%3D%3D%3D%201%29%20%7B%20if%20%28n.tagName%20%3D%3D%3D%20%22BR%22%29%20parts.push%28%22%20%22%29%3B%20else%20walk%28n%29%3B%20%7D%20%7D%20%7D%29%28c%29%3B%20return%20parts.join%28%22%20%22%29%3B%20%7D%20function%20parseCalendar%28doc%29%20%7B%20var%20tables%20%3D%20doc.querySelectorAll%28%22table%22%29%3B%20var%20best%20%3D%20null%3B%20for%20%28var%20ti%20%3D%200%3B%20ti%20%3C%20tables.length%3B%20ti%2B%2B%29%20%7B%20var%20cells%20%3D%20tables%5Bti%5D.querySelectorAll%28%22td%22%29%3B%20var%20map%20%3D%20%7B%7D%3B%20var%20days%20%3D%200%3B%20var%20slots%20%3D%200%3B%20cells.forEach%28function%20%28c%29%20%7B%20var%20raw%20%3D%20cellText%28c%29%3B%20var%20dm%20%3D%20raw.match%28%2F%5E%28%5Cd%7B1%2C2%7D%29%28%3F%21%5Cd%29%2F%29%3B%20if%20%28%21dm%29%20return%3B%20var%20day%20%3D%20parseInt%28dm%5B1%5D%2C%2010%29%3B%20if%20%28day%20%3C%201%20%7C%7C%20day%20%3E%2031%29%20return%3B%20if%20%28day%20in%20map%29%20return%3B%20var%20rest%20%3D%20raw.slice%28dm%5B0%5D.length%29.trim%28%29%3B%20var%20status%20%3D%20%22%22%3B%20var%20nm%20%3D%20rest.match%28%2F%28%5Cd%2B%29%5Cs%2A%E4%BA%BA%2F%29%20%7C%7C%20rest.match%28%2F%E6%AE%8B%E3%82%8A%5Cs%2A%28%5Cd%2B%29%5Cs%2A%E6%9E%A0%2F%29%20%7C%7C%20rest.match%28%2F%5E%28%5Cd%2B%29%24%2F%29%3B%20if%20%28nm%29%20%7B%20status%20%3D%20nm%5B1%5D%3B%20slots%2B%2B%3B%20%7D%20else%20if%20%28rest.indexOf%28%22%E2%97%8B%22%29%20%3E%3D%200%20%7C%7C%20rest.indexOf%28%22%E2%97%AF%22%29%20%3E%3D%200%29%20status%20%3D%20%22%E2%97%8B%22%3B%20else%20if%20%28rest.indexOf%28%22%E2%96%B3%22%29%20%3E%3D%200%29%20status%20%3D%20%22%E2%96%B3%22%3B%20else%20if%20%28rest.indexOf%28%22%C3%97%22%29%20%3E%3D%200%20%7C%7C%20rest.indexOf%28%22%E2%9C%95%22%29%20%3E%3D%200%29%20status%20%3D%20%22%C3%97%22%3B%20else%20if%20%28rest%29%20status%20%3D%20rest.slice%280%2C%208%29%3B%20map%5Bday%5D%20%3D%20status%3B%20days%2B%2B%3B%20%7D%29%3B%20if%20%28days%20%3E%3D%2015%20%26%26%20%28%21best%20%7C%7C%20slots%20%3E%20best.slots%29%29%20best%20%3D%20%7B%20map%3A%20map%2C%20slots%3A%20slots%20%7D%3B%20%7D%20return%20best%3B%20%7D%20function%20currentVenue%28doc%29%20%7B%20var%20sels%20%3D%20doc.querySelectorAll%28%22select%22%29%3B%20for%20%28var%20i%20%3D%200%3B%20i%20%3C%20sels.length%3B%20i%2B%2B%29%20%7B%20var%20opt%20%3D%20sels%5Bi%5D.options%5Bsels%5Bi%5D.selectedIndex%5D%3B%20var%20v%20%3D%20opt%20%3F%20venueOf%28opt.textContent%29%20%3A%20null%3B%20if%20%28v%29%20return%20v%3B%20%7D%20var%20heads%20%3D%20doc.querySelectorAll%28%22h1%2C%20h2%2C%20h3%22%29%3B%20for%20%28var%20j%20%3D%200%3B%20j%20%3C%20heads.length%3B%20j%2B%2B%29%20%7B%20var%20hv%20%3D%20venueOf%28heads%5Bj%5D.textContent%29%3B%20if%20%28hv%29%20return%20hv%3B%20%7D%20return%20venueOf%28doc.title%29%3B%20%7D%20function%20venueLinks%28doc%29%20%7B%20var%20out%20%3D%20%5B%5D%3B%20var%20seen%20%3D%20%7B%7D%3B%20var%20anchors%20%3D%20doc.querySelectorAll%28%22a%5Bhref%5D%22%29%3B%20anchors.forEach%28function%20%28a%29%20%7B%20var%20v%20%3D%20venueOf%28a.textContent%20%7C%7C%20%22%22%29%3B%20if%20%28%21v%20%7C%7C%20seen%5Bv%5D%29%20return%3B%20var%20href%20%3D%20a.getAttribute%28%22href%22%29%3B%20if%20%28%21href%20%7C%7C%20href.charAt%280%29%20%3D%3D%3D%20%22%23%22%29%20return%3B%20var%20u%3B%20try%20%7B%20u%20%3D%20new%20URL%28href%2C%20location.href%29%3B%20%7D%20catch%20%28e%29%20%7B%20return%3B%20%7D%20if%20%28u.origin%20%21%3D%3D%20location.origin%29%20return%3B%20seen%5Bv%5D%20%3D%201%3B%20if%20%28u.href%20%3D%3D%3D%20location.href%29%20return%3B%20out.push%28%7B%20venue%3A%20v%2C%20url%3A%20u.href%20%7D%29%3B%20%7D%29%3B%20return%20out%3B%20%7D%20function%20el%28tag%2C%20text%2C%20style%29%20%7B%20var%20e%20%3D%20document.createElement%28tag%29%3B%20if%20%28text%20%21%3D%20null%29%20e.textContent%20%3D%20text%3B%20if%20%28style%29%20e.setAttribute%28%22style%22%2C%20style%29%3B%20return%20e%3B%20%7D%20function%20showOverlay%28build%29%20%7B%20var%20old%20%3D%20document.getElementById%28ROOT_ID%29%3B%20if%20%28old%29%20old.remove%28%29%3B%20var%20root%20%3D%20el%28%22div%22%2C%20null%2C%20%22position%3Afixed%3Btop%3A10px%3Bleft%3A10px%3Bright%3A10px%3Bz-index%3A2147483647%3Bbackground%3A%23ffffff%3Bcolor%3A%231c2733%3Bborder%3A2px%20solid%20%2312283f%3Bborder-radius%3A12px%3Bbox-shadow%3A0%2012px%2040px%20rgba%280%2C0%2C0%2C.35%29%3Bpadding%3A14px%2016px%3Bmax-height%3A88vh%3Boverflow%3Aauto%3Bfont-family%3Asans-serif%3Bfont-size%3A14px%3Bline-height%3A1.6%3B%22%29%3B%20root.id%20%3D%20ROOT_ID%3B%20var%20head%20%3D%20el%28%22div%22%2C%20null%2C%20%22display%3Aflex%3Bjustify-content%3Aspace-between%3Balign-items%3Acenter%3Bgap%3A10px%3Bmargin-bottom%3A8px%3B%22%29%3B%20head.appendChild%28el%28%22strong%22%2C%20%22%E5%85%8D%E8%A8%B1%E6%9B%B4%E6%96%B0%20%E7%A9%BA%E3%81%8D%E7%8A%B6%E6%B3%81%E3%81%BE%E3%81%A8%E3%82%81%EF%BC%88%E3%83%86%E3%82%B9%E3%83%88%E7%89%88%EF%BC%89%22%2C%20%22font-size%3A16px%3B%22%29%29%3B%20var%20close%20%3D%20el%28%22button%22%2C%20%22%E9%96%89%E3%81%98%E3%82%8B%22%2C%20%22font%3Ainherit%3Bpadding%3A4px%2012px%3Bborder%3A1px%20solid%20%2312283f%3Bborder-radius%3A8px%3Bbackground%3A%23f2a81d%3Bcursor%3Apointer%3Bfont-weight%3A700%3B%22%29%3B%20close.addEventListener%28%22click%22%2C%20function%20%28%29%20%7B%20root.remove%28%29%3B%20%7D%29%3B%20head.appendChild%28close%29%3B%20root.appendChild%28head%29%3B%20build%28root%29%3B%20document.body.appendChild%28root%29%3B%20return%20root%3B%20%7D%20function%20failMessage%28root%2C%20extra%29%20%7B%20root.appendChild%28el%28%22p%22%2C%20%22%E3%82%AB%E3%83%AC%E3%83%B3%E3%83%80%E3%83%BC%E3%82%92%E8%AA%AD%E3%81%BF%E5%8F%96%E3%82%8C%E3%81%BE%E3%81%9B%E3%82%93%E3%81%A7%E3%81%97%E3%81%9F%E3%80%82%22%2C%20%22font-weight%3A700%3Bcolor%3A%23b00020%3B%22%29%29%3B%20root.appendChild%28el%28%22p%22%2C%20%22%E3%81%93%E3%81%AE%E3%83%84%E3%83%BC%E3%83%AB%E3%81%AF%E3%83%86%E3%82%B9%E3%83%88%E7%89%88%E3%81%A7%E3%80%81%E5%AE%9F%E9%9A%9B%E3%81%AE%E4%BA%88%E7%B4%84%E3%82%B5%E3%82%A4%E3%83%88%E3%81%AE%E7%94%BB%E9%9D%A2%E6%A7%8B%E9%80%A0%E3%81%AB%E3%82%88%E3%81%A3%E3%81%A6%E3%81%AF%E5%8B%95%E4%BD%9C%E3%81%97%E3%81%AA%E3%81%84%E5%A0%B4%E5%90%88%E3%81%8C%E3%81%82%E3%82%8A%E3%81%BE%E3%81%99%E3%80%82%E3%81%8A%E6%89%8B%E6%95%B0%E3%81%A7%E3%81%99%E3%81%8C%E3%80%81%E7%A9%BA%E3%81%8D%E7%8A%B6%E6%B3%81%E3%81%AF%E5%85%AC%E5%BC%8F%E3%82%B5%E3%82%A4%E3%83%88%E3%81%AE%E3%80%8C%E7%A9%BA%E3%81%8D%E7%8A%B6%E6%B3%81%E3%82%AB%E3%83%AC%E3%83%B3%E3%83%80%E3%83%BC%E3%80%8D%E3%81%A7%E4%BC%9A%E5%A0%B4%E3%81%94%E3%81%A8%E3%81%AB%E3%81%94%E7%A2%BA%E8%AA%8D%E3%81%8F%E3%81%A0%E3%81%95%E3%81%84%E3%80%82%22%20%2B%20%28extra%20%7C%7C%20%22%22%29%29%29%3B%20%7D%20function%20renderTable%28root%2C%20results%2C%20linkCount%29%20%7B%20root.appendChild%28el%28%22p%22%2C%20%22%E6%95%B0%E5%AD%97%E3%81%AF%E7%A9%BA%E3%81%84%E3%81%A6%E3%81%84%E3%82%8B%E4%BA%88%E7%B4%84%E6%9E%A0%E3%81%AE%E6%95%B0%E3%81%A7%E3%81%99%E3%80%82%E7%A9%BA%E6%AC%84%E3%81%AF%E8%AA%AD%E3%81%BF%E5%8F%96%E3%82%8C%E3%81%AA%E3%81%8B%E3%81%A3%E3%81%9F%E6%97%A5%E3%80%81%C3%97%E3%81%AF%E7%A9%BA%E3%81%8D%E3%81%AA%E3%81%97%E3%81%A8%E3%81%97%E3%81%A6%E8%AA%AD%E3%81%BF%E5%8F%96%E3%81%A3%E3%81%9F%E6%97%A5%E3%81%A7%E3%81%99%E3%80%82%E6%9C%80%E6%96%B0%E3%81%AE%E7%8A%B6%E6%B3%81%E3%81%A8%E4%BA%88%E7%B4%84%E3%81%AF%E5%85%AC%E5%BC%8F%E3%82%B5%E3%82%A4%E3%83%88%E3%81%A7%E3%81%94%E7%A2%BA%E8%AA%8D%E3%81%8F%E3%81%A0%E3%81%95%E3%81%84%E3%80%82%22%2C%20%22margin%3A4px%200%2010px%3B%22%29%29%3B%20if%20%28results.length%20%3D%3D%3D%201%20%26%26%20linkCount%20%3D%3D%3D%200%29%20%7B%20root.appendChild%28el%28%22p%22%2C%20%22%E4%BB%96%E3%81%AE%E4%BC%9A%E5%A0%B4%E3%81%B8%E3%81%AE%E5%88%87%E3%82%8A%E6%9B%BF%E3%81%88%E3%83%AA%E3%83%B3%E3%82%AF%E3%81%8C%E8%A6%8B%E3%81%A4%E3%81%8B%E3%82%89%E3%81%AA%E3%81%8B%E3%81%A3%E3%81%9F%E3%81%9F%E3%82%81%E3%80%81%E8%A1%A8%E7%A4%BA%E4%B8%AD%E3%81%AE%E4%BC%9A%E5%A0%B4%E5%88%86%E3%81%A0%E3%81%91%E3%82%92%E8%A1%A8%E7%A4%BA%E3%81%97%E3%81%A6%E3%81%84%E3%81%BE%E3%81%99%E3%80%82%22%2C%20%22margin%3A4px%200%2010px%3Bcolor%3A%23b00020%3Bfont-weight%3A700%3B%22%29%29%3B%20%7D%20var%20daySet%20%3D%20%7B%7D%3B%20results.forEach%28function%20%28r%29%20%7B%20Object.keys%28r.map%29.forEach%28function%20%28d%29%20%7B%20daySet%5Bd%5D%20%3D%201%3B%20%7D%29%3B%20%7D%29%3B%20var%20days%20%3D%20Object.keys%28daySet%29.map%28Number%29.sort%28function%20%28a%2C%20b%29%20%7B%20return%20a%20-%20b%3B%20%7D%29%3B%20var%20table%20%3D%20el%28%22table%22%2C%20null%2C%20%22border-collapse%3Acollapse%3Bwidth%3A100%25%3Bfont-size%3A12px%3B%22%29%3B%20var%20thead%20%3D%20el%28%22thead%22%29%3B%20var%20trh%20%3D%20el%28%22tr%22%29%3B%20trh.appendChild%28el%28%22th%22%2C%20%22%E4%BC%9A%E5%A0%B4%22%2C%20%22border%3A1px%20solid%20%23c9d4e0%3Bpadding%3A4px%206px%3Bbackground%3A%23eef3f8%3Btext-align%3Aleft%3Bwhite-space%3Anowrap%3B%22%29%29%3B%20trh.appendChild%28el%28%22th%22%2C%20%22%E6%9C%88%22%2C%20%22border%3A1px%20solid%20%23c9d4e0%3Bpadding%3A4px%206px%3Bbackground%3A%23eef3f8%3Bwhite-space%3Anowrap%3B%22%29%29%3B%20days.forEach%28function%20%28d%29%20%7B%20trh.appendChild%28el%28%22th%22%2C%20String%28d%29%2C%20%22border%3A1px%20solid%20%23c9d4e0%3Bpadding%3A4px%203px%3Bbackground%3A%23eef3f8%3Btext-align%3Acenter%3B%22%29%29%3B%20%7D%29%3B%20thead.appendChild%28trh%29%3B%20table.appendChild%28thead%29%3B%20var%20tbody%20%3D%20el%28%22tbody%22%29%3B%20results.forEach%28function%20%28r%29%20%7B%20var%20tr%20%3D%20el%28%22tr%22%29%3B%20tr.appendChild%28el%28%22td%22%2C%20r.venue%2C%20%22border%3A1px%20solid%20%23c9d4e0%3Bpadding%3A4px%206px%3Bwhite-space%3Anowrap%3Bfont-weight%3A700%3B%22%29%29%3B%20tr.appendChild%28el%28%22td%22%2C%20r.month%20%7C%7C%20%22%22%2C%20%22border%3A1px%20solid%20%23c9d4e0%3Bpadding%3A4px%206px%3Bwhite-space%3Anowrap%3B%22%29%29%3B%20days.forEach%28function%20%28d%29%20%7B%20var%20v%20%3D%20r.map%5Bd%5D%3B%20tr.appendChild%28el%28%22td%22%2C%20v%20%3D%3D%20null%20%7C%7C%20v%20%3D%3D%3D%20%22%22%20%3F%20%22%22%20%3A%20v%2C%20%22border%3A1px%20solid%20%23c9d4e0%3Bpadding%3A4px%203px%3Btext-align%3Acenter%3B%22%29%29%3B%20%7D%29%3B%20tbody.appendChild%28tr%29%3B%20%7D%29%3B%20table.appendChild%28tbody%29%3B%20root.appendChild%28table%29%3B%20%7D%20function%20sleep%28ms%29%20%7B%20return%20new%20Promise%28function%20%28r%29%20%7B%20setTimeout%28r%2C%20ms%29%3B%20%7D%29%3B%20%7D%20async%20function%20main%28%29%20%7B%20var%20root%20%3D%20showOverlay%28function%20%28r%29%20%7B%20r.appendChild%28el%28%22p%22%2C%20%22%E8%AA%AD%E3%81%BF%E5%8F%96%E3%82%8A%E4%B8%AD%E3%81%A7%E3%81%99%E2%80%A6%EF%BC%88%E4%BC%9A%E5%A0%B4%E3%81%94%E3%81%A8%E3%81%AB%E9%A0%86%E7%95%AA%E3%81%AB%E8%AA%AD%E3%81%BF%E3%81%BE%E3%81%99%EF%BC%89%22%29%29%3B%20%7D%29%3B%20var%20results%20%3D%20%5B%5D%3B%20var%20cur%20%3D%20parseCalendar%28document%29%3B%20if%20%28cur%29%20results.push%28%7B%20venue%3A%20currentVenue%28document%29%20%7C%7C%20%22%E8%A1%A8%E7%A4%BA%E4%B8%AD%E3%81%AE%E4%BC%9A%E5%A0%B4%22%2C%20month%3A%20monthLabel%28document%29%2C%20map%3A%20cur.map%20%7D%29%3B%20var%20links%20%3D%20venueLinks%28document%29%3B%20for%20%28var%20i%20%3D%200%3B%20i%20%3C%20links.length%20%26%26%20i%20%3C%2020%3B%20i%2B%2B%29%20%7B%20try%20%7B%20var%20res%20%3D%20await%20fetch%28links%5Bi%5D.url%2C%20%7B%20credentials%3A%20%22same-origin%22%20%7D%29%3B%20if%20%28res.ok%29%20%7B%20var%20html%20%3D%20await%20res.text%28%29%3B%20var%20doc%20%3D%20new%20DOMParser%28%29.parseFromString%28html%2C%20%22text%2Fhtml%22%29%3B%20var%20cal%20%3D%20parseCalendar%28doc%29%3B%20if%20%28cal%29%20results.push%28%7B%20venue%3A%20links%5Bi%5D.venue%2C%20month%3A%20monthLabel%28doc%29%2C%20map%3A%20cal.map%20%7D%29%3B%20%7D%20%7D%20catch%20%28e%29%20%7B%20%2F%2A%20skip%20this%20venue%20%2A%2F%20%7D%20await%20sleep%28300%29%3B%20%7D%20var%20fresh%20%3D%20showOverlay%28function%20%28%29%20%7B%7D%29%3B%20if%20%28results.length%20%3D%3D%3D%200%29%20%7B%20failMessage%28fresh%29%3B%20return%3B%20%7D%20renderTable%28fresh%2C%20results%2C%20links.length%29%3B%20%7D%20main%28%29.catch%28function%20%28%29%20%7B%20showOverlay%28function%20%28r%29%20%7B%20failMessage%28r%29%3B%20%7D%29%3B%20%7D%29%3B%20%7D%29%28%29%3B">免許更新 空きまとめ（テスト版）</a>
+<p style="margin-top:12px;">※ このページ自体でクリックしても動作しません。公式サイトのカレンダーページで使います。</p>
+</div>
+<details class="src-box">
+<summary>ブックマークレットのソースコード（全文）</summary>
+<pre class="bm-src">(function () {
+  "use strict";
+  var ROOT_ID = "mk-agg-root";
+  var VENUES = ["府中運転免許試験場", "鮫洲運転免許試験場", "江東運転免許試験場", "神田運転免許更新センター", "新宿運転免許更新センター", "田園調布警察署", "世田谷警察署", "成城警察署", "板橋警察署", "石神井警察署", "下谷警察署", "竹の塚警察署", "本所警察署", "立川警察署", "青梅警察署", "高尾警察署", "町田警察署"];
+  function venueOf(text) {
+    if (!text) return null;
+    var t = String(text).replace(/[\s　]+/g, "");
+    for (var i = 0; i &lt; VENUES.length; i++) {
+      if (t.indexOf(VENUES[i].replace(/[\s　]+/g, "")) &gt;= 0) return VENUES[i];
+    }
+    return null;
+  }
+  function monthLabel(doc) {
+    var t = doc &amp;&amp; doc.body ? doc.body.textContent || "" : "";
+    var m = t.match(/(\d{4})年\s*(\d{1,2})月/);
+    if (m) return m[1] + "年" + m[2] + "月";
+    var m2 = t.match(/(\d{1,2})月の空き|(\d{1,2})月分/);
+    if (m2) return (m2[1] || m2[2]) + "月";
+    return "";
+  }
+  function cellText(c) {
+    var parts = [];
+    (function walk(node) {
+      var kids = node.childNodes;
+      for (var i = 0; i &lt; kids.length; i++) {
+        var n = kids[i];
+        if (n.nodeType === 3) {
+          var t = n.textContent.replace(/[\s　]+/g, " ").trim();
+          if (t) parts.push(t);
+        } else if (n.nodeType === 1) {
+          if (n.tagName === "BR") parts.push(" ");
+          else walk(n);
+        }
+      }
+    })(c);
+    return parts.join(" ");
+  }
+  function parseCalendar(doc) {
+    var tables = doc.querySelectorAll("table");
+    var best = null;
+    for (var ti = 0; ti &lt; tables.length; ti++) {
+      var cells = tables[ti].querySelectorAll("td");
+      var map = {};
+      var days = 0;
+      var slots = 0;
+      cells.forEach(function (c) {
+        var raw = cellText(c);
+        var dm = raw.match(/^(\d{1,2})(?!\d)/);
+        if (!dm) return;
+        var day = parseInt(dm[1], 10);
+        if (day &lt; 1 || day &gt; 31) return;
+        if (day in map) return;
+        var rest = raw.slice(dm[0].length).trim();
+        var status = "";
+        var nm = rest.match(/(\d+)\s*人/) || rest.match(/残り\s*(\d+)\s*枠/) || rest.match(/^(\d+)$/);
+        if (nm) { status = nm[1]; slots++; }
+        else if (rest.indexOf("○") &gt;= 0 || rest.indexOf("◯") &gt;= 0) status = "○";
+        else if (rest.indexOf("△") &gt;= 0) status = "△";
+        else if (rest.indexOf("×") &gt;= 0 || rest.indexOf("✕") &gt;= 0) status = "×";
+        else if (rest) status = rest.slice(0, 8);
+        map[day] = status;
+        days++;
+      });
+      if (days &gt;= 15 &amp;&amp; (!best || slots &gt; best.slots)) best = { map: map, slots: slots };
+    }
+    return best;
+  }
+  function currentVenue(doc) {
+    var sels = doc.querySelectorAll("select");
+    for (var i = 0; i &lt; sels.length; i++) {
+      var opt = sels[i].options[sels[i].selectedIndex];
+      var v = opt ? venueOf(opt.textContent) : null;
+      if (v) return v;
+    }
+    var heads = doc.querySelectorAll("h1, h2, h3");
+    for (var j = 0; j &lt; heads.length; j++) {
+      var hv = venueOf(heads[j].textContent);
+      if (hv) return hv;
+    }
+    return venueOf(doc.title);
+  }
+  function venueLinks(doc) {
+    var out = [];
+    var seen = {};
+    var anchors = doc.querySelectorAll("a[href]");
+    anchors.forEach(function (a) {
+      var v = venueOf(a.textContent || "");
+      if (!v || seen[v]) return;
+      var href = a.getAttribute("href");
+      if (!href || href.charAt(0) === "#") return;
+      var u;
+      try { u = new URL(href, location.href); } catch (e) { return; }
+      if (u.origin !== location.origin) return;
+      seen[v] = 1;
+      if (u.href === location.href) return;
+      out.push({ venue: v, url: u.href });
+    });
+    return out;
+  }
+  function el(tag, text, style) {
+    var e = document.createElement(tag);
+    if (text != null) e.textContent = text;
+    if (style) e.setAttribute("style", style);
+    return e;
+  }
+  function showOverlay(build) {
+    var old = document.getElementById(ROOT_ID);
+    if (old) old.remove();
+    var root = el("div", null, "position:fixed;top:10px;left:10px;right:10px;z-index:2147483647;background:#ffffff;color:#1c2733;border:2px solid #12283f;border-radius:12px;box-shadow:0 12px 40px rgba(0,0,0,.35);padding:14px 16px;max-height:88vh;overflow:auto;font-family:sans-serif;font-size:14px;line-height:1.6;");
+    root.id = ROOT_ID;
+    var head = el("div", null, "display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px;");
+    head.appendChild(el("strong", "免許更新 空き状況まとめ（テスト版）", "font-size:16px;"));
+    var close = el("button", "閉じる", "font:inherit;padding:4px 12px;border:1px solid #12283f;border-radius:8px;background:#f2a81d;cursor:pointer;font-weight:700;");
+    close.addEventListener("click", function () { root.remove(); });
+    head.appendChild(close);
+    root.appendChild(head);
+    build(root);
+    document.body.appendChild(root);
+    return root;
+  }
+  function failMessage(root, extra) {
+    root.appendChild(el("p", "カレンダーを読み取れませんでした。", "font-weight:700;color:#b00020;"));
+    root.appendChild(el("p", "このツールはテスト版で、実際の予約サイトの画面構造によっては動作しない場合があります。お手数ですが、空き状況は公式サイトの「空き状況カレンダー」で会場ごとにご確認ください。" + (extra || "")));
+  }
+  function renderTable(root, results, linkCount) {
+    root.appendChild(el("p", "数字は空いている予約枠の数です。空欄は読み取れなかった日、×は空きなしとして読み取った日です。最新の状況と予約は公式サイトでご確認ください。", "margin:4px 0 10px;"));
+    if (results.length === 1 &amp;&amp; linkCount === 0) {
+      root.appendChild(el("p", "他の会場への切り替えリンクが見つからなかったため、表示中の会場分だけを表示しています。", "margin:4px 0 10px;color:#b00020;font-weight:700;"));
+    }
+    var daySet = {};
+    results.forEach(function (r) { Object.keys(r.map).forEach(function (d) { daySet[d] = 1; }); });
+    var days = Object.keys(daySet).map(Number).sort(function (a, b) { return a - b; });
+    var table = el("table", null, "border-collapse:collapse;width:100%;font-size:12px;");
+    var thead = el("thead");
+    var trh = el("tr");
+    trh.appendChild(el("th", "会場", "border:1px solid #c9d4e0;padding:4px 6px;background:#eef3f8;text-align:left;white-space:nowrap;"));
+    trh.appendChild(el("th", "月", "border:1px solid #c9d4e0;padding:4px 6px;background:#eef3f8;white-space:nowrap;"));
+    days.forEach(function (d) { trh.appendChild(el("th", String(d), "border:1px solid #c9d4e0;padding:4px 3px;background:#eef3f8;text-align:center;")); });
+    thead.appendChild(trh);
+    table.appendChild(thead);
+    var tbody = el("tbody");
+    results.forEach(function (r) {
+      var tr = el("tr");
+      tr.appendChild(el("td", r.venue, "border:1px solid #c9d4e0;padding:4px 6px;white-space:nowrap;font-weight:700;"));
+      tr.appendChild(el("td", r.month || "", "border:1px solid #c9d4e0;padding:4px 6px;white-space:nowrap;"));
+      days.forEach(function (d) {
+        var v = r.map[d];
+        tr.appendChild(el("td", v == null || v === "" ? "" : v, "border:1px solid #c9d4e0;padding:4px 3px;text-align:center;"));
+      });
+      tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);
+    root.appendChild(table);
+  }
+  function sleep(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+  async function main() {
+    var root = showOverlay(function (r) { r.appendChild(el("p", "読み取り中です…（会場ごとに順番に読みます）")); });
+    var results = [];
+    var cur = parseCalendar(document);
+    if (cur) results.push({ venue: currentVenue(document) || "表示中の会場", month: monthLabel(document), map: cur.map });
+    var links = venueLinks(document);
+    for (var i = 0; i &lt; links.length &amp;&amp; i &lt; 20; i++) {
+      try {
+        var res = await fetch(links[i].url, { credentials: "same-origin" });
+        if (res.ok) {
+          var html = await res.text();
+          var doc = new DOMParser().parseFromString(html, "text/html");
+          var cal = parseCalendar(doc);
+          if (cal) results.push({ venue: links[i].venue, month: monthLabel(doc), map: cal.map });
+        }
+      } catch (e) { /* skip this venue */ }
+      await sleep(300);
+    }
+    var fresh = showOverlay(function () {});
+    if (results.length === 0) { failMessage(fresh); return; }
+    renderTable(fresh, results, links.length);
+  }
+  main().catch(function () {
+    showOverlay(function (r) { failMessage(r); });
+  });
+})();</pre>
+</details>
+</section>
+
+<section class="box">
+<h2>対象の会場</h2>
+<p>警視庁の案内では、更新手続の会場は次のとおりです（講習区分によって利用できる会場が異なります）。</p>
+<ul class="venue-list">
+<li>府中運転免許試験場</li>
+<li>鮫洲運転免許試験場</li>
+<li>江東運転免許試験場</li>
+<li>神田運転免許更新センター</li>
+<li>新宿運転免許更新センター</li>
+<li>田園調布警察署</li>
+<li>世田谷警察署</li>
+<li>成城警察署</li>
+<li>板橋警察署</li>
+<li>石神井警察署</li>
+<li>下谷警察署</li>
+<li>竹の塚警察署</li>
+<li>本所警察署</li>
+<li>立川警察署</li>
+<li>青梅警察署</li>
+<li>高尾警察署</li>
+<li>町田警察署</li>
+</ul>
+<p>※ 島部警察署（大島・新島・三宅島・八丈島・小笠原）は予約不要のため対象外です。</p>
+</section>
+
+<section class="box">
+<h2>仕組みと限界</h2>
+<p>ブックマークレットは、表示中のカレンダーと、ページ内にある会場切り替えリンク（同じドメイン内）を辿って各会場のカレンダーを読み、表にまとめます。会場の切り替えがリンク式でない場合や、カレンダーの形式が想定と違う場合は、<strong>「読み取れませんでした」と表示して止まります</strong>（推測で数字を作ることはしません）。</p>
+<p>空き状況は、選択した免許証の種類（「免許証のみ」か「マイナ免許証」か）によって異なります。このツールは、あなたが公式サイトで選択した条件のまま読み取ります。</p>
+<div class="warn-box">
+<p style="margin-top:0;"><strong>注意</strong></p>
+<ul style="margin:0; padding-left:18px;">
+<li>公式サイトの<strong>利用規約に従って</strong>利用してください。規約の本文は予約フローの中で提示されるため、このページからは内容を確認できていません。</li>
+<li>このツールは警視庁・各事業者とは無関係の、個人が作成した非公式の試作品です。</li>
+<li>空きの最終確認と予約は、必ず<strong>公式サイト</strong>で行ってください。</li>
+</ul>
+</div>
+</section>
+</main>
+ <p class="pp-footer"><button type="button" class="pp-link" data-pp-open>プライバシーポリシー</button></p>
+<footer class="ido-site-footer">
+  <p>このサイトは個人が作成した非公式の計算ツール集です。各事業者の公式ページではありません。実際の料金は公式情報をご確認ください。</p>
+  <p>制作：andy（わんこ堂）× 熊八 <span class="ido-pic pic-dual" data-emoji="🐾"><span class="pic-e">🐾</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="12" cy="15.8" rx="4.4" ry="3.6"/><circle cx="5.8" cy="10.8" r="1.8"/><circle cx="9.3" cy="7.8" r="1.9"/><circle cx="14.7" cy="7.8" r="1.9"/><circle cx="18.2" cy="10.8" r="1.8"/></svg></span>（Muse Spark）</p>
+</footer>
+<div class="pp-overlay" data-pp-overlay>
+  <div class="pp-dialog privacy-policy" role="dialog" aria-modal="true" aria-labelledby="ppTitle">
+    <div class="pp-scroll">
+      <h2 id="ppTitle">プライバシーポリシー</h2>
+      <p>当サイト「移動シミュレーター」は、個人を特定する情報を収集しません。</p>
+      <p><strong>入力データについて：</strong>計算ツールに入力した内容は、お使いの端末のブラウザの中だけで処理され、サーバーへ送信されることはありません。「行程カゴ」の内容は、お使いのブラウザの localStorage にのみ保存されます。</p>
+      <p><strong>広告について：</strong>当サイトは、第三者配信の広告サービス（Google AdSense）を利用する場合があります。広告配信事業者は、ユーザーの興味に応じた広告を表示するため Cookie を使用することがあります。パーソナライズ広告は、Google の「広告設定」から無効にできます。</p>
+      <p><strong>アクセス解析について：</strong>当サイトはアクセス解析ツールを使用していません。</p>
+      <p><strong>免責事項：</strong>計算結果は目安であり、実際の料金は各事業者の公式情報をご確認ください。当サイトの利用によって生じた損害について、運営者は責任を負いません。</p>
+      <p><strong>お問い合わせ：</strong>当サイトは個人運営のツールサイトです。</p>
+      <p>制定日：2026年11月15日</p>
+    </div>
+    <div class="pp-actions">
+      <div class="pp-btn-row">
+        <button type="button" class="pp-close-btn" data-pp-close>閉じる</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="policy-snippet.js"></script>
+<script src="policy-snippet.js"></script>
+</body>
+</html>
