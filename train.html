@@ -159,6 +159,14 @@
 html[data-theme="andy"] .frwarn{background:#3a1408;color:#ffb37a}
 .frdist{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px;font-size:14px}
 .frdist select{padding:8px;border-radius:8px;border:1px solid var(--line);background:var(--chip);color:var(--ink);max-width:42%}
+.groupedchips{display:block}
+.lgfold{margin:6px 0}
+.lgfold>summary{cursor:pointer;font-weight:700;font-size:14px;padding:9px 12px;background:var(--chip);color:var(--ink);border-radius:9px;list-style:none}
+.lgfold>summary::-webkit-details-marker{display:none}
+.lgfold[open ]>summary{background:var(--accent);color:#1a1200}
+.lgfold>summary::after{content:" ▼";font-size:11px}
+.lgfold[open ]>summary::after{content:" ▲";font-size:11px}
+.lgfold .linechips{padding:8px 2px 2px}
       .src a{ color:var(--accent); }
       @media (max-width:560px){
         .grid2{ grid-template-columns:1fr auto 1fr; }
@@ -197,12 +205,12 @@ html[data-theme="andy"] .frwarn{background:#3a1408;color:#ffb37a}
         .row:has(#seatSeg){ margin-top:75px; }
       }
     </style>
-  <meta name="description" content="電車・新幹線の運賃を無料で試算。全452路線を収録し、在来線・有料特急・新幹線の運賃計算、駅の時刻表、発車までのカウントダウン表示に対応。私鉄・地下鉄・ケーブルカー・ロープウェイも収録。" />
+  <meta name="description" content="電車・新幹線の運賃を無料で試算。全588路線を収録し、在来線・有料特急・新幹線の運賃計算、駅の時刻表、発車までのカウントダウン表示に対応。私鉄・地下鉄・ケーブルカー・ロープウェイも収録。" />
 <link rel="canonical" href="https://wankodo.github.io/mobility-simulator/train.html" />
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="移動シミュレーター" />
 <meta property="og:title" content="移動シミュレーター｜電車・新幹線シミュレーター" />
-<meta property="og:description" content="電車・新幹線の運賃を無料で試算。全452路線を収録し、在来線・有料特急・新幹線の運賃計算、駅の時刻表、発車までのカウントダウン表示に対応。私鉄・地下鉄・ケーブルカー・ロープウェイも収録。" />
+<meta property="og:description" content="電車・新幹線の運賃を無料で試算。全588路線を収録し、在来線・有料特急・新幹線の運賃計算、駅の時刻表、発車までのカウントダウン表示に対応。私鉄・地下鉄・ケーブルカー・ロープウェイも収録。" />
 <meta property="og:url" content="https://wankodo.github.io/mobility-simulator/train.html" />
 <meta property="og:image" content="https://wankodo.github.io/mobility-simulator/ogp.png" />
 <meta property="og:image:width" content="1200" />
@@ -258,7 +266,7 @@ html[data-theme="andy"] .frwarn{background:#3a1408;color:#ffb37a}
   "@type": "WebApplication",
   "url": "https://wankodo.github.io/mobility-simulator/train.html",
   "name": "電車・新幹線シミュレーター",
-  "description": "電車・新幹線の運賃を無料で試算。全452路線を収録し、在来線・有料特急・新幹線の運賃計算、駅の時刻表、発車までのカウントダウン表示に対応。私鉄・地下鉄・ケーブルカー・ロープウェイも収録。",
+  "description": "電車・新幹線の運賃を無料で試算。全588路線を収録し、在来線・有料特急・新幹線の運賃計算、駅の時刻表、発車までのカウントダウン表示に対応。私鉄・地下鉄・ケーブルカー・ロープウェイも収録。",
   "applicationCategory": "TravelApplication",
   "operatingSystem": "Webブラウザ",
   "inLanguage": "ja",
@@ -504,7 +512,7 @@ html[data-theme="andy"] .frwarn{background:#3a1408;color:#ffb37a}
         <summary>駅時刻表</summary>
         <div class="foldbody">
           <p class="sub">全路線から選べます。有料特急・新幹線の列車は、上のチェックを入れた場合に表示します。路線・駅・方向を選ぶと、その駅の発車時刻表（標準パターン）を表示します。次の発車は色付きです。</p>
-          <div class="linechips" id="ttLineChips"></div>
+          <div class="groupedchips" id="ttLineChips"></div>
           <div class="row" style="margin-top:0">
             <div>
               <label class="flabel" for="ttStation">駅</label>
@@ -547,7 +555,7 @@ html[data-theme="andy"] .frwarn{background:#3a1408;color:#ffb37a}
             <button type="button" class="dtab" id="dtabFreight">貨物線・非旅客線（資料）</button>
           </div>
           <p class="sub" id="freightNote" style="display:none">旅客が乗れない貨物専用線・非旅客線の資料です。経路検索の対象にはなりません。駅・営業キロは公表資料で確認できた範囲（30路線・85駅）で収録しています。時刻表は公式ダイヤではなく、目撃情報などをもとにした推測です。</p>
-          <div class="linechips" id="dataLineChips"></div>
+          <div class="groupedchips" id="dataLineChips"></div>
           <div class="stationlist" id="stationList"></div>
           <div id="freightDetail"></div>
           <h3>データの出典</h3>
@@ -1663,7 +1671,7 @@ EXTRA_DEFS.push(
    stations:"花巻,0.0|似内,1.9|新花巻,3.5|小山田,6.1|土沢,12.0|晴山,16.3|岩根橋,24.1|宮守,28.7|柏木平,34.0|鱒沢,36.1|荒谷前,38.5|岩手二日町,41.1|綾織,42.6|遠野,46.9|青笹,53.5|岩手上郷,58.9|平倉,60.4|足ケ瀬,62.9|上有住,65.2|陸中大橋,69.7|洞泉,72.9|松倉,74.9|小佐野,82.0|釜石,90.2",
    services:[ { name:"普通", cls:"local", stops:"all", perKm:1.35, hours:[6,20], mins:[0,45] } ]},
  { key:"ymd", name:"JR山田線（盛岡〜宮古）", color:"#0277bd", zone:"jreast",
-   stations:"盛岡,0|上盛岡,2.8|山岸,4.9|上米内,7.5|区界,36.4|松草,47.9|川内（岩手）,63.9|箱石,68.1|陸中川井,75.9|陸中山田,76.9|豊間根,84.5|腹帯,85|茂市,89.4|蟇目,93.9|花原市,96.6|磯鶏,98.8|千徳,101.2|宮古,102.1",
+   stations:"盛岡,0|上盛岡,2.8|山岸,4.9|上米内,7.5|区界,36.4|松草,47.9|川内（岩手）,63.9|箱石,68.1|陸中川井,75.9|陸中山田（現・三陸鉄道）,76.9|豊間根（現・三陸鉄道）,84.5|腹帯,85|茂市,89.4|蟇目,93.9|花原市,96.6|磯鶏（現・三陸鉄道）,98.8|千徳,101.2|宮古,102.1",
    services:[ { name:"普通", cls:"local", stops:"all", perKm:1.4, hours:[6,19], mins:[10,55] } ]},
  { key:"hch", name:"JR八戸線（八戸〜久慈）", color:"#b6007d", zone:"jreast",
    stations:"八戸,0|長苗代,4.3|本八戸,6.9|小中野,10.4|陸奥湊,13.8|白銀,16.4|鮫,19.3|陸奥白浜,25.2|種差海岸,27.4|大久喜,30.8|金浜,34.6|大蛇,36.9|階上,39.5|角の浜,42.5|平内,46.3|種市,49.4|玉川（岩手）,51.2|宿戸,52|陸中八木,53.5|有家,54.7|陸中中野,55.9|侍浜,58.6|陸中夏井,63|久慈,64.9",
@@ -4976,6 +4984,60 @@ function renderLineChips(container, current, cb){
     container.appendChild(b);
   }
 }
+
+/* 路線の会社・カテゴリ分類（チップの畳み込み表示用。運賃計算には影響しない） */
+const JR_KEY_GROUPS = {
+ "JR北海道": ["hdh","hdc","hdn","hdm","hdb","sek","nmw","nme","soy","skh","snm","frn","hdk","sss","rmo","hakodate-sawara"],
+ "JR東日本": ["tk","jc","jy","jk","ja","jo","jb","td","jj","ju","ss","jm","je","jn","jh","sg","sen","thn","ouh","uet","snz","bwe","bwt","jbn","jou","rym","snt2","snt","snn","hks","ecg","yhk","iym","kou","agt","htk","ome","its","tru","nrt","stb","ucb","sbu","tgn","krr","ksm","mtl","sgn","tdm","nkk","kry","ito","cue","oit","sni","ou2","gno","ogn","tgr","tzw","hnw","ktkm","kms","ymd","hch","omnt","isv","ksnm","ofn","rkt","rks","atz","ysk","kwg","nta"],
+ "JR東海": ["tcs","tcn","chw","kns","cuw","tky","iid","mnb","gtn","bto","tta"],
+ "JR西日本": ["sny","osl","kha","nrl","knw","fky","ksi","san","btn","kgw","ksn","ako","hkb2","gib","fke","kre","kbl","gtk","ygc","ubl","mnl","obm","mzl","ehn","nno","hml","wky","skr","inm","ski","kgj","oin","sgu","nsm","kse","ksw","gss","jhd","tsm","kbbi","uno","katamachi","jrtozai","osaka-higashi","onoda","onoda-nagato","katamachi-city"],
+ "JR四国": ["ysn","dsn","ktoku","tks","mgi","nrm","yos","dos","ydo","hsb"],
+ "JR九州": ["kgn","kgs","kgl","nip","ngs","ckf","sbo","omr","kud","hoh","ckh","ssg","ibk","ncn","apk","ktl","hst","msm","ksh","gtj","wkm","hky","knm","krt"]
+};
+const JR_KEY_GROUP = {};
+for (const g of Object.keys(JR_KEY_GROUPS)) for (const k of JR_KEY_GROUPS[g]) JR_KEY_GROUP[k] = g;
+const KEY_GROUPS = { "od":"小田急電鉄", "ko":"京王電鉄", "kk":"京急電鉄", "kkk":"京急電鉄", "kkd":"京急電鉄", "kkz":"京急電鉄", "kkr":"京急電鉄", "ks":"京成電鉄", "kso":"京成電鉄", "ksk":"京成電鉄", "kchb":"京成電鉄", "ksch":"京成電鉄", "ksa":"京成電鉄", "kmt":"京成電鉄", "keisei-higashinarita":"京成電鉄", "so":"相模鉄道", "soiz":"相模鉄道", "sotetsu-shinyoko":"相模鉄道", "yu":"モノレール・新交通システム", "kum":"路面電車・LRT", "kag":"路面電車・LRT" };
+const FG_GROUPS = { "tokyo-metro":"東京メトロ", "toei-sub":"都営地下鉄", "osaka-metro":"大阪メトロ", "tobu":"東武鉄道", "seibu":"西武鉄道", "tokyu":"東急電鉄", "odakyu":"小田急電鉄", "keio":"京王電鉄", "kintetsu":"近畿日本鉄道", "hankyu":"阪急電鉄", "hanshin":"阪神電気鉄道", "keihan":"京阪電気鉄道", "nankai":"南海電気鉄道", "nankai-semboku":"南海電気鉄道", "meitetsu":"名古屋鉄道", "nishitetsu":"西日本鉄道", "hakata-minami":"JR西日本", "sapporo-sub":"地下鉄（札幌・仙台・横浜・名古屋・京都・神戸・福岡）", "sendai-sub":"地下鉄（札幌・仙台・横浜・名古屋・京都・神戸・福岡）", "yokohama-sub":"地下鉄（札幌・仙台・横浜・名古屋・京都・神戸・福岡）", "nagoya-sub":"地下鉄（札幌・仙台・横浜・名古屋・京都・神戸・福岡）", "kyoto-sub":"地下鉄（札幌・仙台・横浜・名古屋・京都・神戸・福岡）", "kobe-sub":"地下鉄（札幌・仙台・横浜・名古屋・京都・神戸・福岡）", "fukuoka-sub":"地下鉄（札幌・仙台・横浜・名古屋・京都・神戸・福岡）", "tokyo-monorail":"モノレール・新交通システム", "chibamono":"モノレール・新交通システム", "shonanmono":"モノレール・新交通システム", "tamamono":"モノレール・新交通システム", "osakamono":"モノレール・新交通システム", "kitakyumono":"モノレール・新交通システム", "yui":"モノレール・新交通システム", "astram":"モノレール・新交通システム", "linimo":"モノレール・新交通システム", "nippori-toneri":"モノレール・新交通システム", "seaside-line":"モノレール・新交通システム", "newshuttle":"モノレール・新交通システム", "disney":"モノレール・新交通システム", "sapporo-tram":"路面電車・LRT", "hakodate-tram":"路面電車・LRT", "toden":"路面電車・LRT", "toyama-tram":"路面電車・LRT", "iyo-tram":"路面電車・LRT", "tosaden":"路面電車・LRT", "nagaden":"路面電車・LRT", "okaden":"路面電車・LRT", "hiroden":"路面電車・LRT", "toyotetsu-azumada":"路面電車・LRT", "fukutetsu":"路面電車・LRT", "fukutetsu-ekimae":"路面電車・LRT", "hankai":"路面電車・LRT" };
+const GROUP_ORDER = ["JR新幹線","JR北海道","JR東日本","JR東海","JR西日本","JR四国","JR九州","東京メトロ","都営地下鉄","東武鉄道","西武鉄道","京成電鉄","京急電鉄","東急電鉄","小田急電鉄","京王電鉄","相模鉄道","近畿日本鉄道","阪急電鉄","阪神電気鉄道","京阪電気鉄道","南海電気鉄道","名古屋鉄道","西日本鉄道","大阪メトロ","地下鉄（札幌・仙台・横浜・名古屋・京都・神戸・福岡）","モノレール・新交通システム","路面電車・LRT","ケーブルカー","ロープウェイ","地方私鉄・第三セクター"];
+function lineGroupOf(k){
+  if (KEY_GROUPS[k]) return KEY_GROUPS[k];
+  const L = LINES[k];
+  if (L.type === "shinkansen") return "JR新幹線";
+  if (JR_KEY_GROUP[k]) return JR_KEY_GROUP[k];
+  const fg = L.fareGroup || "";
+  if (FG_GROUPS[fg]) return FG_GROUPS[fg];
+  if (/-cable$/.test(fg)) return "ケーブルカー";
+  if (/-ropeway$/.test(fg)) return "ロープウェイ";
+  return "地方私鉄・第三セクター";
+}
+function scrollToEl(el){ if (el) el.scrollIntoView({ behavior: "smooth", block: "start" }); }
+function renderGroupedChips(container, current, cb){
+  container.innerHTML = "";
+  const byGroup = {};
+  for (const k of Object.keys(LINES)){ const g = lineGroupOf(k); (byGroup[g] = byGroup[g] || []).push(k); }
+  for (const g of GROUP_ORDER){
+    const keys = byGroup[g];
+    if (!keys || !keys.length) continue;
+    const det = document.createElement("details");
+    det.className = "lgfold";
+    if (keys.includes(current)) det.open = true;
+    const sum = document.createElement("summary");
+    sum.textContent = (/(システム|セクター|LRT|ロープウェイ|ケーブルカー|）)$/.test(g) ? g : g + "路線") + "（" + keys.length + "路線）";
+    det.appendChild(sum);
+    const wrap = document.createElement("div");
+    wrap.className = "linechips";
+    for (const key of keys){
+      const b = document.createElement("button");
+      b.type = "button"; b.className = "lchip" + (key === current ? " on" : "");
+      b.innerHTML = '<span class="dot" style="background:' + LINES[key].color + '"></span>' + LINES[key].name + (key === current ? ' ✓' : '');
+      if (key === current){ b.style.background = LINES[key].color; b.style.borderColor = LINES[key].color; b.style.color = "#fff"; }
+      b.addEventListener("click", () => cb(key));
+      wrap.appendChild(b);
+    }
+    det.appendChild(wrap);
+    container.appendChild(det);
+  }
+}
 function fillTtStations(){
   const sel = $("ttStation");
   sel.innerHTML = "";
@@ -5073,7 +5135,7 @@ function renderStationData(){
     $("freightDetail").innerHTML = "";
     const line = LINES[state.dataLine];
     $("stationList").innerHTML = line.stations.map(s => s[0] + ' <span class="km">' + s[1].toFixed(1) + 'km</span>').join(" ・ ");
-    renderLineChips($("dataLineChips"), state.dataLine, k => { state.dataLine = k; renderStationData(); });
+    renderGroupedChips($("dataLineChips"), state.dataLine, k => { state.dataLine = k; renderStationData(); scrollToEl($("stationList")); });
     return;
   }
   renderFreight();
@@ -5086,7 +5148,7 @@ function renderFreight(){
     b.type = "button"; b.className = "lchip" + (L.key === dataFreightKey ? " on" : "");
     b.textContent = L.name + (L.key === dataFreightKey ? " ✓" : "");
     if (L.key === dataFreightKey){ b.style.background = "#8a5a2b"; b.style.borderColor = "#8a5a2b"; b.style.color = "#fff"; }
-    b.addEventListener("click", () => { dataFreightKey = L.key; renderStationData(); });
+    b.addEventListener("click", () => { dataFreightKey = L.key; renderStationData(); scrollToEl($("stationList")); });
     box.appendChild(b);
   }
   const L = FREIGHT_LINES.find(x => x.key === dataFreightKey) || FREIGHT_LINES[0];
@@ -5251,8 +5313,8 @@ $("useShinkansen").addEventListener("change", onUseFlagsChanged);
 /* ================= 初期化・イベント ================= */
 fillStationSelects();
 /* 日付・時刻は開いた時点で現在時刻が入った状態にする（andy の指定） */
-function onTtLine(k){ state.ttLine = k; renderLineChips($("ttLineChips"), k, onTtLine); fillTtStations(); renderTimetable(); }
-renderLineChips($("ttLineChips"), state.ttLine, onTtLine);
+function onTtLine(k){ state.ttLine = k; renderGroupedChips($("ttLineChips"), k, onTtLine); fillTtStations(); renderTimetable(); scrollToEl($("ttStation")); }
+renderGroupedChips($("ttLineChips"), state.ttLine, onTtLine);
 fillTtStations();
 renderTimetable();
 renderStationData();
