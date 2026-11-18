@@ -18,15 +18,6 @@
         --shadow:0 1px 3px rgba(15,45,80,.12);
         color-scheme: light dark;
       }
-      @media (prefers-color-scheme: dark){
-        :root{
-          --bg:#0d141d; --panel:#17222f; --ink:#e7eff7; --ink2:#9db4c8; --line:#2d4156;
-          --accent:#4aa3dd; --accent-ink:#081a29; --chip:#1f3044;
-          --warn-bg:#3a2f18; --warn-ink:#e8c98a;
-          --next-bg:#2f7fc4; --next-ink:#ffffff;
-          --shadow:0 1px 3px rgba(0,0,0,.4);
-        }
-      }
       body{ margin:0; background:var(--bg); color:var(--ink);
         font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans","Noto Sans JP",system-ui,sans-serif;
         -webkit-font-smoothing:antialiased; }
@@ -104,7 +95,7 @@
       .pagenav button{ flex:1; }
       .pagenav button:disabled{ opacity:.4; cursor:default; }
       .badge-last{ background:#b3261e; color:#fff; font-size:12px; font-weight:700; border-radius:20px; padding:3px 10px; }
-      @media (prefers-color-scheme: dark){ .badge-last{ background:#e0655e; color:#1a0d0c; } }
+      html[data-theme="andy"] .badge-last{ background:#e0655e; color:#1a0d0c; }
       .georow{ display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; align-items:center; }
       .geostatus{ font-size:12.5px; color:var(--accent); font-weight:700; }
       .geolist{ display:flex; flex-direction:column; gap:7px; margin-top:10px; }
@@ -121,7 +112,7 @@
       .stnone{ font-size:12.5px; color:var(--ink2); margin:2px 0; line-height:1.5; }
       .geomsg{ font-size:12.5px; color:var(--ink2); margin-top:8px; line-height:1.5; }
       .geomsg.err{ color:#b3261e; font-weight:700; }
-      @media (prefers-color-scheme: dark){ .geomsg.err{ color:#e0655e; } }
+      html[data-theme="andy"] .geomsg.err{ color:#e0655e; }
       .lchip .dot{ display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:6px; }
       .stationlist{ font-size:13.5px; line-height:2; }
       .stationlist .km{ color:var(--ink2); font-size:11.5px; font-variant-numeric:tabular-nums; }
@@ -142,11 +133,9 @@
       .cattab[data-cat="local"].on{ background:#2f7fc4; border-color:#2f7fc4; color:#fff; box-shadow:0 2px 9px rgba(47,127,196,.4); }
       .cattab[data-cat="limited"].on{ background:#4458b8; border-color:#4458b8; color:#fff; box-shadow:0 2px 9px rgba(68,88,184,.4); }
       .cattab[data-cat="shinkansen"].on{ background:#0277bd; border-color:#0277bd; color:#fff; box-shadow:0 2px 9px rgba(2,119,189,.4); }
-      @media (prefers-color-scheme: dark){
-        .cattab[data-cat="local"].on{ background:#5ea3dd; border-color:#5ea3dd; color:#0a1a29; }
-        .cattab[data-cat="limited"].on{ background:#8296e8; border-color:#8296e8; color:#0d1230; }
-        .cattab[data-cat="shinkansen"].on{ background:#4fc3e8; border-color:#4fc3e8; color:#06222f; }
-      }
+      html[data-theme="andy"] .cattab[data-cat="local"].on{ background:#5ea3dd; border-color:#5ea3dd; color:#0a1a29; }
+      html[data-theme="andy"] .cattab[data-cat="limited"].on{ background:#8296e8; border-color:#8296e8; color:#0d1230; }
+      html[data-theme="andy"] .cattab[data-cat="shinkansen"].on{ background:#4fc3e8; border-color:#4fc3e8; color:#06222f; }
       .catdesc{ font-size:12.5px; color:var(--ink2); line-height:1.6; margin:0 0 12px; }
       .catdesc strong{ color:var(--ink); }
       .src{ font-size:12px; color:var(--ink2); line-height:1.7; }
@@ -794,7 +783,7 @@ const EXTRA_DEFS = [
    stations:"品川,0|大崎,0.9|五反田,1.8|目黒,3.3|恵比寿,4.9|渋谷,6.5|原宿,7.7|代々木,8.7|新宿,9.4|新大久保,10.7|高田馬場,12.1|目白,13.3|池袋,14.5|大塚,16.3|巣鴨,17.4|駒込,19.0|田端,20.6|西日暮里,21.4|日暮里,21.9|鶯谷,23.0|上野,24.1|御徒町,24.7|秋葉原,25.7|神田,26.4|東京,27.7|有楽町,28.5|新橋,29.6|浜松町,30.8|田町,32.1|高輪ゲートウェイ,33.1|品川,34.5",
    services:[ { name:"各駅停車", cls:"local", stops:"all", perKm:1.08, hours:[4,24], mins:[0,4,8,12,16,20,24,28,32,36,40,44,48,52,56] } ]},
  { key:"jk", name:"JR京浜東北線・根岸線", color:"#00b2e5", zone:"jreast",
-   stations:"大宮,0|さいたま新都心,1.6|与野,3.0|北浦和,4.5|浦和,6.1|南浦和,7.9|蕨,10.6|西川口,12.0|川口,13.1|赤羽,17.1|東十条,18.6|王子,20.0|上中里,21.5|田端,23.2|西日暮里,24.0|日暮里,24.5|鶯谷,25.6|上野,26.7|御徒町,27.3|秋葉原,28.3|神田,29.0|東京,30.3|有楽町,31.1|新橋,32.2|浜松町,33.4|田町,34.7|高輪ゲートウェイ,35.7|品川,37.1|大井町,38.0|大森,39.5|蒲田,42.1|川崎,48.1|鶴見,50.7|新子安,52.8|東神奈川,54.9|横浜,59.1|桜木町,60.1|関内,60.8|石川町,61.6|山手,62.8|根岸,65.9|磯子,69.3|新杉田,72.0|洋光台,74.4|港南台,77.9|本郷台,80.7|大船,81.2",
+   stations:"大宮,0|さいたま新都心,1.6|与野,3.0|北浦和,4.5|浦和,6.1|南浦和,7.9|蕨,10.6|西川口,12.0|川口,13.1|赤羽,17.1|東十条,18.6|王子,20.0|上中里,21.5|田端,23.2|西日暮里,24.0|日暮里,24.5|鶯谷,25.6|上野,26.7|御徒町,27.3|秋葉原,28.3|神田,29.0|東京,30.3|有楽町,31.1|新橋,32.2|浜松町,33.4|田町,34.7|高輪ゲートウェイ,35.7|品川,37.1|大井町,39.5|大森,41.7|蒲田,44.7|川崎,48.5|鶴見,52.0|新子安,55.1|東神奈川,57.3|横浜,59.1|桜木町,61.1|関内,62.1|石川町,62.9|山手,64.1|根岸,66.2|磯子,68.6|新杉田,70.2|洋光台,73.2|港南台,75.1|本郷台,77.6|大船,81.2",
    services:[
      { name:"各駅停車", cls:"local", stops:"all", perKm:1.08, hours:[5,23], mins:[0,10,20,30,40,50] },
      { name:"快速", cls:"rapid", stops:"大宮,さいたま新都心,浦和,南浦和,蕨,川口,赤羽,東十条,王子,田端,西日暮里,日暮里,鶯谷,上野,御徒町,秋葉原,神田,東京,有楽町,新橋,浜松町,田町,高輪ゲートウェイ,品川,大井町,大森,蒲田,川崎,鶴見,新子安,東神奈川,横浜,桜木町,関内,石川町,山手,根岸,磯子,新杉田,洋光台,港南台,本郷台,大船", perKm:1.05, hours:[10,15], mins:[5,25,45] }
@@ -854,10 +843,10 @@ const EXTRA_DEFS = [
      { name:"快速", cls:"rapid", stops:"川崎,鹿島田,武蔵小杉,武蔵中原,武蔵溝ノ口,登戸,稲田堤,稲城長沼,府中本町,分倍河原,西府,立川", perKm:1.05, hours:[6,21], mins:[10,30,50] }
    ]},
  { key:"jh", name:"JR横浜線", color:"#6cb33f", zone:"jreast",
-   stations:"横浜,0|東神奈川,1.4|大口,3.9|菊名,6.5|新横浜,7.9|鴨居,10.9|中山,13.9|十日市場,16.6|長津田,19.3|成瀬,22.6|町田,24.0|古淵,26.8|淵野辺,29.0|矢部,30.9|相模原,32.6|橋本,37.0|相原,39.4|八王子,44.0",
+   stations:"横浜,0|東神奈川,1.8|大口,4.0|菊名,6.6|新横浜,7.9|小机,9.6|鴨居,12.7|中山,15.3|十日市場,17.7|長津田,19.7|成瀬,22.0|町田,24.7|古淵,27.5|淵野辺,30.2|矢部,31.0|相模原,32.8|橋本,35.6|相原,37.5|八王子みなみ野,40.4|片倉,41.8|八王子,44.4",
    services:[
      { name:"各駅停車", cls:"local", stops:"all", perKm:1.12, hours:[5,23], mins:[0,10,20,30,40,50] },
-     { name:"快速", cls:"rapid", stops:"横浜,東神奈川,菊名,新横浜,鴨居,中山,長津田,町田,淵野辺,相模原,橋本,八王子", perKm:1.05, hours:[6,21], mins:[15,35,55] }
+     { name:"快速", cls:"rapid", stops:"横浜,東神奈川,菊名,新横浜,鴨居,中山,長津田,町田,相模原,橋本,相原,八王子みなみ野,片倉,八王子", perKm:1.05, hours:[6,21], mins:[15,35,55] }
    ]},
  { key:"sg", name:"JR相模線", color:"#009ad6", zone:"jreast",
    stations:"茅ヶ崎,0|北茅ヶ崎,1.3|香川,3.4|寒川,5.7|宮山,8.5|倉見,10.4|門沢橋,11.9|社家,13.7|厚木,15.0|海老名,18.9|入谷,21.6|相武台下,24.2|下溝,26.8|原当麻,28.6|番田,30.5|上溝,31.9|橋本,33.3",
