@@ -146,6 +146,19 @@
       .linelist .lmeta{ color:var(--ink2); font-size:12px; }
       .notcov{ font-size:13px; line-height:1.75; color:var(--ink2); padding-left:1.3em; margin:4px 0 10px; }
       .notcov strong{ color:var(--ink); }
+.dtabs{display:flex;gap:8px;margin:4px 0 10px}
+.dtab{flex:1;padding:9px 10px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:14px;font-weight:700;cursor:pointer}
+.dtab.on{background:var(--accent);border-color:var(--accent);color:#1a1200}
+.frdetail{margin-top:12px;border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--card)}
+.frdetail h4{margin:0 0 6px;font-size:16px}
+.frdetail .frmeta{font-size:13px;color:var(--ink2);margin:2px 0;line-height:1.6}
+.frdetail .frnote{font-size:13px;margin:8px 0;line-height:1.7}
+.frpat{margin-top:10px;border-top:1px dashed var(--line);padding-top:10px}
+.frpat h5{margin:0 0 6px;font-size:14px}
+.frwarn{background:#7a2b12;color:#ffd9a8;border-radius:8px;padding:8px 10px;font-size:13px;line-height:1.6;margin:6px 0}
+html[data-theme="andy"] .frwarn{background:#3a1408;color:#ffb37a}
+.frdist{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px;font-size:14px}
+.frdist select{padding:8px;border-radius:8px;border:1px solid var(--line);background:var(--chip);color:var(--ink);max-width:42%}
       .src a{ color:var(--accent); }
       @media (max-width:560px){
         .grid2{ grid-template-columns:1fr auto 1fr; }
@@ -518,9 +531,8 @@
           <h3>検索できない路線</h3>
           <p class="sub">次の路線は、列車の運行状況や運賃体系の都合で検索対象にしていません（2026年11月19日確認）。</p>
           <ul class="notcov">
-            <li><strong>JR海峡線（中小国〜木古内）</strong>：2016年の北海道新幹線開業以降、定期旅客列車の運行がなく貨物列車のみ</li>
-            <li><strong>鹿島臨海鉄道 鹿島臨港線／岩手開発鉄道／八戸臨海鉄道線／仙台臨海鉄道／秋田臨海鉄道／福島臨海鉄道／京葉臨海鉄道／神奈川臨海鉄道／名古屋臨海鉄道</strong>：貨物専用で旅客営業を行っていない</li>
-            <li><strong>下関市火の山ロープウェイ</strong>：設備更新のため長期運休中（2027年3月にパルスゴンドラとして再開予定）</li>
+            <li><strong>貨物専用線・非旅客線（海峡線・臨海鉄道各線など30路線）</strong>：旅客列車がないため経路検索の対象にはしていませんが、駅・営業キロと目撃情報ベースの推測時刻表を、下の「駅データ」の「貨物線・非旅客線（資料）」タブに資料として収録しています。すでに廃止された路線（秋田臨海鉄道・新潟臨海鉄道など）は収録していません</li>
+                        <li><strong>下関市火の山ロープウェイ</strong>：設備更新のため長期運休中（2027年3月にパルスゴンドラとして再開予定）</li>
             <li><strong>阿蘇山ロープウェー／能勢電鉄 妙見の森ケーブル・リフト／スカイレール みどり坂線</strong>：廃止済み</li>
             <li><strong>ゆとりーとライン（名古屋ガイドウェイバス志段味線）</strong>：高架区間の区間制・平面区間のバス均一運賃・乗継割引が組み合わさった運賃体系で、本ツールの距離帯運賃表では再現できない</li>
         <li><strong>八栗ケーブル（四国ケーブル）</strong>：運賃が上り600円・下り500円と方向で異なるため、片道の運賃表では再現できない</li>
@@ -529,9 +541,15 @@
           </ul>
 
           <h3>駅データ</h3>
-          <p class="sub">路線を選ぶと、その路線の収録駅と起点からの営業キロを表示します。全路線が対象です。</p>
+          <p class="sub">路線を選ぶと、その路線の収録駅と起点からの営業キロを表示します。</p>
+          <div class="dtabs">
+            <button type="button" class="dtab on" id="dtabPax">旅客線</button>
+            <button type="button" class="dtab" id="dtabFreight">貨物線・非旅客線（資料）</button>
+          </div>
+          <p class="sub" id="freightNote" style="display:none">旅客が乗れない貨物専用線・非旅客線の資料です。経路検索の対象にはなりません。駅・営業キロは公表資料で確認できた範囲（30路線・85駅）で収録しています。時刻表は公式ダイヤではなく、目撃情報などをもとにした推測です。</p>
           <div class="linechips" id="dataLineChips"></div>
           <div class="stationlist" id="stationList"></div>
+          <div id="freightDetail"></div>
           <h3>データの出典</h3>
           <p class="src">
             運賃：<a href="https://jr-group.jp/higashinihon-fare/" target="_blank" rel="noopener">JR東日本運賃表（2026年3月改定）</a>の幹線運賃表と、本州3社の幹線賃率（〜300km:16.20円/km、301〜600km:12.85円/km、601km〜:7.05円/km＋消費税・端数処理）で計算しています。JR北海道・四国・九州の区間も同じ方式の試算です。<br />
@@ -3271,6 +3289,177 @@ EXTRA_DEFS.push(
 {"key":"iwakuni-ropeway","name":"岩国城ロープウェー（横山〜岩国城）","color":"#2e86c1","zone":"private","fareGroup":"iwakuni-ropeway","fareTable":FARE_IWAKUNI_ROPEWAY,"stations":"山麓（岩国城）,0|山頂（岩国城）,0.4","services":[{"name":"普通","cls":"local","stops":"all","perKm":7.3,"hours":[9,17],"mins":[0,15,30,45]}]}
 );
 
+/* ================================================================
+   貨物線・非旅客線データ（カバー率100%化プログラム 第4波）
+   作成：2026-11-19
+   ----------------------------------------------------------------
+   ・旅客が乗れない貨物専用線・非旅客線のうち、公表資料（鉄道要覧
+     準拠で突合可能な出典）で駅一覧・営業キロが確認できた路線のみ
+     収録。旅客線の LINES とは別データとして、別タブでの資料検索用。
+   ・駅・営業キロは現行のもののみ（廃止駅・廃止区間は含まない）。
+   ・時刻表（pattern）について：
+     貨物列車の公式ダイヤは非公表のため、pattern は目撃情報・
+     非公式まとめ等をもとにした「目撃ベースの推測」である。
+     UI 側では必ず「この時刻表は公式ダイヤではなく、目撃情報など
+     をもとにした推測です」という注釈を表示すること。
+     pattern.sourceLevel は出典の強さ：
+       1 = 公式資料（事業者・自治体・JR貨物公式コンテナ時刻表等）
+       2 = 非公式の列車別ダイヤまとめ（配信データ＋推定系）
+       3 = 目撃まとめ・記事・百科事典の運行形態記述
+     pattern のない路線は「目撃情報なし（時刻表なし）」。
+     一次資料として『貨物時刻表』（公益社団法人鉄道貨物協会、年刊）
+     が存在し、パターンの照合・検証に使える（内容はWeb未公開）。
+   ================================================================ */
+const FREIGHT_LINES = [
+  /* 海峡線 出典: https://ja.wikipedia.org/wiki/海峡線 （駅一覧・営業キロ）／運行本数 https://ja.wikipedia.org/wiki/青函トンネル 確認日: 2026-11-19 */
+  { key:"fr-kaikyo", name:"海峡線", operator:"JR北海道（貨物列車はJR貨物が第二種事業者として運行）",
+    note:"2016年の北海道新幹線開業以降、定期旅客列車なし（貨物列車と団体臨時列車のみ）。中小国は津軽線所属駅、奥津軽いまべつ・木古内は北海道新幹線の駅と同一地点（奥津軽いまべつに在来線ホームはない）。竜飛定点・吉岡定点は青函トンネル内の避難・保守施設（旧海底駅）。新中小国信号場〜木古内間は北海道新幹線と線路共用。",
+    stations:"中小国,0|新中小国信号場,2.3|奥津軽いまべつ,13.0|竜飛定点,32.5|吉岡定点,55.5|湯の里知内信号場,76.0|木古内,87.8",
+    pattern:{ summary:"定期貨物列車が1日21往復設定（臨時を含め上下合わせて約50本）。発車時刻帯の網羅的な裏付けはない", source:"Wikipedia「青函トンネル」（本数）／東洋経済オンライン2025年記事（上下約40本）", sourceLevel:3, asOf:"2025年時点" } },
+  /* 鹿島臨港線 出典: http://ja.wikipedia.org/wiki/鹿島臨海鉄道鹿島臨港線 ／本数 https://trafficnews.jp/post/642961/2 確認日: 2026-11-19
+     ※『貨物時刻表』（鉄道貨物協会）2026年版の掲載時刻を紹介する個人ページでは、下り鹿島サッカースタジアム発7:05・13:18、神栖発上り10:05・11:50・14:40（いずれも日曜運休）等の記載あり（一次資料の紹介であり参考扱い） */
+  { key:"fr-kashima-rinkou", name:"鹿島臨港線", operator:"鹿島臨海鉄道",
+    note:"貨物専用（旅客営業は1978〜1983年のみ）。終点は奥野谷浜（鹿島港南は1983年廃止）。鹿島サッカースタジアムは大洗鹿島線・JR鹿島線の旅客駅と同一駅。",
+    stations:"鹿島サッカースタジアム,0|神栖,10.1|奥野谷浜,19.2",
+    pattern:{ summary:"鹿島サッカースタジアム〜神栖は1日3往復（日曜運休）、神栖〜奥野谷浜は平日1日1往復", source:"乗りものニュース 2026-03-12（ツアー列車車内解説）", sourceLevel:3, asOf:"2026年3月時点" } },
+  /* 日頃市線 出典: http://ja.wikipedia.org/wiki/岩手開発鉄道日頃市線 確認日: 2026-11-19 */
+  { key:"fr-hikoroichi", name:"日頃市線", operator:"岩手開発鉄道",
+    note:"貨物専用（旅客営業は1992年廃止）。大船渡鉱山の石灰石を岩手石橋で積み込み、赤崎線経由で赤崎のセメント工場へ輸送。盛は三陸鉄道リアス線の旅客駅と同一駅。長安寺・日頃市は列車交換のための駅で貨物扱いはない。",
+    stations:"盛,0|長安寺,3.3|日頃市,6.4|岩手石橋,9.5",
+    pattern:{ summary:"赤崎線と一体運行（岩手石橋〜赤崎を通しで運転）。平日の昼間帯に約40分間隔で1日13〜18本程度、土日・夜間は運休", source:"GetNavi 2018年記事／鉄道ホビダス／Wikipedia運行形態", sourceLevel:3, asOf:"2018年前後の資料" } },
+  /* 赤崎線 出典: http://ja.wikipedia.org/wiki/岩手開発鉄道日頃市線 （赤崎線の区間・キロも同記事系で確認） 確認日: 2026-11-19 */
+  { key:"fr-akasaki", name:"赤崎線", operator:"岩手開発鉄道",
+    note:"貨物専用（開業当初から貨物専業）。赤崎は石灰石の荷下ろし駅（太平洋セメント大船渡工場）。",
+    stations:"盛,0|赤崎,2.0",
+    pattern:{ summary:"日頃市線と一体運行（岩手石橋〜赤崎）。平日の昼間帯に約40分間隔で高頻度往復、土日・夜間は運休", source:"GetNavi 2018年記事／鉄道ホビダス／Wikipedia運行形態", sourceLevel:3, asOf:"2018年前後の資料" } },
+  /* 八戸臨海鉄道線 出典: http://ja.wikipedia.org/wiki/八戸臨海鉄道線 確認日: 2026-11-19
+     ※北八戸信号場は路線図に記載があるが営業キロが公表資料で確認できないため未収録 */
+  { key:"fr-hachinohe-rinkai", name:"八戸臨海鉄道線", operator:"八戸臨海鉄道",
+    note:"貨物専用。八戸貨物はJR貨物・青い森鉄道線の貨物駅で、旅客駅「八戸」とは別駅。北沼からは三菱製紙八戸工場への専用線が接続。",
+    stations:"八戸貨物,0|北沼,8.5",
+    pattern:{ summary:"専用貨物列車が1日3往復＋臨時1往復の設定。発車時刻帯の裏付けはない", source:"Wikipedia運行形態", sourceLevel:3, asOf:"年次不明" } },
+  /* 臨海本線（仙台臨海鉄道） 出典: http://ja.wikipedia.org/wiki/仙台臨海鉄道臨海本線 ／カンガルーライナー時刻 http://www.seino.co.jp/seino/news/stc/2018/0425-01.htm 確認日: 2026-11-19 */
+  { key:"fr-sendai-rinkai-honsen", name:"臨海本線", operator:"仙台臨海鉄道",
+    note:"貨物専用。起点は陸前山王（JR東北本線の旅客駅と同一駅）。仙台港で仙台埠頭線・仙台西港線が分岐。",
+    stations:"陸前山王,0|仙台港,4.2|仙台北港,5.4",
+    pattern:{ summary:"陸前山王〜仙台港は1日13往復（うち一部は単機回送）、仙台港〜仙台北港は1日5往復＋臨時1往復。JR直通列車「カンガルーライナーSS60」は仙台港22:35発／12:45着（2018年・西濃運輸公式発表）", source:"Wikipedia運行形態／西濃運輸公式発表（2018年）", sourceLevel:3, asOf:"本数は年次不明、カンガルーライナー時刻は2018年" } },
+  /* 仙台埠頭線 出典: http://ja.wikipedia.org/wiki/仙台臨海鉄道仙台埠頭線 確認日: 2026-11-19 */
+  { key:"fr-sendai-futo", name:"仙台埠頭線", operator:"仙台臨海鉄道",
+    note:"貨物専用。仙台埠頭は鉄道用レールの発送駅。",
+    stations:"仙台港,0|仙台埠頭,1.6",
+    pattern:{ summary:"レール輸送列車が1日1往復。発車時刻帯の裏付けはない", source:"Wikipedia運行形態", sourceLevel:3, asOf:"年次不明" } },
+  /* 仙台西港線 出典: http://ja.wikipedia.org/wiki/仙台臨海鉄道仙台西港線 確認日: 2026-11-19 */
+  { key:"fr-sendai-seiko", name:"仙台西港線", operator:"仙台臨海鉄道",
+    note:"貨物専用。仙台西港はキリンビール仙台工場の飲料発送駅。",
+    stations:"仙台港,0|仙台西港,2.5",
+    pattern:{ summary:"コンテナ専用貨物3往復＋臨時1往復（2008年3月改正時点の資料で、現在の本数は未確認）", source:"Wikipedia運行形態（2008年3月15日改正時点）", sourceLevel:3, asOf:"2008年時点" } },
+  /* 福島臨海鉄道本線 出典: http://ja.wikipedia.org/wiki/福島臨海鉄道本線 ／ https://news.mynavi.jp/article/20251129-fukushimarinkai/ 確認日: 2026-11-19 */
+  { key:"fr-fukushima-rinkai", name:"福島臨海鉄道本線", operator:"福島臨海鉄道",
+    note:"貨物専用。小名浜は貨物専用駅（JRに同名の旅客駅はない）。宮下駅は2015年廃止。2025年3月に亜鉛鉱石列車「安中貨物」が終了し、現在はコンテナ輸送のみ。",
+    stations:"泉,0|小名浜,4.8",
+    pattern:{ summary:"平日の日中〜午後帯にコンテナ貨物1〜2往復（資料により本数が異なる）", source:"Wikipedia運行形態／マイナビニュース 2025-11-29（『2025貨物時刻表』参照）", sourceLevel:3, asOf:"2025年時点" } },
+  /* 京葉臨海鉄道臨海本線 出典: http://ja.wikipedia.org/wiki/京葉臨海鉄道臨海本線 確認日: 2026-11-19（親側でも同記事でスポット検証済み） */
+  { key:"fr-keiyo-rinkai", name:"臨海本線", operator:"京葉臨海鉄道",
+    note:"貨物専用。市原分岐点（5.8km）から京葉市原方面、北袖分岐点（19.3km）から京葉久保田方面の支線が分岐。貨物駅として機能しているのは千葉貨物・浜五井・甲子・北袖・京葉久保田とされる。",
+    stations:"蘇我,0|千葉貨物,3.0|市原分岐点,5.8|浜五井,8.8|玉前,10.1|甲子,11.8|前川,14.5|椎津,17.7|北袖分岐点,19.3|北袖,19.9",
+    pattern:{ summary:"1日16往復（2022年時点）。時刻は非公表", source:"Wikipedia「京葉臨海鉄道」会社記事", sourceLevel:3, asOf:"2022年時点" } },
+  /* 臨海本線支線（市原支線） 出典: http://ja.wikipedia.org/wiki/京葉臨海鉄道臨海本線 確認日: 2026-11-19 */
+  { key:"fr-keiyo-rinkai-ichihara", name:"臨海本線支線（市原支線）", operator:"京葉臨海鉄道",
+    note:"貨物専用。市原分岐点は本線の蘇我起点5.8km地点。キロは分岐点起点。",
+    stations:"市原分岐点,0|京葉市原,1.6" },
+  /* 臨海本線支線（久保田支線） 出典: http://ja.wikipedia.org/wiki/京葉臨海鉄道臨海本線 確認日: 2026-11-19 */
+  { key:"fr-keiyo-rinkai-kubota", name:"臨海本線支線（久保田支線）", operator:"京葉臨海鉄道",
+    note:"貨物専用。北袖分岐点は本線の蘇我起点19.3km地点。キロは分岐点起点。",
+    stations:"北袖分岐点,0|京葉久保田,2.3" },
+  /* 浮島線 出典: http://ja.wikipedia.org/wiki/神奈川臨海鉄道浮島線 ／末広町キロ http://ja.wikipedia.org/wiki/末広町駅_(神奈川県) 確認日: 2026-11-19 */
+  { key:"fr-ukishima", name:"浮島線", operator:"神奈川臨海鉄道",
+    note:"貨物専用。浮島町発着列車は末広町を通過する。キロは路線距離（運賃計算キロとは異なる）。川崎貨物はJR東海道貨物線の貨物駅。",
+    stations:"川崎貨物,0|末広町,2.9|浮島町,3.9",
+    pattern:{ summary:"1日18往復（川崎貨物〜末広町7往復・川崎貨物〜浮島町11往復。2008年3月改正時点の資料で、現在の本数は未確認）", source:"Wikipedia運行形態（2008年3月15日改正時点）", sourceLevel:3, asOf:"2008年時点" } },
+  /* 千鳥線 出典: http://ja.wikipedia.org/wiki/神奈川臨海鉄道千鳥線 確認日: 2026-11-19 */
+  { key:"fr-chidori", name:"千鳥線", operator:"神奈川臨海鉄道",
+    note:"貨物専用。中間駅なし。キロは路線距離（運賃計算キロとは異なる）。",
+    stations:"川崎貨物,0|千鳥町,4.2",
+    pattern:{ summary:"1日4往復（2012年3月改正時点の資料で、現在の本数は未確認）", source:"Wikipedia運行形態（2012年3月17日改正時点）", sourceLevel:3, asOf:"2012年時点" } },
+  /* 本牧線 出典: http://ja.wikipedia.org/wiki/神奈川臨海鉄道本牧線 ／横浜本牧キロ https://ja.wikipedia.org/wiki/横浜本牧駅 確認日: 2026-11-19 */
+  { key:"fr-honmoku", name:"本牧線", operator:"神奈川臨海鉄道",
+    note:"貨物専用。根岸はJR根岸線の旅客駅と同一駅。横浜本牧で列車が分離運行される。",
+    stations:"根岸,0|横浜本牧,4.0|本牧埠頭,5.6",
+    pattern:{ summary:"根岸〜横浜本牧は1日3往復（うち1往復は単機）、横浜本牧〜本牧埠頭は1日2往復（うち1往復は単機）（2015年3月時点）", source:"Wikipedia運行形態（2015年3月時点）", sourceLevel:3, asOf:"2015年時点" } },
+  /* 東港線（名古屋臨海鉄道） 出典: https://ja.wikipedia.org/wiki/名古屋臨海鉄道東港線 ／ダイヤ http://dencs.net/ugokan/nagorin.htm 確認日: 2026-11-19 */
+  { key:"fr-nagoya-rinkai-toko", name:"東港線", operator:"名古屋臨海鉄道",
+    note:"貨物専用。笠寺はJR東海道本線の旅客駅と同一駅。",
+    stations:"笠寺,0|東港,3.8",
+    pattern:{ summary:"笠寺5:00発→東港5:10着のコンテナ列車など（日曜運休）", source:"非公式ダイヤまとめ dencs.net（令和6年3月改正）", sourceLevel:2, asOf:"2024年3月改正" } },
+  /* 南港線 出典: https://ja.wikipedia.org/wiki/名古屋臨海鉄道 （路線一覧）／駅一覧はWeblio転載で確認 ／ダイヤ http://dencs.net/ugokan/nagorin.htm 確認日: 2026-11-19 */
+  { key:"fr-nagoya-rinkai-nanko", name:"南港線", operator:"名古屋臨海鉄道",
+    note:"貨物専用。名古屋南貨物〜知多間は2015年8月1日から営業休止中で、実営業は東港〜名古屋南貨物間のみ。",
+    stations:"東港,0|名古屋南貨物,6.9|知多,11.3",
+    pattern:{ summary:"東港5:15発→名古屋南貨物5:31着のコンテナ列車など（日曜運休、営業区間内のみ）", source:"非公式ダイヤまとめ dencs.net（令和6年3月改正）", sourceLevel:2, asOf:"2024年3月改正" } },
+  /* 東築線 出典: http://ja.wikipedia.org/wiki/名古屋臨海鉄道東築線 確認日: 2026-11-19 */
+  { key:"fr-nagoya-rinkai-tochiku", name:"東築線", operator:"名古屋臨海鉄道",
+    note:"貨物専用。定期貨物列車はなく、名鉄向け新車・輸出車両の甲種輸送等が不定期に運行される。名電築港は名鉄築港線の駅と同一駅。",
+    stations:"東港,0|名電築港,1.3" },
+  /* 市橋線 出典: http://ja.wikipedia.org/wiki/西濃鉄道市橋線 確認日: 2026-11-19 */
+  { key:"fr-seino-ichibashi", name:"市橋線", operator:"西濃鉄道",
+    note:"貨物専用（石灰石輸送）。路線名は市橋線だが市橋駅は2006年廃止、猿岩駅も2022年廃止で、現在の終点は乙女坂。美濃赤坂はJR東海道本線（美濃赤坂支線）の旅客駅と同一駅。",
+    stations:"美濃赤坂,0|乙女坂,1.3",
+    pattern:{ summary:"日本製鉄名古屋製鉄所向け石灰石列車が1日3往復（出荷量により運休あり）", source:"Wikipedia運行形態", sourceLevel:3, asOf:"年次不明" } },
+  /* 碧南線 出典: http://ja.wikipedia.org/wiki/衣浦臨海鉄道碧南線 ／本数 https://www.pref.aichi.jp/soshiki/kotsu/0000027073.html 確認日: 2026-11-19 */
+  { key:"fr-kinuura-hekinan", name:"碧南線", operator:"衣浦臨海鉄道",
+    note:"貨物専用。炭酸カルシウム（下り）・フライアッシュ（上り）輸送。東浦はJR武豊線の旅客駅と同一駅。",
+    stations:"東浦,0|碧南市,8.2",
+    pattern:{ summary:"1日1.5往復", source:"愛知県公式ページ（公式資料）", sourceLevel:1, asOf:"確認日時点" } },
+  /* 半田線（衣浦臨海鉄道） 出典: http://ja.wikipedia.org/wiki/衣浦臨海鉄道半田線 確認日: 2026-11-19 */
+  { key:"fr-kinuura-handa", name:"半田線", operator:"衣浦臨海鉄道",
+    note:"貨物専用。起点は東成岩（JR武豊線の旅客駅と同一駅）。新半田駅は2006年廃止。",
+    stations:"東成岩,0|半田埠頭,3.4",
+    pattern:{ summary:"1日1往復（高速貨物列車のみ。武豊線・東海道本線経由で名古屋貨物ターミナル発着）", source:"Wikipedia記事／愛知県公式ページ", sourceLevel:1, asOf:"確認日時点" } },
+  /* 港東線 出典: https://ja.wikipedia.org/wiki/水島臨海鉄道港東線 確認日: 2026-11-19 */
+  { key:"fr-mizushima-koto", name:"港東線", operator:"水島臨海鉄道",
+    note:"貨物専用。正式路線名は港東線。水島は水島本線の旅客駅と同一駅。",
+    stations:"水島,0|東水島,3.6",
+    pattern:{ summary:"JR岡山貨物ターミナル方面との間に1日2往復ほど。東水島発・東京貨物ターミナル行き直通列車もあり（2020年の記事による）", source:"GetNavi 2020年記事", sourceLevel:3, asOf:"2020年時点" } },
+  /* 酒田港線 出典: https://www.weblio.jp/content/貨物支線 （貨物線一覧）／ https://www.haisenryakuzu.net/column/konaiunten/ 確認日: 2026-11-19 */
+  { key:"fr-sakata-ko", name:"酒田港線", operator:"JR貨物",
+    note:"羽越本線の貨物支線（JR貨物が第一種事業者）。酒田はJR羽越本線・陸羽西線の旅客駅と同一駅。取扱はコンテナのみとされる。",
+    stations:"酒田,0|酒田港,2.7",
+    pattern:{ summary:"コンテナ列車が1日1往復（入換方式で運転、2.7kmを約10分、制限速度25km/h）。発車時刻の裏付けはない", source:"HaisenNet「構内運転・入換の貨物支線」", sourceLevel:3, asOf:"年次不明" } },
+  /* 博多臨港線 出典: http://ja.wikipedia.org/wiki/博多臨港線 確認日: 2026-11-19 */
+  { key:"fr-hakata-rinko", name:"博多臨港線", operator:"JR貨物",
+    note:"鹿児島本線の貨物支線（JR貨物が第一種事業者）。福岡貨物ターミナル〜博多港方面の区間は1998年廃止。香椎はJR鹿児島本線・香椎線の旅客駅と同一駅。",
+    stations:"香椎,0|千早操車場,1.5|福岡貨物ターミナル,3.7",
+    pattern:{ summary:"高速貨物列車が1日21往復発着（2014年3月改正時点の資料で、現在の本数は未確認）。JR貨物公式コンテナ時刻表でも福岡貨物ターミナル発着の多数のコンテナ列車が確認できる", source:"Wikipedia「福岡貨物ターミナル駅」（2014年時点本数）／JR貨物公式コンテナ時刻表（発着の存在確認）", sourceLevel:3, asOf:"2014年時点（本数）" } },
+  /* 北方貨物線 出典: http://ja.wikipedia.org/wiki/北方貨物線 確認日: 2026-11-19 */
+  { key:"fr-hoppo", name:"北方貨物線", operator:"JR西日本（貨物列車はJR貨物が第二種事業者として運行）",
+    note:"東海道本線の貨物支線。正式区間は吹田貨物ターミナル〜尼崎で、宮原操車場は途中施設。尼崎はJR神戸線・JR東西線・福知山線の旅客駅と同一駅。貨物列車のほか宮原支所への回送列車が運行される。",
+    stations:"吹田貨物ターミナル,0|宮原操車場,6.6|尼崎,12.2" },
+  /* 新金線 出典: https://ja.wikipedia.org/wiki/新金貨物線 確認日: 2026-11-19 */
+  { key:"fr-shinkin", name:"新金線", operator:"JR東日本（貨物列車はJR貨物が第二種事業者として運行）",
+    note:"総武本線の貨物支線（正式名：新金貨物線）。小岩〜新小岩信号場間は総武本線と重複。新小岩信号場で越中島支線が分岐。",
+    stations:"小岩,0|新小岩信号場,2.3|金町,8.9",
+    pattern:{ summary:"定期貨物列車4往復＋臨時貨物列車1往復（2018年3月時点の資料で、現在も同水準かは未確認）", source:"Wikipedia運行形態（2018年3月時点）", sourceLevel:3, asOf:"2018年時点" } },
+  /* 越中島支線 出典: https://ja.wikipedia.org/wiki/越中島支線 ／本数 https://getnavi.jp/mobility/270369/ 確認日: 2026-11-19 */
+  { key:"fr-etchujima", name:"越中島支線", operator:"JR東日本（貨物列車はJR貨物が第二種事業者として運行）",
+    note:"総武本線の貨物支線。現在は一般貨物営業はなく、JR東日本のレール輸送列車のみが運行される。越中島貨物は京葉線の旅客駅「越中島」とは別駅・別場所。小名木川駅は2000年廃止。",
+    stations:"小岩,0|新小岩信号場,2.3|越中島貨物,11.7",
+    pattern:{ summary:"日曜を除き1日3往復（レール輸送列車）。2018年の記事では新小岩信号場12:10発→越中島貨物12:22着、越中島貨物13:42発→新小岩信号場13:55着等の時刻例あり", source:"GetNavi 2018-06-15記事", sourceLevel:3, asOf:"2018年時点" } },
+  /* 高島線 出典: https://ja.wikipedia.org/wiki/高島線 確認日: 2026-11-19 */
+  { key:"fr-takashima", name:"高島線", operator:"JR東日本（貨物列車はJR貨物が第二種事業者として運行）",
+    note:"東海道本線の貨物支線。現行区間は鶴見〜桜木町（東高島〜横浜港方面は1987年廃止）。線内完結の列車はなく、鶴見方面と根岸線根岸方面を結ぶ中継ルート。東高島は現在、運転停車のみで貨車の発着はない。",
+    stations:"鶴見,0|東高島,5.6|桜木町,8.5",
+    pattern:{ summary:"日中はおおむね30分間隔で貨物列車が往来することもある（時期により変動）", source:"Wikipedia運行形態", sourceLevel:3, asOf:"年次不明" } },
+  /* 塩浜支線 出典: https://ja.wikipedia.org/wiki/関西本線 ／ http://ja.wikipedia.org/wiki/塩浜駅 確認日: 2026-11-19 */
+  { key:"fr-shiohama", name:"塩浜支線", operator:"JR貨物",
+    note:"関西本線の貨物支線（JR貨物が第一種事業者）。石油の車扱貨物専用。塩浜は近鉄名古屋線の旅客駅「塩浜」と同名だが、隣接する別駅で線路は接続していない。",
+    stations:"四日市,0|塩浜,3.3",
+    pattern:{ summary:"上り（四日市方面）は高速貨物1日1本＋専用貨物1日2本、下り（塩浜終着）は高速貨物1日1本＋専用貨物1日1本（2021年3月改正時点）", source:"Wikipedia「塩浜駅」（2021年3月改正時点）", sourceLevel:3, asOf:"2021年時点" } },
+  /* 尻手短絡線 出典: https://ja.wikipedia.org/wiki/日本貨物鉄道関東支社 （JR貨物第二種区間表） 確認日: 2026-11-19 */
+  { key:"fr-shitte-tanraku", name:"尻手短絡線", operator:"JR東日本（貨物列車はJR貨物が第二種事業者として運行）",
+    note:"南武線尻手と東海道貨物線新鶴見信号場を結ぶ貨物専用の短絡線。中間駅なし。なお南武線の尻手〜浜川崎間は旅客支線（貨物列車も共用）のため本データの対象外。",
+    stations:"尻手,0|新鶴見信号場,1.5" }
+];
+
 buildExtraLines();
 
 /* 上り列車は下りの停車時分を反転して自動生成する */
@@ -4876,11 +5065,61 @@ function renderAllLineList(){
   $("allLineList").innerHTML = html;
   $("foldCount").textContent = Object.keys(LINES).length;
 }
+let dataTab = "pax", dataFreightKey = "fr-kaikyo";
+function escHtml(s){ return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+function parseFrStations(line){ return line.stations.split("|").map(t => { const i = t.lastIndexOf(","); return [t.slice(0, i), parseFloat(t.slice(i + 1))]; }); }
 function renderStationData(){
-  const line = LINES[state.dataLine];
-  $("stationList").innerHTML = line.stations.map(s => s[0] + ' <span class="km">' + s[1].toFixed(1) + 'km</span>').join(" ・ ");
-  renderLineChips($("dataLineChips"), state.dataLine, k => { state.dataLine = k; renderStationData(); });
+  const pax = dataTab === "pax";
+  $("dtabPax").classList.toggle("on", pax);
+  $("dtabFreight").classList.toggle("on", !pax);
+  $("freightNote").style.display = pax ? "none" : "";
+  if (pax){
+    $("freightDetail").innerHTML = "";
+    const line = LINES[state.dataLine];
+    $("stationList").innerHTML = line.stations.map(s => s[0] + ' <span class="km">' + s[1].toFixed(1) + 'km</span>').join(" ・ ");
+    renderLineChips($("dataLineChips"), state.dataLine, k => { state.dataLine = k; renderStationData(); });
+    return;
+  }
+  renderFreight();
 }
+function renderFreight(){
+  const box = $("dataLineChips");
+  box.innerHTML = "";
+  for (const L of FREIGHT_LINES){
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "lchip" + (L.key === dataFreightKey ? " on" : "");
+    b.textContent = L.name + (L.key === dataFreightKey ? " ✓" : "");
+    if (L.key === dataFreightKey){ b.style.background = "#8a5a2b"; b.style.borderColor = "#8a5a2b"; b.style.color = "#fff"; }
+    b.addEventListener("click", () => { dataFreightKey = L.key; renderStationData(); });
+    box.appendChild(b);
+  }
+  const L = FREIGHT_LINES.find(x => x.key === dataFreightKey) || FREIGHT_LINES[0];
+  const sts = parseFrStations(L);
+  $("stationList").innerHTML = sts.map(s => escHtml(s[0]) + ' <span class="km">' + s[1].toFixed(1) + 'km</span>').join(" ・ ");
+  const total = sts[sts.length - 1][1];
+  let h = '<div class="frdetail"><h4>' + escHtml(L.name) + '</h4>';
+  h += '<p class="frmeta">事業者：' + escHtml(L.operator) + '</p>';
+  h += '<p class="frmeta">区間：' + escHtml(sts[0][0]) + '〜' + escHtml(sts[sts.length - 1][0]) + '（営業キロ ' + total.toFixed(1) + 'km・全' + sts.length + '駅）</p>';
+  if (L.note) h += '<p class="frnote">' + escHtml(L.note) + '</p>';
+  h += '<div class="frdist"><span>駅間の距離：</span><select id="frFrom">' + sts.map((s, i) => '<option value="' + i + '">' + escHtml(s[0]) + '</option>').join("") + '</select><span>→</span><select id="frTo">' + sts.map((s, i) => '<option value="' + i + '"' + (i === sts.length - 1 ? ' selected' : '') + '>' + escHtml(s[0]) + '</option>').join("") + '</select><strong id="frDistOut"></strong></div>';
+  h += '<div class="frpat"><h5>時刻表（推測）</h5>';
+  if (L.pattern){
+    const lv = {1: "公式資料ベース", 2: "非公式の列車別まとめベース", 3: "目撃情報ベース"}[L.pattern.sourceLevel] || "";
+    h += '<p class="frwarn">この時刻表は公式ダイヤではなく、目撃情報などをもとにした推測です。実際の発着とは異なる場合があります。</p>';
+    h += '<p class="frnote">' + escHtml(L.pattern.summary) + '</p>';
+    h += '<p class="frmeta">出典：' + escHtml(L.pattern.source) + (L.pattern.asOf ? '（' + escHtml(L.pattern.asOf) + '）' : '') + '／区分：' + lv + '</p>';
+  } else {
+    h += '<p class="frnote">時刻表は掲載していません（目撃情報などの裏付けが取れていないため）。</p>';
+  }
+  h += '</div></div>';
+  $("freightDetail").innerHTML = h;
+  const upd = () => { const a = sts[Number($("frFrom").value)], b = sts[Number($("frTo").value)]; $("frDistOut").textContent = a && b ? Math.abs(b[1] - a[1]).toFixed(1) + 'km' : ''; };
+  $("frFrom").addEventListener("change", upd);
+  $("frTo").addEventListener("change", upd);
+  upd();
+}
+$("dtabPax").addEventListener("click", () => { dataTab = "pax"; renderStationData(); });
+$("dtabFreight").addEventListener("click", () => { dataTab = "freight"; renderStationData(); });
 
 /* ================= 現在地から近い駅 ================= */
 /* 収録駅の座標（緯度・経度）。現在地との距離計算は端末内のみで行う */
