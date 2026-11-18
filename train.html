@@ -397,7 +397,7 @@ html[data-theme="andy"] .frwarn{background:#3a1408;color:#ffb37a}
 <div class="wrap">
       <div class="ido-toolnav" role="navigation" aria-label="電車系ツール"><span class="ido-toolnav-label">電車系ツール</span><a href="rail.html">電車系トップ</a><a href="train.html" aria-current="page"><span class="ido-pic pic-dual" data-emoji="🚃"><span class="pic-e">🚃</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3.5" width="14" height="13" rx="2.5"/><path d="M5 10.3h14"/><path d="M9 13.9h.01M15 13.9h.01" stroke-width="2.6"/><path d="M8.5 20.5l2-4"/><path d="M15.5 20.5l-2-4"/><path d="M7 20.5h10"/></svg></span> 電車・新幹線</a><a href="pass.html"><span class="ido-pic pic-dual" data-emoji="🎫"><span class="pic-e">🎫</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8.6a2.4 2.4 0 0 0 0 2.8V15a1.6 1.6 0 0 0 1.6 1.6h12.8A1.6 1.6 0 0 0 20 15v-3.6a2.4 2.4 0 0 1 0-2.8V7A1.6 1.6 0 0 0 18.4 5.4H5.6A1.6 1.6 0 0 0 4 7z"/><path d="M13.8 6.2v1.7M13.8 10.2v1.7M13.8 14.2v1.6"/></svg></span> 定期代</a></div>
 <header class="ido-hero ido-train-hero"><h1>電車・新幹線シミュレーター</h1>
-      <p class="sub">全国のJR各社（北海道・東日本・東海・西日本・四国・九州）・新幹線各線・各地の大手私鉄と地下鉄を収録した時刻表検索。いまの時刻から「次の電車」と運賃・特急料金を計算します。収録路線は原則として全駅収録です（一部の路線・区間では、公式資料で確認できなかった駅を省略している場合があります）（収録路線の一覧は、ページ下部の折り畳み「収録路線一覧・駅データ・データの出典」にまとめています）。</p></header>
+      <p class="sub">全国のJR各社（北海道・東日本・東海・西日本・四国・九州）・新幹線各線・各地の大手私鉄と地下鉄を収録した時刻表検索。いまの時刻から「次の電車」と運賃・特急料金を計算します。収録路線は原則として全駅収録です（一部の路線・区間では、公式資料で確認できなかった駅を省略している場合があります）（収録路線の一覧とデータの出典はページ下部の折り畳み「収録一覧・データの出典」に、各路線の駅と営業キロは折り畳み「駅データ」にまとめています）。</p></header>
       <div class="clockbar">
         <div class="clock" id="clock">--:--:--</div>
         <div class="dateline" id="dateline">—</div>
@@ -531,7 +531,7 @@ html[data-theme="andy"] .frwarn{background:#3a1408;color:#ffb37a}
       </details>
 
       <details class="foldsec" id="dataFold">
-        <summary>収録路線一覧・駅データ・データの出典（全<span id="foldCount">―</span>路線）</summary>
+        <summary>収録一覧・データの出典（全<span id="foldCount">―</span>路線）</summary>
         <div class="foldbody">
           <h3>収録路線一覧</h3>
           <p class="sub">収録している全路線の一覧です。原則として<strong>全駅収録</strong>です（一部の路線・区間では、公式資料で確認できなかった駅を省略している場合があります）。発車時刻は各路線の標準パターンの目安です。</p>
@@ -548,16 +548,6 @@ html[data-theme="andy"] .frwarn{background:#3a1408;color:#ffb37a}
             <li><strong>立山トンネル電気バス／関電トンネル電気バス</strong>：電気バスに転換済みで、鉄道・軌道ではない</li>
           </ul>
 
-          <h3>駅データ</h3>
-          <p class="sub">路線を選ぶと、その路線の収録駅と起点からの営業キロを表示します。</p>
-          <div class="dtabs">
-            <button type="button" class="dtab on" id="dtabPax">旅客線</button>
-            <button type="button" class="dtab" id="dtabFreight">貨物線・非旅客線（資料）</button>
-          </div>
-          <p class="sub" id="freightNote" style="display:none">旅客が乗れない貨物専用線・非旅客線の資料です。経路検索の対象にはなりません。駅・営業キロは公表資料で確認できた範囲（30路線・85駅）で収録しています。時刻表は公式ダイヤではなく、目撃情報などをもとにした推測です。</p>
-          <div class="groupedchips" id="dataLineChips"></div>
-          <div class="stationlist" id="stationList"></div>
-          <div id="freightDetail"></div>
           <h3>データの出典</h3>
           <p class="src">
             運賃：<a href="https://jr-group.jp/higashinihon-fare/" target="_blank" rel="noopener">JR東日本運賃表（2026年3月改定）</a>の幹線運賃表と、本州3社の幹線賃率（〜300km:16.20円/km、301〜600km:12.85円/km、601km〜:7.05円/km＋消費税・端数処理）で計算しています。JR北海道・四国・九州の区間も同じ方式の試算です。<br />
@@ -568,6 +558,21 @@ html[data-theme="andy"] .frwarn{background:#3a1408;color:#ffb37a}
             有料特急料金：高崎線「特急スワローあかぎ」と小田急「ロマンスカー」は、公表の指定席特急料金をもとに距離帯テーブル化した試算です（全車指定席）。実際の料金は区間・座席種別・時期により異なる場合があります。<br />
             発車パターン：東海道新幹線「のぞみ」の東京発パターン（毎時00分＝新大阪行き、12・30分＝博多行き、48分＝広島・博多行き）など、各線の標準ダイヤパターンを再現しています。高崎線は日中の運行本数（上野東京ライン＋湘南新宿ライン）と標準所要時間（上野〜高崎 普通約101分・快速約97分）に基づきます。
           </p>
+        </div>
+      </details>
+
+      <details class="foldsec" id="stationFold">
+        <summary>駅データ</summary>
+        <div class="foldbody">
+          <p class="sub">路線を選ぶと、その路線の収録駅と起点からの営業キロを表示します。</p>
+          <div class="dtabs">
+            <button type="button" class="dtab on" id="dtabPax">旅客線</button>
+            <button type="button" class="dtab" id="dtabFreight">貨物線・非旅客線（資料）</button>
+          </div>
+          <p class="sub" id="freightNote" style="display:none">旅客が乗れない貨物専用線・非旅客線の資料です。経路検索の対象にはなりません。駅・営業キロは公表資料で確認できた範囲（30路線・85駅）で収録しています。時刻表は公式ダイヤではなく、目撃情報などをもとにした推測です。</p>
+          <div class="groupedchips" id="dataLineChips"></div>
+          <div class="stationlist" id="stationList"></div>
+          <div id="freightDetail"></div>
         </div>
       </details>
 
