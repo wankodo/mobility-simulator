@@ -51,6 +51,7 @@
       .btn-sub{ background:var(--chip); color:var(--ink); border:1px solid var(--line); border-radius:8px;
         font-size:13px; padding:8px 12px; cursor:pointer; }
       .note{ background:var(--warn-bg); color:var(--warn-ink); border-radius:8px; padding:9px 11px; font-size:12.5px; line-height:1.55; margin-top:12px; }
+      html[data-theme="andy"]{ --warn-bg:#3a1408; --warn-ink:#ffb37a; }
       .result{ background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:13px 14px; margin-bottom:10px; box-shadow:var(--shadow); }
       .result.next{ border:2px solid var(--accent); }
       .r-head{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:7px; }
@@ -195,14 +196,12 @@ html[data-theme="andy"] .frwarn{background:#3a1408;color:#ffb37a}
         .farebar-in > div:last-child{ display:flex; align-items:baseline; gap:6px; }
         .farebar .total{ font-size:20px; }
         .farebar .per{ font-size:11px; }
-        /* 日付・出発時刻・「現在時刻にする」を1行に収める（折り返すとボタンが固定の運賃バーに隠れるため）。
-           1行化で詰まった分は座席の行の上余白で戻し、後続のボタンがバーの裏に入らないようにする */
-        .row:has(#nowBtn){ flex-wrap:nowrap; gap:6px; }
+        /* 日付は1行目にフル幅、出発時刻と「現在時刻にする」は2行目に並べる（横幅の詰まり解消のため2行化） */
+        .row:has(#nowBtn){ flex-wrap:wrap; gap:6px; }
         .row:has(#nowBtn) > div.narrow{ flex:1 1 0; min-width:0; }
-        .row:has(#nowBtn) > div.narrow:first-child{ flex-grow:1.2; }
+        .row:has(#nowBtn) > div.narrow:first-child{ flex:1 1 100%; }
         .row:has(#nowBtn) input{ width:100%; min-width:0; }
-        #nowBtn{ font-size:12px; padding:8px 2px; white-space:nowrap; }
-        .row:has(#seatSeg){ margin-top:75px; }
+        #nowBtn{ font-size:12px; padding:8px 2px; white-space:nowrap; height:44px; }
       }
     </style>
   <meta name="description" content="電車・新幹線の運賃を無料で試算。全588路線を収録し、在来線・有料特急・新幹線の運賃計算、駅の時刻表、発車までのカウントダウン表示に対応。私鉄・地下鉄・ケーブルカー・ロープウェイも収録。" />
