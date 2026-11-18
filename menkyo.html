@@ -75,6 +75,12 @@ pre.bm-src { background:#0b1c2c; color:#d7e4f2; border-radius:12px; padding:14px
 font-size:11.5px; line-height:1.55; max-height:320px; white-space:pre-wrap; word-break:break-all;}
 details.src-box { margin-top:12px;}
 details.src-box summary { cursor:pointer; font-weight:700; font-size:14px; color:var(--navy);}
+details.fold-box > summary { cursor:pointer; font-weight:800; font-size:18px; color:var(--ink); display:flex; align-items:center; gap:10px; list-style:none; }
+details.fold-box > summary::-webkit-details-marker { display:none; }
+details.fold-box > summary::before { content:""; width:9px; height:20px; border-radius:3px; background:linear-gradient(180deg,var(--amber),#f28c13); flex:none; }
+details.fold-box > summary::after { content:"\FF0B"; margin-left:auto; font-size:15px; font-weight:900; color:var(--mut); flex:none; }
+details.fold-box[open] > summary::after { content:"\FF0D"; }
+details.fold-box > summary + * { margin-top:10px; }
 .venue-list { columns:2; column-gap:24px; padding-left:18px;}
 .venue-list li { break-inside:avoid;}
 @media (max-width:560px){.venue-list { columns:1;}}
@@ -241,6 +247,14 @@ html[data-theme="andy"] .venue-dist { color:#46d9ec; background:rgba(70,217,236,
 <a class="backlink" href="index.html">← トップへ戻る</a>
 
 <section class="box">
+<details class="fold-box">
+<summary>このツールについて</summary>
+<p>警視庁の運転免許手続予約サイトでは、空き状況カレンダーは<strong>会場を1つずつ選んで</strong>見る仕組みになっています。このツールは、ログイン済みの公式サイトのページでブックマークレットを実行すると、公式サイトがカレンダー表示に使っているデータ（カレンダーAPI）を読み取り、全17会場の当月・翌月分を<strong>1つの表にまとめて表示</strong>するツールです。データを読むだけで、予約を確定することはありません。</p>
+<p><strong>個人情報の扱い：</strong>予約用IDなどの情報は、お使いのブラウザの中だけで扱われます。このブックマークレットが通信するのは、公式サイトのカレンダーデータ（API）だけです。会場・月・講習区分の条件を送って空きデータを受け取る読み取り専用の通信で、予約用IDなどを外部のサーバーへ送信する処理は一切入っていません。ソースコードを下に全文公開していますので、実行前に中身を確認できます。</p>
+</details>
+</section>
+
+<section class="box">
 <h2>使い方（3ステップ）</h2>
 <div class="quick-steps">
 <div class="quick-step"><div class="qs-num">1</div><div class="qs-body"><strong>公式予約サイトでログインし、カレンダーを1回表示する</strong><br><a href="https://license-renew.tokyo-madoguchi-yoyaku.com/police-pref-tokyo/index_000.html" target="_blank" rel="noopener">警視庁運転免許手続予約サイト</a>を開き、いつも通りご自身で手続を進めて、会場を選んで「進む」を押し、<strong>空き状況カレンダーを1回表示</strong>します。（このツールは、カレンダー表示のときに読み込まれるデータを使って集約するため、このひと手間が必要です）</div></div>
@@ -250,11 +264,7 @@ html[data-theme="andy"] .venue-dist { color:#46d9ec; background:rgba(70,217,236,
 <p style="margin-top:14px;"><strong>実行する画面について：</strong>カレンダーを1回表示した後であれば、公式予約サイトのどの画面で実行しても全会場分を集約します。カレンダーをまだ表示していない状態で実行した場合は、その旨の案内が表示されます。</p>
 </section>
 
-<section class="box">
-<h2>このツールについて</h2>
-<p>警視庁の運転免許手続予約サイトでは、空き状況カレンダーは<strong>会場を1つずつ選んで</strong>見る仕組みになっています。このツールは、ログイン済みの公式サイトのページでブックマークレットを実行すると、公式サイトがカレンダー表示に使っているデータ（カレンダーAPI）を読み取り、全17会場の当月・翌月分を<strong>1つの表にまとめて表示</strong>するツールです。データを読むだけで、予約を確定することはありません。</p>
-<p><strong>個人情報の扱い：</strong>予約用IDなどの情報は、お使いのブラウザの中だけで扱われます。このブックマークレットが通信するのは、公式サイトのカレンダーデータ（API）だけです。会場・月・講習区分の条件を送って空きデータを受け取る読み取り専用の通信で、予約用IDなどを外部のサーバーへ送信する処理は一切入っていません。ソースコードを下に全文公開していますので、実行前に中身を確認できます。</p>
-</section>
+
 
 <section class="box">
 <h2>ブックマークの登録方法</h2>
@@ -273,6 +283,21 @@ html[data-theme="andy"] .venue-dist { color:#46d9ec; background:rgba(70,217,236,
 <li><strong>URL欄の内容を全部消して、コピーしたコードを貼り付け</strong>て保存します。</li>
 <li>使い方：公式予約サイトでログインしてカレンダーを1回表示した後で、<strong>ブックマークを開いて「空きまとめ」をタップ</strong>すると実行されます。</li>
 <li>もう一つの実行方法：公式サイトを開いた状態で、<strong>アドレスバーにブックマーク名（例：空きまとめ）と入力</strong>すると候補に表示されるので、それをタップしても実行できます。</li>
+</ol>
+<h3 class="howto-h3">iPhone（ショートカットアプリ）の場合 ― ブックマーク登録が面倒な方へ</h3>
+<p>iPhoneの「ショートカット」アプリを使う方法もあります。最初に1回だけショートカットを作っておくと、公式サイトの画面から共有シートを開いてタップするだけで実行できます。中身（集約の仕組み）はブックマークレットと同じで、実行する仕組みが違うだけです。</p>
+<div class="copy-zone">
+<p><strong>まず、ショートカット用のコードをコピーしてください</strong><br>下のボタンを押すと、ショートカットに貼るためのコードがコピーされます。ブックマークレット用とは別のコードなので、こちらを使ってください。</p>
+<button type="button" class="copy-btn" id="sc-copy-btn">ショートカット用コードをコピー</button><span class="copy-done" id="sc-copy-done">コピーしました</span>
+<textarea class="bm-code" id="sc-code" readonly aria-label="ショートカット用のコード"></textarea>
+<p style="margin-top:10px;">ボタンでコピーできない場合は、上の欄の文字列を長押し（タップ）で全選択してコピーしてください。コードは1文字も変えず、そのまま貼ります。</p>
+</div>
+<ol class="steps">
+<li>「ショートカット」アプリを開き、右上の「＋」をタップして<strong>新規作成</strong>します。名前は「空きまとめ」など、分かりやすいものにしておきます。</li>
+<li>「アクションを追加」から<strong>「WebページでJavaScriptを実行」</strong>を検索して追加します。</li>
+<li>アクションの中の<strong>コード欄に、コピーしたコードを貼り付け</strong>ます（最初から入っている例のコードは、全部消してから貼ってください）。</li>
+<li>ショートカットの詳細設定で、<strong>入力を「SafariのWebページ」に設定</strong>し、<strong>「共有シートに表示」</strong>をオンにします。</li>
+<li>使い方：公式予約サイトでログインしてカレンダーを1回表示した後、Safariの<strong>共有ボタンからこのショートカットを選ぶ</strong>と実行され、空き一覧が表示されます。</li>
 </ol>
 <h3 class="howto-h3">Android（Chrome）の場合</h3>
 <ol class="steps">
@@ -600,9 +625,43 @@ html[data-theme="andy"] .venue-dist { color:#46d9ec; background:rgba(70,217,236,
   }
 })();
 </script>
+<script>
+(function () {
+  var btn = document.getElementById("sc-copy-btn");
+  var done = document.getElementById("sc-copy-done");
+  var area = document.getElementById("sc-code");
+  var link = document.querySelector("a.bm-btn");
+  if (!area || !link) return;
+  var body = (link.getAttribute("href") || "").replace(/^javascript:/, "");
+  try { body = decodeURIComponent(body); } catch (e) { /* デコードできない場合はそのまま使う */ }
+  var GUARD = 'if (typeof completion !== "undefined") { completion("done"); }';
+  var code = body.replace(/\s+$/, "") + "\n" + GUARD + "\n";
+  area.value = code;
+  function showDone() {
+    if (!done) return;
+    done.style.display = "inline";
+    setTimeout(function () { done.style.display = "none"; }, 3000);
+  }
+  function fallbackCopy() {
+    area.focus();
+    area.select();
+    try { document.execCommand("copy"); showDone(); } catch (e) { /* 選択状態のままにして手動コピーを促す */ }
+  }
+  if (btn) {
+    btn.addEventListener("click", function () {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(code).then(showDone, fallbackCopy);
+      } else {
+        fallbackCopy();
+      }
+    });
+  }
+})();
+</script>
 
 <section class="box">
-<h2>対象の会場</h2>
+<details class="fold-box">
+<summary>対象の会場</summary>
 <p>警視庁の案内では、更新手続の会場は次のとおりです（講習区分によって利用できる会場が異なります）。</p>
 <ul class="venue-list">
 <li>府中運転免許試験場</li>
@@ -624,6 +683,7 @@ html[data-theme="andy"] .venue-dist { color:#46d9ec; background:rgba(70,217,236,
 <li>町田警察署</li>
 </ul>
 <p>※ 島部警察署（大島・新島・三宅島・八丈島・小笠原）は予約不要のため対象外です。</p>
+</details>
 </section>
 
 <section class="box">
@@ -756,7 +816,7 @@ html[data-theme="andy"] .venue-dist { color:#46d9ec; background:rgba(70,217,236,
 
 <section class="box">
 <h2>仕組みと限界</h2>
-<p>公式サイトは、空き状況カレンダーを表示するときに、専用のデータ配信（カレンダーAPI）から空きデータを受け取っています。このブックマークレットは、<strong>あなたがカレンダーを1回表示したときに使われた通信先と講習区分を、ブラウザの記録から再利用</strong>し、全17会場について<strong>当月と翌月</strong>のデータを同じAPIから読み取り、表にまとめます。空き数は、時間枠ごとの「定員 − 予約済み数」を日ごとに合計したものです。あわせて、会場ごとに最も早い空き日も表示します。読み取れなかった会場・月には<strong>「読み取れませんでした」と理由（サーバーエラー、データが空だった等）もあわせて表示します</strong>（推測で数字を作ることはしません）。このツールはデータを読むだけで、予約の確定はしません。サイト側の仕様が変わると読み取れなくなる場合があります。うまく集約できなかった場合は、下の「構造チェック」を実行して、結果を送ってください。</p>
+<p>公式サイトは、空き状況カレンダーを表示するときに、専用のデータ配信（カレンダーAPI）から空きデータを受け取っています。このブックマークレットは、<strong>あなたがカレンダーを1回表示したときに使われた通信先と講習区分を、ブラウザの記録から再利用</strong>し、全17会場について<strong>当月と翌月</strong>のデータを同じAPIから読み取り、表にまとめます。空き数は、時間枠ごとの「定員 − 予約済み数」を日ごとに合計したものです。あわせて、会場ごとに最も早い空き日も表示します。読み取れなかった会場・月には<strong>「読み取れませんでした」と理由（サーバーエラー、データが空だった等）もあわせて表示します</strong>（推測で数字を作ることはしません）。このツールはデータを読むだけで、予約の確定はしません。サイト側の仕様が変わると読み取れなくなる場合があります。</p>
 <p>空き状況は、講習区分などの条件によって異なります。このツールは、あなたが公式サイトでカレンダーを表示したときの講習区分のまま読み取ります。</p>
 <div class="warn-box">
 <p style="margin-top:0;"><strong>注意</strong></p>
@@ -767,401 +827,6 @@ html[data-theme="andy"] .venue-dist { color:#46d9ec; background:rgba(70,217,236,
 </ul>
 </div>
 </section>
-<section class="box">
-<h2>うまく集約できなかったとき（構造チェック）</h2>
-<p>空きまとめがうまく動かなかった場合は、<strong>構造チェック</strong>用のブックマークレットを会場選択画面で実行すると、画面の構造（フォーム内の全コントロールのタグ・type・name、送信・次へ系ボタンの情報、会場ラジオボタンの属性、日付ラジオボタンの disabled や周囲のクラス名、カレンダーの見出し、script 内の日付らしい文字列の件数、カレンダー部分の要素の構造、フォームの method と action）だけを調べた結果が表示されます。その内容をコピーして送ってください。次回の改修の手がかりになります。カレンダー画面でも実行できるので、集約がうまくいかない場合は<strong>会場選択画面とカレンダー画面の両方</strong>で実行した結果を送ってもらえると、より正確に直せます。</p>
-<p>構造チェックは<strong>構造だけ</strong>を調べます。個人情報やセッションIDが含まれないよう、値が長いものや英数字が長く続くものは伏せ字にし、予約用ID・氏名・生年月日・免許証番号などの項目は値の長さにかかわらず伏せ字にします。URLはパスの部分だけを表示します（クエリ文字列は含めません）。外部への送信は一切行いません。</p>
-<div class="copy-zone">
-<p><strong>構造チェックのコードをコピーしてください</strong><br>空きまとめとは別のブックマークとして登録します。登録の手順は、上の「ブックマークの登録方法」と同じ要領です（名前は「構造チェック」などがおすすめです）。</p>
-<button type="button" class="copy-btn" id="bm-diag-copy-btn">コードをコピー</button><span class="copy-done" id="bm-diag-copy-done">コピーしました</span>
-<textarea class="bm-code" id="bm-diag-code" readonly aria-label="構造チェック用ブックマークレットのコード"></textarea>
-</div>
-<div class="bm-install">
-<p>パソコンの場合は、このボタンをブックマークバーへドラッグしてください</p>
-<a class="bm-btn bm-diag-btn" href="javascript:%28function%20%28%29%20%7B%0A%20%20%22use%20strict%22%3B%0A%20%20var%20VENUE_WORD%20%3D%20%2F%28%E8%A9%A6%E9%A8%93%E5%A0%B4%7C%E3%82%BB%E3%83%B3%E3%82%BF%E3%83%BC%7C%E8%AD%A6%E5%AF%9F%E7%BD%B2%7C%E7%BD%B2%29%2F%3B%0A%20%20var%20PERSONAL_NAME%20%3D%20%2F%28yoyaku%7Cname%7Cbirth%7Clicense%7Ctel%7Ccard%7Caddress%7Cgraduation%7Ckana%7Cpasswd%7Cpassword%29%2Fi%3B%0A%20%20function%20norm%28s%29%20%7B%20return%20String%28s%20%3D%3D%20null%20%3F%20%22%22%20%3A%20s%29.replace%28%2F%5Cs%2B%2Fg%2C%20%22%20%22%29.trim%28%29%3B%20%7D%0A%20%20function%20mask%28v%29%20%7B%0A%20%20%20%20if%20%28v%20%3D%3D%20null%20%7C%7C%20v%20%3D%3D%3D%20%22%22%29%20return%20%22%28%E3%81%AA%E3%81%97%29%22%3B%0A%20%20%20%20var%20s%20%3D%20String%28v%29%3B%0A%20%20%20%20if%20%28%2F%5E%5B0-9%5D%2B%24%2F.test%28s%29%20%26%26%20s.length%20%3C%3D%206%29%20return%20s%3B%0A%20%20%20%20if%20%28s.length%20%3C%3D%208%20%26%26%20%21%2F%5BA-Za-z0-9%5D%7B6%2C%7D%2F.test%28s%29%29%20return%20s%3B%0A%20%20%20%20return%20s.slice%280%2C%202%29%20%2B%20%22%2A%2A%2A%EF%BC%88%22%20%2B%20s.length%20%2B%20%22%E6%96%87%E5%AD%97%EF%BC%89%22%3B%0A%20%20%7D%0A%20%20function%20maskFor%28name%2C%20v%29%20%7B%0A%20%20%20%20%2F%2A%20%E4%BA%88%E7%B4%84%E7%94%A8ID%E3%83%BB%E6%B0%8F%E5%90%8D%E3%83%BB%E7%94%9F%E5%B9%B4%E6%9C%88%E6%97%A5%E3%83%BB%E5%85%8D%E8%A8%B1%E8%A8%BC%E7%95%AA%E5%8F%B7%E3%81%AA%E3%81%A9%E5%80%8B%E4%BA%BA%E6%83%85%E5%A0%B1%E3%82%89%E3%81%97%E3%81%84%E9%A0%85%E7%9B%AE%E3%81%AF%E3%80%81%E7%9F%AD%E3%81%84%E5%80%A4%E3%81%A7%E3%82%82%E4%BC%8F%E3%81%9B%E5%AD%97%E3%81%AB%E3%81%99%E3%82%8B%20%2A%2F%0A%20%20%20%20if%20%28name%20%26%26%20PERSONAL_NAME.test%28name%29%29%20%7B%0A%20%20%20%20%20%20if%20%28v%20%3D%3D%20null%20%7C%7C%20v%20%3D%3D%3D%20%22%22%29%20return%20%22%28%E3%81%AA%E3%81%97%29%22%3B%0A%20%20%20%20%20%20return%20%22%2A%2A%2A%EF%BC%88%22%20%2B%20String%28v%29.length%20%2B%20%22%E6%96%87%E5%AD%97%EF%BC%89%22%3B%0A%20%20%20%20%7D%0A%20%20%20%20return%20mask%28v%29%3B%0A%20%20%7D%0A%20%20function%20pathOf%28u%29%20%7B%0A%20%20%20%20if%20%28%21u%29%20return%20%22%28%E3%81%AA%E3%81%97%29%22%3B%0A%20%20%20%20try%20%7B%20return%20new%20URL%28u%2C%20location.href%29.pathname%3B%20%7D%20catch%20%28e%29%20%7B%20return%20%22%28%E4%B8%8D%E6%98%8E%29%22%3B%20%7D%0A%20%20%7D%0A%20%20function%20desc%28e%29%20%7B%0A%20%20%20%20if%20%28%21e%29%20return%20%22-%22%3B%0A%20%20%20%20var%20c%20%3D%20%28typeof%20e.className%20%3D%3D%3D%20%22string%22%29%20%3F%20e.className.trim%28%29.replace%28%2F%5Cs%2B%2Fg%2C%20%22.%22%29%20%3A%20%22%22%3B%0A%20%20%20%20return%20e.tagName.toLowerCase%28%29%20%2B%20%28c%20%3F%20%22.%22%20%2B%20c%20%3A%20%22%22%29%3B%0A%20%20%7D%0A%20%20function%20clickable%28e%29%20%7B%0A%20%20%20%20if%20%28e.tagName%20%3D%3D%3D%20%22A%22%20%7C%7C%20e.tagName%20%3D%3D%3D%20%22BUTTON%22%29%20return%20true%3B%0A%20%20%20%20if%20%28e.tagName%20%3D%3D%3D%20%22INPUT%22%20%26%26%20%28e.getAttribute%28%22type%22%29%20%7C%7C%20%22%22%29.toLowerCase%28%29%20%21%3D%3D%20%22hidden%22%29%20return%20true%3B%0A%20%20%20%20if%20%28e.hasAttribute%20%26%26%20e.hasAttribute%28%22onclick%22%29%29%20return%20true%3B%0A%20%20%20%20var%20inner%20%3D%20e.querySelectorAll%28%22a%2C%20button%2C%20input%2C%20%5Bonclick%5D%22%29%3B%0A%20%20%20%20for%20%28var%20i%20%3D%200%3B%20i%20%3C%20inner.length%3B%20i%2B%2B%29%20%7B%0A%20%20%20%20%20%20if%20%28inner%5Bi%5D.tagName%20%3D%3D%3D%20%22INPUT%22%20%26%26%20%28inner%5Bi%5D.getAttribute%28%22type%22%29%20%7C%7C%20%22%22%29.toLowerCase%28%29%20%3D%3D%3D%20%22hidden%22%29%20continue%3B%0A%20%20%20%20%20%20return%20true%3B%0A%20%20%20%20%7D%0A%20%20%20%20return%20false%3B%0A%20%20%7D%0A%20%20function%20labelElOf%28input%29%20%7B%0A%20%20%20%20if%20%28input.id%29%20%7B%0A%20%20%20%20%20%20var%20lab%20%3D%20document.querySelector%28%22label%5Bfor%3D%27%22%20%2B%20input.id%20%2B%20%22%27%5D%22%29%3B%0A%20%20%20%20%20%20if%20%28lab%29%20return%20lab%3B%0A%20%20%20%20%7D%0A%20%20%20%20return%20input.closest%20%3F%20input.closest%28%22label%22%29%20%3A%20null%3B%0A%20%20%7D%0A%20%20function%20textOf%28e%29%20%7B%0A%20%20%20%20var%20parts%20%3D%20%5B%5D%3B%0A%20%20%20%20%28function%20walk%28node%29%20%7B%0A%20%20%20%20%20%20var%20kids%20%3D%20node.childNodes%3B%0A%20%20%20%20%20%20for%20%28var%20i%20%3D%200%3B%20i%20%3C%20kids.length%3B%20i%2B%2B%29%20%7B%0A%20%20%20%20%20%20%20%20var%20n%20%3D%20kids%5Bi%5D%3B%0A%20%20%20%20%20%20%20%20if%20%28n.nodeType%20%3D%3D%3D%203%29%20%7B%20var%20t%20%3D%20norm%28n.textContent%29%3B%20if%20%28t%29%20parts.push%28t%29%3B%20%7D%0A%20%20%20%20%20%20%20%20else%20if%20%28n.nodeType%20%3D%3D%3D%201%20%26%26%20n.tagName%20%21%3D%3D%20%22BR%22%29%20walk%28n%29%3B%0A%20%20%20%20%20%20%20%20else%20if%20%28n.nodeType%20%3D%3D%3D%201%29%20parts.push%28%22%20%22%29%3B%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%7D%29%28e%29%3B%0A%20%20%20%20return%20parts.join%28%22%20%22%29%3B%0A%20%20%7D%0A%20%20%2F%2A%20disabled%20%E3%81%AE%E6%9C%89%E7%84%A1%E3%81%A8%E3%80%81%E8%A6%81%E7%B4%A0%E3%80%9C%E8%A6%AA%E3%83%BB%E8%A6%AA%E3%81%AE%E8%A6%AA%E3%81%AB%E3%81%8B%E3%81%91%E3%81%A6%E3%81%AE%20disabled%20%E7%B3%BB%E3%82%AF%E3%83%A9%E3%82%B9%E3%81%AE%E6%9C%89%E7%84%A1%E3%82%92%E5%BF%85%E3%81%9A%E5%87%BA%E3%81%99%20%2A%2F%0A%20%20function%20disInfo%28e%29%20%7B%0A%20%20%20%20var%20parts%20%3D%20%5B%5D%3B%0A%20%20%20%20if%20%28e.tagName%20%3D%3D%3D%20%22INPUT%22%29%20parts.push%28%22disabled%3D%22%20%2B%20%28e.disabled%20%3F%20%22%E3%81%82%E3%82%8A%22%20%3A%20%22%E3%81%AA%E3%81%97%22%29%29%3B%0A%20%20%20%20var%20hit%20%3D%20%5B%5D%3B%0A%20%20%20%20var%20p%20%3D%20e%3B%0A%20%20%20%20for%20%28var%20i%20%3D%200%3B%20i%20%3C%203%20%26%26%20p%3B%20i%2B%2B%29%20%7B%0A%20%20%20%20%20%20var%20cn%20%3D%20%28typeof%20p.className%20%3D%3D%3D%20%22string%22%29%20%3F%20p.className%20%3A%20%22%22%3B%0A%20%20%20%20%20%20if%20%28%2Fdisabled%7Cdisable%7Cunselect%7Cunavailable%7Cgray%7Cgrey%7Cmuted%2Fi.test%28cn%29%29%20hit.push%28desc%28p%29%29%3B%0A%20%20%20%20%20%20p%20%3D%20p.parentElement%3B%0A%20%20%20%20%7D%0A%20%20%20%20parts.push%28%22disabled%E7%B3%BB%E3%82%AF%E3%83%A9%E3%82%B9%3D%22%20%2B%20%28hit.length%20%3F%20hit.join%28%22%2C%22%29%20%3A%20%22%E3%81%AA%E3%81%97%22%29%29%3B%0A%20%20%20%20return%20parts.join%28%22%20%2F%20%22%29%3B%0A%20%20%7D%0A%20%20var%20lines%20%3D%20%5B%5D%3B%0A%20%20lines.push%28%22%22%29%3B%0A%20%20lines.push%28%22%E3%83%9A%E3%83%BC%E3%82%B8%E3%81%AE%E3%83%91%E3%82%B9%3A%20%22%20%2B%20location.pathname%29%3B%0A%20%20%28function%20%28%29%20%7B%0A%20%20%20%20var%20f%20%3D%20document.querySelector%28%22%5Bname%3D%27strChoiceDetail%27%5D%22%29%3B%0A%20%20%20%20var%20vd%20%3D%20document.querySelector%28%22%5Bname%3D%27visitDate%27%5D%22%29%3B%0A%20%20%20%20var%20parts%20%3D%20%5B%5D%3B%0A%20%20%20%20if%20%28f%29%20parts.push%28%22strChoiceDetail%3D%22%20%2B%20%28%28f.value%20%7C%7C%20%22%22%29.trim%28%29%20%3F%20%22%E5%85%A5%E5%8A%9B%E3%81%82%E3%82%8A%22%20%3A%20%22%E7%A9%BA%22%29%29%3B%0A%20%20%20%20if%20%28vd%29%20parts.push%28%22visitDate%3D%22%20%2B%20%28%28vd.value%20%7C%7C%20%22%22%29.trim%28%29%20%3F%20%22%E5%85%A5%E5%8A%9B%E3%81%82%E3%82%8A%22%20%3A%20%22%E7%A9%BA%22%29%29%3B%0A%20%20%20%20if%20%28parts.length%29%20%7B%0A%20%20%20%20%20%20var%20note%20%3D%20%28f%20%26%26%20%21%28f.value%20%7C%7C%20%22%22%29.trim%28%29%29%20%3F%20%22%EF%BC%88%E4%BC%9A%E5%A0%B4%E3%81%8C%E6%9C%AA%E9%81%B8%E6%8A%9E%E3%81%AE%E7%8A%B6%E6%85%8B%E3%81%A8%E3%81%BF%E3%82%89%E3%82%8C%E3%81%BE%E3%81%99%EF%BC%89%22%20%3A%20%22%22%3B%0A%20%20%20%20%20%20lines.push%28%22%E3%83%9A%E3%83%BC%E3%82%B8%E3%81%AE%E7%8A%B6%E6%85%8B%3A%20%22%20%2B%20parts.join%28%22%20%2F%20%22%29%20%2B%20note%29%3B%0A%20%20%20%20%7D%0A%20%20%7D%29%28%29%3B%0A%20%20var%20forms%20%3D%20document.querySelectorAll%28%22form%22%29%3B%0A%20%20lines.push%28%22%E3%83%95%E3%82%A9%E3%83%BC%E3%83%A0%E6%95%B0%3A%20%22%20%2B%20forms.length%29%3B%0A%20%20forms.forEach%28function%20%28f%2C%20i%29%20%7B%0A%20%20%20%20var%20names%20%3D%20%5B%5D%3B%0A%20%20%20%20f.querySelectorAll%28%22input%2C%20select%2C%20textarea%22%29.forEach%28function%20%28fld%29%20%7B%0A%20%20%20%20%20%20if%20%28fld.name%20%26%26%20names.indexOf%28fld.name%29%20%3C%200%29%20names.push%28fld.name%29%3B%0A%20%20%20%20%7D%29%3B%0A%20%20%20%20lines.push%28%22%E3%83%95%E3%82%A9%E3%83%BC%E3%83%A0%22%20%2B%20%28i%20%2B%201%29%20%2B%20%22%3A%20method%3D%22%20%2B%20%28f.getAttribute%28%22method%22%29%20%7C%7C%20%22get%22%29%20%2B%20%22%20%2F%20action%3D%22%20%2B%20pathOf%28f.getAttribute%28%22action%22%29%29%20%2B%20%22%20%2F%20%E3%83%95%E3%82%A3%E3%83%BC%E3%83%AB%E3%83%89%E5%90%8D%3D%22%20%2B%20%28names.length%20%3F%20names.join%28%22%2C%20%22%29%20%3A%20%22%28%E3%81%AA%E3%81%97%29%22%29%29%3B%0A%20%20%7D%29%3B%0A%20%20forms.forEach%28function%20%28f%2C%20i%29%20%7B%0A%20%20%20%20var%20ctls%20%3D%20f.querySelectorAll%28%22input%2C%20select%2C%20textarea%2C%20button%22%29%3B%0A%20%20%20%20lines.push%28%22%E3%83%95%E3%82%A9%E3%83%BC%E3%83%A0%22%20%2B%20%28i%20%2B%201%29%20%2B%20%22%20%E3%81%AE%E5%85%A8%E3%82%B3%E3%83%B3%E3%83%88%E3%83%AD%E3%83%BC%E3%83%AB%EF%BC%88%22%20%2B%20ctls.length%20%2B%20%22%E4%BB%B6%EF%BC%89%3A%22%29%3B%0A%20%20%20%20var%20shown%20%3D%200%3B%0A%20%20%20%20ctls.forEach%28function%20%28c%29%20%7B%0A%20%20%20%20%20%20if%20%28shown%20%3E%3D%20100%29%20return%3B%0A%20%20%20%20%20%20shown%2B%2B%3B%0A%20%20%20%20%20%20var%20parts%20%3D%20%5B%5D%3B%0A%20%20%20%20%20%20parts.push%28%22%E3%82%BF%E3%82%B0%3D%22%20%2B%20c.tagName.toLowerCase%28%29%29%3B%0A%20%20%20%20%20%20parts.push%28%22type%3D%22%20%2B%20%28c.getAttribute%28%22type%22%29%20%7C%7C%20%22-%22%29%29%3B%0A%20%20%20%20%20%20parts.push%28%22name%3D%22%20%2B%20%28c.getAttribute%28%22name%22%29%20%7C%7C%20%22-%22%29%29%3B%0A%20%20%20%20%20%20if%20%28c.tagName%20%3D%3D%3D%20%22BUTTON%22%29%20parts.push%28%22%E8%A1%A8%E7%A4%BA%3D%22%20%2B%20norm%28c.textContent%20%7C%7C%20%22%22%29.slice%280%2C%2030%29%29%3B%0A%20%20%20%20%20%20parts.push%28%22value%3D%22%20%2B%20maskFor%28c.getAttribute%28%22name%22%29%2C%20c.value%20%21%3D%20null%20%3F%20c.value%20%3A%20c.getAttribute%28%22value%22%29%29%29%3B%0A%20%20%20%20%20%20if%20%28c.getAttribute%28%22onclick%22%29%29%20parts.push%28%22onclick%3D%E3%81%82%E3%82%8A%22%29%3B%0A%20%20%20%20%20%20lines.push%28%22-%20%22%20%2B%20parts.join%28%22%20%2F%20%22%29%29%3B%0A%20%20%20%20%7D%29%3B%0A%20%20%20%20if%20%28ctls.length%20%3E%20shown%29%20lines.push%28%22%EF%BC%88%E3%81%BB%E3%81%8B%20%22%20%2B%20%28ctls.length%20-%20shown%29%20%2B%20%22%20%E4%BB%B6%E3%81%AF%E7%9C%81%E7%95%A5%EF%BC%89%22%29%3B%0A%20%20%7D%29%3B%0A%20%20lines.push%28%22%E4%BC%9A%E5%A0%B4%E5%90%8D%E3%82%92%E5%90%AB%E3%82%80%E8%A6%81%E7%B4%A0%3A%22%29%3B%0A%20%20var%20count%20%3D%200%3B%0A%20%20var%20els%20%3D%20document.querySelectorAll%28%22a%2C%20button%2C%20input%2C%20select%2C%20%5Bonclick%5D%22%29%3B%0A%20%20els.forEach%28function%20%28e%29%20%7B%0A%20%20%20%20var%20label%20%3D%20e.tagName%20%3D%3D%3D%20%22INPUT%22%20%3F%20String%28e.value%20%7C%7C%20%22%22%29%20%3A%20norm%28e.textContent%20%7C%7C%20%22%22%29%3B%0A%20%20%20%20var%20valAttr%20%3D%20e.getAttribute%28%22value%22%29%20%7C%7C%20%22%22%3B%0A%20%20%20%20if%20%28%21VENUE_WORD.test%28label%29%20%26%26%20%21VENUE_WORD.test%28valAttr%29%29%20return%3B%0A%20%20%20%20count%2B%2B%3B%0A%20%20%20%20var%20form%20%3D%20e.form%20%7C%7C%20%28e.closest%20%3F%20e.closest%28%22form%22%29%20%3A%20null%29%3B%0A%20%20%20%20var%20fi%20%3D%20form%20%3F%20Array.prototype.indexOf.call%28forms%2C%20form%29%20%2B%201%20%3A%200%3B%0A%20%20%20%20var%20parts%20%3D%20%5B%5D%3B%0A%20%20%20%20parts.push%28%22%E3%82%BF%E3%82%B0%3D%22%20%2B%20e.tagName.toLowerCase%28%29%29%3B%0A%20%20%20%20parts.push%28%22type%3D%22%20%2B%20%28e.getAttribute%28%22type%22%29%20%7C%7C%20%22-%22%29%29%3B%0A%20%20%20%20parts.push%28%22%E8%A1%A8%E7%A4%BA%3D%22%20%2B%20%28label%20%3F%20label.slice%280%2C%2030%29%20%3A%20%22-%22%29%29%3B%0A%20%20%20%20parts.push%28%22name%3D%22%20%2B%20%28e.getAttribute%28%22name%22%29%20%7C%7C%20%22-%22%29%29%3B%0A%20%20%20%20parts.push%28%22value%3D%22%20%2B%20mask%28e.getAttribute%28%22value%22%29%29%29%3B%0A%20%20%20%20if%20%28e.tagName%20%3D%3D%3D%20%22A%22%29%20parts.push%28%22href%E3%83%91%E3%82%B9%3D%22%20%2B%20pathOf%28e.getAttribute%28%22href%22%29%29%29%3B%0A%20%20%20%20if%20%28e.getAttribute%28%22onclick%22%29%29%20parts.push%28%22onclick%3D%E3%81%82%E3%82%8A%22%29%3B%0A%20%20%20%20parts.push%28fi%20%3F%20%22%E3%83%95%E3%82%A9%E3%83%BC%E3%83%A0%22%20%2B%20fi%20%2B%20%22%E5%86%85%22%20%3A%20%22%E3%83%95%E3%82%A9%E3%83%BC%E3%83%A0%E5%A4%96%22%29%3B%0A%20%20%20%20lines.push%28%22-%20%22%20%2B%20parts.join%28%22%20%2F%20%22%29%29%3B%0A%20%20%7D%29%3B%0A%20%20if%20%28%21count%29%20lines.push%28%22%EF%BC%88%E4%BC%9A%E5%A0%B4%E5%90%8D%E3%82%92%E5%90%AB%E3%82%80%E8%A6%81%E7%B4%A0%E3%81%AF%E8%A6%8B%E3%81%A4%E3%81%8B%E3%82%8A%E3%81%BE%E3%81%9B%E3%82%93%E3%81%A7%E3%81%97%E3%81%9F%EF%BC%89%22%29%3B%0A%20%20lines.push%28%22%E9%80%81%E4%BF%A1%E3%83%BB%E6%AC%A1%E3%81%B8%E7%B3%BB%E3%81%AE%E8%A6%81%E7%B4%A0%3A%22%29%3B%0A%20%20var%20ncount%20%3D%200%3B%0A%20%20var%20navs%20%3D%20document.querySelectorAll%28%22input%5Btype%3D%27submit%27%5D%2C%20input%5Btype%3D%27image%27%5D%2C%20input%5Btype%3D%27button%27%5D%2C%20button%2C%20a%22%29%3B%0A%20%20navs.forEach%28function%20%28e%29%20%7B%0A%20%20%20%20if%20%28ncount%20%3E%3D%2040%29%20return%3B%0A%20%20%20%20var%20label%20%3D%20e.tagName%20%3D%3D%3D%20%22INPUT%22%20%3F%20String%28e.value%20%7C%7C%20%22%22%29%20%3A%20norm%28e.textContent%20%7C%7C%20%22%22%29%3B%0A%20%20%20%20if%20%28e.tagName%20%3D%3D%3D%20%22A%22%20%26%26%20%21%2F%28%E6%AC%A1%7C%E9%80%B2%7C%E6%B1%BA%E5%AE%9A%7C%E8%A1%A8%E7%A4%BA%7C%E6%A4%9C%E7%B4%A2%7C%E7%A2%BA%E8%AA%8D%7C%E7%A9%BA%E3%81%8D%7C%E3%82%AB%E3%83%AC%E3%83%B3%E3%83%80%E3%83%BC%7C%E3%81%B8%29%2F.test%28label%29%29%20return%3B%0A%20%20%20%20ncount%2B%2B%3B%0A%20%20%20%20var%20parts%20%3D%20%5B%5D%3B%0A%20%20%20%20parts.push%28%22%E3%82%BF%E3%82%B0%3D%22%20%2B%20e.tagName.toLowerCase%28%29%29%3B%0A%20%20%20%20parts.push%28%22type%3D%22%20%2B%20%28e.getAttribute%28%22type%22%29%20%7C%7C%20%22-%22%29%29%3B%0A%20%20%20%20parts.push%28%22%E8%A1%A8%E7%A4%BA%3D%22%20%2B%20%28label%20%3F%20label.slice%280%2C%2030%29%20%3A%20%22-%22%29%29%3B%0A%20%20%20%20parts.push%28%22name%3D%22%20%2B%20%28e.getAttribute%28%22name%22%29%20%7C%7C%20%22-%22%29%29%3B%0A%20%20%20%20parts.push%28%22value%3D%22%20%2B%20maskFor%28e.getAttribute%28%22name%22%29%2C%20e.getAttribute%28%22value%22%29%29%29%3B%0A%20%20%20%20parts.push%28%22onclick%3D%22%20%2B%20%28e.getAttribute%28%22onclick%22%29%20%3F%20%22%E3%81%82%E3%82%8A%22%20%3A%20%22%E3%81%AA%E3%81%97%22%29%29%3B%0A%20%20%20%20if%20%28e.tagName%20%3D%3D%3D%20%22A%22%29%20parts.push%28%22href%E3%83%91%E3%82%B9%3D%22%20%2B%20pathOf%28e.getAttribute%28%22href%22%29%29%29%3B%0A%20%20%20%20lines.push%28%22-%20%22%20%2B%20parts.join%28%22%20%2F%20%22%29%29%3B%0A%20%20%7D%29%3B%0A%20%20if%20%28%21ncount%29%20lines.push%28%22%EF%BC%88%E9%80%81%E4%BF%A1%E3%83%BB%E6%AC%A1%E3%81%B8%E7%B3%BB%E3%81%AE%E8%A6%81%E7%B4%A0%E3%81%AF%E8%A6%8B%E3%81%A4%E3%81%8B%E3%82%8A%E3%81%BE%E3%81%9B%E3%82%93%E3%81%A7%E3%81%97%E3%81%9F%EF%BC%89%22%29%3B%0A%20%20lines.push%28%22%E3%82%AB%E3%83%AC%E3%83%B3%E3%83%80%E3%83%BC%E3%81%AE%E8%A6%8B%E5%87%BA%E3%81%97%EF%BC%88%E5%B9%B4%E6%9C%88%EF%BC%89%3A%22%29%3B%0A%20%20%28function%20%28%29%20%7B%0A%20%20%20%20var%20hc%20%3D%200%3B%0A%20%20%20%20document.querySelectorAll%28%22h1%2C%20h2%2C%20h3%2C%20h4%2C%20h5%2C%20h6%2C%20caption%2C%20.ui-datepicker-title%22%29.forEach%28function%20%28h%29%20%7B%0A%20%20%20%20%20%20if%20%28hc%20%3E%3D%205%29%20return%3B%0A%20%20%20%20%20%20var%20tx%20%3D%20norm%28h.textContent%20%7C%7C%20%22%22%29%3B%0A%20%20%20%20%20%20if%20%28%2F%28%5Cd%7B4%7D%29%E5%B9%B4%5Cs%2A%28%5Cd%7B1%2C2%7D%29%E6%9C%88%2F.test%28tx%29%20%26%26%20tx.length%20%3C%3D%2040%29%20%7B%20lines.push%28%22-%20%22%20%2B%20tx%29%3B%20hc%2B%2B%3B%20%7D%0A%20%20%20%20%7D%29%3B%0A%20%20%20%20if%20%28%21hc%29%20lines.push%28%22%EF%BC%88%E5%B9%B4%E6%9C%88%E3%82%92%E5%90%AB%E3%82%80%E8%A6%8B%E5%87%BA%E3%81%97%E3%81%AF%E8%A6%8B%E3%81%A4%E3%81%8B%E3%82%8A%E3%81%BE%E3%81%9B%E3%82%93%E3%81%A7%E3%81%97%E3%81%9F%EF%BC%89%22%29%3B%0A%20%20%7D%29%28%29%3B%0A%20%20lines.push%28%22%E6%97%A5%E4%BB%98%E3%83%A9%E3%82%B8%E3%82%AA%E3%83%9C%E3%82%BF%E3%83%B3%E3%81%AE%E6%A7%8B%E9%80%A0%3A%22%29%3B%0A%20%20%28function%20%28%29%20%7B%0A%20%20%20%20var%20groups%20%3D%20%7B%7D%3B%0A%20%20%20%20var%20order%20%3D%20%5B%5D%3B%0A%20%20%20%20document.querySelectorAll%28%22input%5Btype%3D%27radio%27%5D%22%29.forEach%28function%20%28r%29%20%7B%0A%20%20%20%20%20%20var%20lab%20%3D%20labelElOf%28r%29%3B%0A%20%20%20%20%20%20var%20tx%20%3D%20lab%20%3F%20norm%28textOf%28lab%29%29%20%3A%20%22%22%3B%0A%20%20%20%20%20%20var%20m%20%3D%20tx.match%28%2F%5E%28%5Cd%7B1%2C2%7D%29%28%3F%21%5Cd%29%2F%29%3B%0A%20%20%20%20%20%20var%20day%20%3D%20null%3B%0A%20%20%20%20%20%20var%20src%20%3D%20%22%22%3B%0A%20%20%20%20%20%20if%20%28m%29%20%7B%20day%20%3D%20parseInt%28m%5B1%5D%2C%2010%29%3B%20src%20%3D%20%22label%22%3B%20%7D%0A%20%20%20%20%20%20if%20%28day%20%3D%3D%20null%29%20%7B%0A%20%20%20%20%20%20%20%20var%20vm%20%3D%20String%28r.value%20%3D%3D%20null%20%3F%20%22%22%20%3A%20r.value%29.match%28%2F%28%5Cd%7B4%7D%29%5B%5C%2F-%5D%28%5Cd%7B1%2C2%7D%29%5B%5C%2F-%5D%28%5Cd%7B1%2C2%7D%29%2F%29%3B%0A%20%20%20%20%20%20%20%20if%20%28vm%29%20%7B%20day%20%3D%20parseInt%28vm%5B3%5D%2C%2010%29%3B%20src%20%3D%20%22ymd%22%3B%20%7D%0A%20%20%20%20%20%20%20%20else%20if%20%28%2F%5E%5Cd%7B1%2C2%7D%24%2F.test%28String%28r.value%20%3D%3D%20null%20%3F%20%22%22%20%3A%20r.value%29.trim%28%29%29%29%20%7B%20day%20%3D%20parseInt%28r.value%2C%2010%29%3B%20src%20%3D%20%22bare%22%3B%20%7D%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20if%20%28day%20%3D%3D%20null%20%7C%7C%20day%20%3C%201%20%7C%7C%20day%20%3E%2031%29%20return%3B%0A%20%20%20%20%20%20var%20nm%20%3D%20r.name%20%7C%7C%20%22%28%E5%90%8D%E5%89%8D%E3%81%AA%E3%81%97%29%22%3B%0A%20%20%20%20%20%20if%20%28%21groups%5Bnm%5D%29%20%7B%20groups%5Bnm%5D%20%3D%20%5B%5D%3B%20order.push%28nm%29%3B%20%7D%0A%20%20%20%20%20%20groups%5Bnm%5D.push%28%7B%20r%3A%20r%2C%20lab%3A%20lab%2C%20day%3A%20day%2C%20src%3A%20src%20%7D%29%3B%0A%20%20%20%20%7D%29%3B%0A%20%20%20%20%2F%2A%20%E5%80%A4%E3%81%8C%E6%95%B0%E5%AD%97%E3%81%A0%E3%81%91%E3%81%AE%E5%B0%8F%E3%81%95%E3%81%AA%E3%83%A9%E3%82%B8%E3%82%AA%E3%82%B0%E3%83%AB%E3%83%BC%E3%83%97%EF%BC%88%E8%AC%9B%E7%BF%92%E5%8C%BA%E5%88%86%E3%81%AA%E3%81%A9%EF%BC%89%E3%81%AF%E6%97%A5%E4%BB%98%E3%81%A8%E8%AA%A4%E8%AA%8D%E3%81%97%E3%81%AA%E3%81%84%E3%82%88%E3%81%86%E3%80%81%0A%20%20%20%20%20%20%20%E3%83%A9%E3%83%99%E3%83%AB%E7%AD%89%E3%81%8B%E3%82%89%E6%97%A5%E3%81%8C%E5%8F%96%E3%82%8C%E3%81%9F%E3%82%B0%E3%83%AB%E3%83%BC%E3%83%97%E3%81%8B%E3%80%8115%E6%97%A5%E5%88%86%E4%BB%A5%E4%B8%8A%E3%81%9D%E3%82%8D%E3%81%86%E3%82%B0%E3%83%AB%E3%83%BC%E3%83%97%E3%81%A0%E3%81%91%E3%82%92%E5%AF%BE%E8%B1%A1%E3%81%AB%E3%81%99%E3%82%8B%20%2A%2F%0A%20%20%20%20var%20shownGroups%20%3D%20order.filter%28function%20%28nm%29%20%7B%0A%20%20%20%20%20%20var%20items%20%3D%20groups%5Bnm%5D%3B%0A%20%20%20%20%20%20var%20hasLabelDay%20%3D%20items.some%28function%20%28it%29%20%7B%20return%20it.src%20%21%3D%3D%20%22bare%22%3B%20%7D%29%3B%0A%20%20%20%20%20%20if%20%28hasLabelDay%29%20return%20true%3B%0A%20%20%20%20%20%20var%20distinct%20%3D%20%7B%7D%3B%0A%20%20%20%20%20%20items.forEach%28function%20%28it%29%20%7B%20distinct%5Bit.day%5D%20%3D%201%3B%20%7D%29%3B%0A%20%20%20%20%20%20return%20Object.keys%28distinct%29.length%20%3E%3D%2015%3B%0A%20%20%20%20%7D%29%3B%0A%20%20%20%20if%20%28%21shownGroups.length%29%20%7B%20lines.push%28%22%EF%BC%88%E6%97%A5%E4%BB%98%E3%82%89%E3%81%97%E3%81%84%E3%83%A9%E3%82%B8%E3%82%AA%E3%83%9C%E3%82%BF%E3%83%B3%E3%81%AF%E8%A6%8B%E3%81%A4%E3%81%8B%E3%82%8A%E3%81%BE%E3%81%9B%E3%82%93%E3%81%A7%E3%81%97%E3%81%9F%EF%BC%89%22%29%3B%20return%3B%20%7D%0A%20%20%20%20shownGroups.forEach%28function%20%28nm%29%20%7B%0A%20%20%20%20%20%20var%20items%20%3D%20groups%5Bnm%5D%3B%0A%20%20%20%20%20%20lines.push%28%22%E3%82%B0%E3%83%AB%E3%83%BC%E3%83%97%20name%3D%22%20%2B%20nm%20%2B%20%22%20%2F%20%22%20%2B%20items.length%20%2B%20%22%E4%BB%B6%22%29%3B%0A%20%20%20%20%20%20items.slice%280%2C%2060%29.forEach%28function%20%28it%29%20%7B%0A%20%20%20%20%20%20%20%20var%20r%20%3D%20it.r%3B%0A%20%20%20%20%20%20%20%20var%20span%20%3D%20it.lab%20%3F%20it.lab.parentElement%20%3A%20%28r.parentElement%20%3F%20r.parentElement.parentElement%20%3A%20null%29%3B%0A%20%20%20%20%20%20%20%20lines.push%28%22-%20%E6%97%A5%3D%22%20%2B%20it.day%20%2B%20%22%20%2F%20value%3D%22%20%2B%20mask%28r.value%29%20%2B%20%22%20%2F%20%22%20%2B%20disInfo%28r%29%20%2B%20%22%20%2F%20%E8%A6%81%E7%B4%A0%3D%22%20%2B%20desc%28r%29%20%2B%20%22%20%2F%20%E3%83%A9%E3%83%99%E3%83%AB%3D%22%20%2B%20desc%28it.lab%29%20%2B%20%22%20%2F%20%E8%A6%AA%E3%81%AE%E8%A6%AA%EF%BC%88span%E7%AD%89%EF%BC%89%3D%22%20%2B%20desc%28span%29%29%3B%0A%20%20%20%20%20%20%7D%29%3B%0A%20%20%20%20%20%20if%20%28items.length%20%3E%2060%29%20lines.push%28%22%EF%BC%88%E3%81%BB%E3%81%8B%20%22%20%2B%20%28items.length%20-%2060%29%20%2B%20%22%20%E4%BB%B6%E3%81%AF%E7%9C%81%E7%95%A5%EF%BC%89%22%29%3B%0A%20%20%20%20%7D%29%3B%0A%20%20%7D%29%28%29%3B%0A%20%20lines.push%28%22datepicker%20%E3%81%AE%E6%A7%8B%E9%80%A0%3A%22%29%3B%0A%20%20%28function%20%28%29%20%7B%0A%20%20%20%20var%20aCnt%20%3D%20document.querySelectorAll%28%22a.ui-state-default%22%29.length%3B%0A%20%20%20%20var%20sCnt%20%3D%20document.querySelectorAll%28%22span.ui-state-default%22%29.length%3B%0A%20%20%20%20var%20tdData%20%3D%20document.querySelectorAll%28%22td%5Bdata-month%5D%22%29.length%3B%0A%20%20%20%20lines.push%28%22a.ui-state-default%3A%20%22%20%2B%20aCnt%20%2B%20%22%E4%BB%B6%20%2F%20span.ui-state-default%3A%20%22%20%2B%20sCnt%20%2B%20%22%E4%BB%B6%20%2F%20data-month%20%E3%82%92%E6%8C%81%E3%81%A4%20td%3A%20%22%20%2B%20tdData%20%2B%20%22%E4%BB%B6%22%29%3B%0A%20%20%20%20var%20titles%20%3D%20document.querySelectorAll%28%22.ui-datepicker-title%22%29%3B%0A%20%20%20%20titles.forEach%28function%20%28t%2C%20i%29%20%7B%0A%20%20%20%20%20%20if%20%28i%20%3C%203%29%20lines.push%28%22datepicker%20%E3%81%AE%E3%82%BF%E3%82%A4%E3%83%88%E3%83%AB%3A%20%22%20%2B%20norm%28t.textContent%20%7C%7C%20%22%22%29.slice%280%2C%2030%29%29%3B%0A%20%20%20%20%7D%29%3B%0A%20%20%20%20var%20samples%20%3D%20document.querySelectorAll%28%22td%20.ui-state-default%22%29%3B%0A%20%20%20%20var%20shown%20%3D%200%3B%0A%20%20%20%20samples.forEach%28function%20%28n%29%20%7B%0A%20%20%20%20%20%20if%20%28shown%20%3E%3D%2010%29%20return%3B%0A%20%20%20%20%20%20shown%2B%2B%3B%0A%20%20%20%20%20%20var%20td%20%3D%20n.closest%20%3F%20n.closest%28%22td%22%29%20%3A%20null%3B%0A%20%20%20%20%20%20lines.push%28%22-%20%E6%97%A5%3D%22%20%2B%20norm%28n.textContent%20%7C%7C%20%22%22%29%20%2B%20%22%20%2F%20%E8%A6%81%E7%B4%A0%3D%22%20%2B%20desc%28n%29%20%2B%20%22%20%2F%20%E8%A6%AA%EF%BC%88td%EF%BC%89%3D%22%20%2B%20desc%28td%29%20%2B%20%22%20%2F%20data-month%3D%22%20%2B%20%28td%20%3F%20%28td.getAttribute%28%22data-month%22%29%20%7C%7C%20%22-%22%29%20%3A%20%22-%22%29%20%2B%20%22%20%2F%20data-year%3D%22%20%2B%20%28td%20%3F%20%28td.getAttribute%28%22data-year%22%29%20%7C%7C%20%22-%22%29%20%3A%20%22-%22%29%29%3B%0A%20%20%20%20%7D%29%3B%0A%20%20%7D%29%28%29%3B%0A%20%20lines.push%28%22script%20%E5%86%85%E3%81%AE%E6%97%A5%E4%BB%98%E3%82%89%E3%81%97%E3%81%84%E6%96%87%E5%AD%97%E5%88%97%3A%22%29%3B%0A%20%20%28function%20%28%29%20%7B%0A%20%20%20%20var%20sc%20%3D%20document.querySelectorAll%28%22script%22%29%3B%0A%20%20%20%20var%20allText%20%3D%20%22%22%3B%0A%20%20%20%20sc.forEach%28function%20%28s%29%20%7B%20allText%20%2B%3D%20%22%5Cn%22%20%2B%20%28s.textContent%20%7C%7C%20%22%22%29%3B%20%7D%29%3B%0A%20%20%20%20var%20dm%20%3D%20allText.match%28%2F%5Cd%7B4%7D%5B%5C%2F-%5D%5Cd%7B1%2C2%7D%5B%5C%2F-%5D%5Cd%7B1%2C2%7D%2Fg%29%3B%0A%20%20%20%20lines.push%28%22script%20%E3%81%AE%E6%95%B0%3A%20%22%20%2B%20sc.length%20%2B%20%22%20%2F%20%E6%97%A5%E4%BB%98%E3%82%89%E3%81%97%E3%81%84%E6%96%87%E5%AD%97%E5%88%97%EF%BC%88YYYY%2FMM%2FDD%20%E5%BD%A2%E5%BC%8F%EF%BC%89%E3%81%AE%E5%87%BA%E7%8F%BE%3A%20%22%20%2B%20%28dm%20%3F%20dm.length%20%3A%200%29%20%2B%20%22%E4%BB%B6%EF%BC%88%E5%86%85%E5%AE%B9%E3%81%AF%E5%87%BA%E5%8A%9B%E3%81%97%E3%81%BE%E3%81%9B%E3%82%93%EF%BC%89%22%29%3B%0A%20%20%7D%29%28%29%3B%0A%20%20lines.push%28%22%E3%82%AB%E3%83%AC%E3%83%B3%E3%83%80%E3%83%BC%E9%83%A8%E5%88%86%E3%81%AE%E6%A7%8B%E9%80%A0%3A%22%29%3B%0A%20%20%28function%20%28%29%20%7B%0A%20%20%20%20function%20dayStart%28text%29%20%7B%0A%20%20%20%20%20%20var%20m%20%3D%20String%28text%20%7C%7C%20%22%22%29.match%28%2F%5E%28%5Cd%7B1%2C2%7D%29%28%3F%21%5Cd%29%2F%29%3B%0A%20%20%20%20%20%20if%20%28%21m%29%20return%20null%3B%0A%20%20%20%20%20%20var%20rest%20%3D%20String%28text%29.slice%28m%5B0%5D.length%29.trim%28%29%3B%0A%20%20%20%20%20%20if%20%28%2F%5E%5B%3A%EF%BC%9A%5D%2F.test%28rest%29%20%7C%7C%20%2F%5E%28%E4%BA%BA%7C%E6%9E%A0%7C%E5%90%8D%7C%E5%86%86%7C%E6%99%82%7C%E5%88%86%7C%E7%A7%92%29%2F.test%28rest%29%29%20return%20null%3B%0A%20%20%20%20%20%20return%20parseInt%28m%5B1%5D%2C%2010%29%3B%0A%20%20%20%20%7D%0A%20%20%20%20var%20all%20%3D%20document.body%20%3F%20document.body.querySelectorAll%28%22%2A%22%29%20%3A%20%5B%5D%3B%0A%20%20%20%20var%20mins%20%3D%20%5B%5D%3B%0A%20%20%20%20all.forEach%28function%20%28e%29%20%7B%0A%20%20%20%20%20%20var%20tag%20%3D%20e.tagName%3B%0A%20%20%20%20%20%20if%20%28tag%20%3D%3D%3D%20%22SCRIPT%22%20%7C%7C%20tag%20%3D%3D%3D%20%22STYLE%22%20%7C%7C%20tag%20%3D%3D%3D%20%22NOSCRIPT%22%20%7C%7C%20tag%20%3D%3D%3D%20%22SELECT%22%20%7C%7C%20tag%20%3D%3D%3D%20%22TEXTAREA%22%20%7C%7C%20tag%20%3D%3D%3D%20%22OPTION%22%29%20return%3B%0A%20%20%20%20%20%20if%20%28tag%20%3D%3D%3D%20%22INPUT%22%20%26%26%20%28e.getAttribute%28%22type%22%29%20%7C%7C%20%22%22%29.toLowerCase%28%29%20%3D%3D%3D%20%22hidden%22%29%20return%3B%0A%20%20%20%20%20%20if%20%28e.closest%20%26%26%20e.closest%28%22select%2C%20textarea%22%29%29%20return%3B%0A%20%20%20%20%20%20var%20tx%20%3D%20e.tagName%20%3D%3D%3D%20%22INPUT%22%20%3F%20String%28e.value%20%7C%7C%20%22%22%29%20%3A%20textOf%28e%29%3B%0A%20%20%20%20%20%20var%20d%20%3D%20dayStart%28tx%29%3B%0A%20%20%20%20%20%20if%20%28d%20%3D%3D%20null%20%7C%7C%20d%20%3C%201%20%7C%7C%20d%20%3E%2031%29%20return%3B%0A%20%20%20%20%20%20var%20desc2%20%3D%20e.querySelectorAll%28%22%2A%22%29%3B%0A%20%20%20%20%20%20for%20%28var%20i%20%3D%200%3B%20i%20%3C%20desc2.length%3B%20i%2B%2B%29%20%7B%0A%20%20%20%20%20%20%20%20var%20dt%20%3D%20desc2%5Bi%5D.tagName%20%3D%3D%3D%20%22INPUT%22%20%3F%20String%28desc2%5Bi%5D.value%20%7C%7C%20%22%22%29%20%3A%20textOf%28desc2%5Bi%5D%29%3B%0A%20%20%20%20%20%20%20%20if%20%28dayStart%28dt%29%20%3D%3D%3D%20d%29%20return%3B%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20mins.push%28%7B%20el%3A%20e%2C%20day%3A%20d%2C%20text%3A%20tx%20%7D%29%3B%0A%20%20%20%20%7D%29%3B%0A%20%20%20%20if%20%28%21mins.length%29%20%7B%0A%20%20%20%20%20%20lines.push%28%22%EF%BC%88%E6%97%A5%E4%BB%98%E3%82%89%E3%81%97%E3%81%84%E8%A6%81%E7%B4%A0%E3%81%AF%E8%A6%8B%E3%81%A4%E3%81%8B%E3%82%8A%E3%81%BE%E3%81%9B%E3%82%93%E3%81%A7%E3%81%97%E3%81%9F%EF%BC%89%22%29%3B%0A%20%20%20%20%20%20return%3B%0A%20%20%20%20%7D%0A%20%20%20%20var%20daySet%20%3D%20%7B%7D%3B%0A%20%20%20%20mins.forEach%28function%20%28m%29%20%7B%20daySet%5Bm.day%5D%20%3D%201%3B%20%7D%29%3B%0A%20%20%20%20lines.push%28%22%E6%97%A5%E4%BB%98%E3%82%89%E3%81%97%E3%81%84%E8%A6%81%E7%B4%A0%3A%20%22%20%2B%20mins.length%20%2B%20%22%E5%80%8B%EF%BC%88%22%20%2B%20Object.keys%28daySet%29.length%20%2B%20%22%E6%97%A5%E5%88%86%EF%BC%89%22%29%3B%0A%20%20%20%20mins.slice%280%2C%2060%29.forEach%28function%20%28m%29%20%7B%0A%20%20%20%20%20%20var%20e%20%3D%20m.el%3B%0A%20%20%20%20%20%20var%20p%20%3D%20e.parentElement%3B%0A%20%20%20%20%20%20var%20gp%20%3D%20p%20%3F%20p.parentElement%20%3A%20null%3B%0A%20%20%20%20%20%20lines.push%28%22-%20%E6%97%A5%3D%22%20%2B%20m.day%20%2B%20%22%20%2F%20%E8%A6%81%E7%B4%A0%3D%22%20%2B%20desc%28e%29%20%2B%20%22%20%2F%20%22%20%2B%20disInfo%28e%29%20%2B%20%22%20%2F%20%E8%A6%AA%3D%22%20%2B%20desc%28p%29%20%2B%20%22%20%2F%20%E8%A6%AA%E3%81%AE%E8%A6%AA%3D%22%20%2B%20desc%28gp%29%20%2B%20%22%20%2F%20%E3%82%AF%E3%83%AA%E3%83%83%E3%82%AF%E5%8F%AF%E8%83%BD%3D%22%20%2B%20%28clickable%28e%29%20%3F%20%22%E3%81%82%E3%82%8A%22%20%3A%20%22%E3%81%AA%E3%81%97%22%29%20%2B%20%22%20%2F%20%E3%83%86%E3%82%AD%E3%82%B9%E3%83%88%3D%22%20%2B%20norm%28m.text%29.slice%280%2C%2020%29%29%3B%0A%20%20%20%20%7D%29%3B%0A%20%20%20%20if%20%28mins.length%20%3E%2060%29%20lines.push%28%22%EF%BC%88%E3%81%BB%E3%81%8B%20%22%20%2B%20%28mins.length%20-%2060%29%20%2B%20%22%20%E4%BB%B6%E3%81%AF%E7%9C%81%E7%95%A5%EF%BC%89%22%29%3B%0A%20%20%7D%29%28%29%3B%0A%20%20lines.push%28%22%E8%A1%A8%EF%BC%88table%EF%BC%89%E3%81%AE%E6%95%B0%3A%20%22%20%2B%20document.querySelectorAll%28%22table%22%29.length%29%3B%0A%20%20%2F%2A%20----%20%E8%A1%A8%E7%A4%BA%EF%BC%88%E5%85%AC%E5%BC%8F%E3%82%B5%E3%82%A4%E3%83%88%E3%81%AE%20CSP%20%E3%81%A7%E5%BC%BE%E3%81%8B%E3%82%8C%E3%81%AA%E3%81%84%E3%82%88%E3%81%86%E3%80%81style%20%E5%B1%9E%E6%80%A7%E3%82%92%E4%BD%BF%E3%82%8F%E3%81%9A%E3%83%97%E3%83%AC%E3%82%BC%E3%83%B3%E3%83%86%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3%E5%B1%9E%E6%80%A7%E3%81%A0%E3%81%91%E3%81%A7%E7%B5%84%E3%82%80%EF%BC%89%20----%20%2A%2F%0A%20%20var%20old%20%3D%20document.getElementById%28%22mk-diag-root%22%29%3B%0A%20%20if%20%28old%29%20old.remove%28%29%3B%0A%20%20var%20root%20%3D%20document.createElement%28%22div%22%29%3B%0A%20%20root.id%20%3D%20%22mk-diag-root%22%3B%0A%20%20var%20outer%20%3D%20document.createElement%28%22table%22%29%3B%0A%20%20outer.setAttribute%28%22width%22%2C%20%22100%25%22%29%3B%0A%20%20outer.setAttribute%28%22border%22%2C%20%222%22%29%3B%0A%20%20outer.setAttribute%28%22cellspacing%22%2C%20%220%22%29%3B%0A%20%20outer.setAttribute%28%22cellpadding%22%2C%20%2210%22%29%3B%0A%20%20outer.setAttribute%28%22bgcolor%22%2C%20%22%23ffffff%22%29%3B%0A%20%20var%20ob%20%3D%20document.createElement%28%22tbody%22%29%3B%0A%20%20var%20otr%20%3D%20document.createElement%28%22tr%22%29%3B%0A%20%20var%20otd%20%3D%20document.createElement%28%22td%22%29%3B%0A%20%20var%20ht%20%3D%20document.createElement%28%22table%22%29%3B%0A%20%20ht.setAttribute%28%22width%22%2C%20%22100%25%22%29%3B%0A%20%20ht.setAttribute%28%22cellspacing%22%2C%20%220%22%29%3B%0A%20%20ht.setAttribute%28%22cellpadding%22%2C%20%226%22%29%3B%0A%20%20var%20hb%20%3D%20document.createElement%28%22tbody%22%29%3B%0A%20%20var%20hr%20%3D%20document.createElement%28%22tr%22%29%3B%0A%20%20var%20htd1%20%3D%20document.createElement%28%22td%22%29%3B%0A%20%20htd1.setAttribute%28%22bgcolor%22%2C%20%22%2312283f%22%29%3B%0A%20%20var%20fnt%20%3D%20document.createElement%28%22font%22%29%3B%0A%20%20fnt.setAttribute%28%22color%22%2C%20%22%23ffffff%22%29%3B%0A%20%20var%20strong%20%3D%20document.createElement%28%22strong%22%29%3B%0A%20%20strong.textContent%20%3D%20%22%E6%A7%8B%E9%80%A0%E3%83%81%E3%82%A7%E3%83%83%E3%82%AF%22%3B%0A%20%20fnt.appendChild%28strong%29%3B%0A%20%20htd1.appendChild%28fnt%29%3B%0A%20%20var%20htd2%20%3D%20document.createElement%28%22td%22%29%3B%0A%20%20htd2.setAttribute%28%22align%22%2C%20%22right%22%29%3B%0A%20%20htd2.setAttribute%28%22width%22%2C%20%2280%22%29%3B%0A%20%20var%20close%20%3D%20document.createElement%28%22button%22%29%3B%0A%20%20close.textContent%20%3D%20%22%E9%96%89%E3%81%98%E3%82%8B%22%3B%0A%20%20close.addEventListener%28%22click%22%2C%20function%20%28%29%20%7B%20root.remove%28%29%3B%20%7D%29%3B%0A%20%20htd2.appendChild%28close%29%3B%0A%20%20hr.appendChild%28htd1%29%3B%0A%20%20hr.appendChild%28htd2%29%3B%0A%20%20hb.appendChild%28hr%29%3B%0A%20%20ht.appendChild%28hb%29%3B%0A%20%20otd.appendChild%28ht%29%3B%0A%20%20var%20p%20%3D%20document.createElement%28%22p%22%29%3B%0A%20%20p.textContent%20%3D%20%22%E4%B8%8B%E3%81%AE%E5%86%85%E5%AE%B9%E3%82%92%E3%82%B3%E3%83%94%E3%83%BC%E3%81%97%E3%81%A6%E9%80%81%E3%81%A3%E3%81%A6%E3%81%8F%E3%81%A0%E3%81%95%E3%81%84%E3%80%82%E5%80%8B%E4%BA%BA%E6%83%85%E5%A0%B1%E3%82%84%E3%82%BB%E3%83%83%E3%82%B7%E3%83%A7%E3%83%B3ID%E3%81%8C%E5%90%AB%E3%81%BE%E3%82%8C%E3%81%AA%E3%81%84%E3%82%88%E3%81%86%E3%80%81%E5%80%A4%E3%81%AF%E4%BC%8F%E3%81%9B%E5%AD%97%E3%81%AB%E3%81%97%E3%80%81URL%E3%81%AF%E3%83%91%E3%82%B9%E3%81%AE%E9%83%A8%E5%88%86%E3%81%A0%E3%81%91%E3%81%AB%E3%81%97%E3%81%A6%E3%81%84%E3%81%BE%E3%81%99%E3%80%82%22%3B%0A%20%20otd.appendChild%28p%29%3B%0A%20%20var%20ta%20%3D%20document.createElement%28%22textarea%22%29%3B%0A%20%20ta.value%20%3D%20lines.join%28%22%5Cn%22%29%3B%0A%20%20ta.setAttribute%28%22readonly%22%2C%20%22%22%29%3B%0A%20%20ta.setAttribute%28%22cols%22%2C%20%2272%22%29%3B%0A%20%20ta.setAttribute%28%22rows%22%2C%20%2216%22%29%3B%0A%20%20otd.appendChild%28ta%29%3B%0A%20%20otd.appendChild%28document.createElement%28%22br%22%29%29%3B%0A%20%20var%20btn%20%3D%20document.createElement%28%22button%22%29%3B%0A%20%20btn.textContent%20%3D%20%22%E3%82%B3%E3%83%94%E3%83%BC%E3%81%99%E3%82%8B%22%3B%0A%20%20btn.addEventListener%28%22click%22%2C%20function%20%28%29%20%7B%0A%20%20%20%20ta.focus%28%29%3B%0A%20%20%20%20ta.select%28%29%3B%0A%20%20%20%20if%20%28navigator.clipboard%20%26%26%20navigator.clipboard.writeText%29%20navigator.clipboard.writeText%28ta.value%29%3B%0A%20%20%20%20else%20%7B%20try%20%7B%20document.execCommand%28%22copy%22%29%3B%20%7D%20catch%20%28e%29%20%7B%20%2F%2A%20%E6%89%8B%E5%8B%95%E3%82%B3%E3%83%94%E3%83%BC%E3%81%AB%E4%BB%BB%E3%81%9B%E3%82%8B%20%2A%2F%20%7D%20%7D%0A%20%20%7D%29%3B%0A%20%20otd.appendChild%28btn%29%3B%0A%20%20otr.appendChild%28otd%29%3B%0A%20%20ob.appendChild%28otr%29%3B%0A%20%20outer.appendChild%28ob%29%3B%0A%20%20root.appendChild%28outer%29%3B%0A%20%20if%20%28document.body%29%20%7B%0A%20%20%20%20document.body.insertBefore%28root%2C%20document.body.firstChild%29%3B%0A%20%20%20%20try%20%7B%20window.scrollTo%280%2C%200%29%3B%20%7D%20catch%20%28e%29%20%7B%20%2F%2A%20%E3%82%B9%E3%82%AF%E3%83%AD%E3%83%BC%E3%83%AB%E3%81%A7%E3%81%8D%E3%81%AA%E3%81%8F%E3%81%A6%E3%82%82%E8%A1%A8%E7%A4%BA%E3%81%AF%E3%81%99%E3%82%8B%20%2A%2F%20%7D%0A%20%20%7D%0A%7D%29%28%29%3B%0A">免許更新 構造チェック</a>
-<p style="margin-top:12px;">※ このページ自体でクリックしても動作しません。公式サイトの会場選択画面やカレンダー画面で使います。</p>
-</div>
-<details class="src-box">
-<summary>構造チェックのソースコード（全文）</summary>
-<pre class="bm-src">(function () {
-  "use strict";
-  var VENUE_WORD = /(試験場|センター|警察署|署)/;
-  var PERSONAL_NAME = /(yoyaku|name|birth|license|tel|card|address|graduation|kana|passwd|password)/i;
-  function norm(s) { return String(s == null ? "" : s).replace(/\s+/g, " ").trim(); }
-  function mask(v) {
-    if (v == null || v === "") return "(なし)";
-    var s = String(v);
-    if (/^[0-9]+$/.test(s) &amp;&amp; s.length &lt;= 6) return s;
-    if (s.length &lt;= 8 &amp;&amp; !/[A-Za-z0-9]{6,}/.test(s)) return s;
-    return s.slice(0, 2) + "***（" + s.length + "文字）";
-  }
-  function maskFor(name, v) {
-    /* 予約用ID・氏名・生年月日・免許証番号など個人情報らしい項目は、短い値でも伏せ字にする */
-    if (name &amp;&amp; PERSONAL_NAME.test(name)) {
-      if (v == null || v === "") return "(なし)";
-      return "***（" + String(v).length + "文字）";
-    }
-    return mask(v);
-  }
-  function pathOf(u) {
-    if (!u) return "(なし)";
-    try { return new URL(u, location.href).pathname; } catch (e) { return "(不明)"; }
-  }
-  function desc(e) {
-    if (!e) return "-";
-    var c = (typeof e.className === "string") ? e.className.trim().replace(/\s+/g, ".") : "";
-    return e.tagName.toLowerCase() + (c ? "." + c : "");
-  }
-  function clickable(e) {
-    if (e.tagName === "A" || e.tagName === "BUTTON") return true;
-    if (e.tagName === "INPUT" &amp;&amp; (e.getAttribute("type") || "").toLowerCase() !== "hidden") return true;
-    if (e.hasAttribute &amp;&amp; e.hasAttribute("onclick")) return true;
-    var inner = e.querySelectorAll("a, button, input, [onclick]");
-    for (var i = 0; i &lt; inner.length; i++) {
-      if (inner[i].tagName === "INPUT" &amp;&amp; (inner[i].getAttribute("type") || "").toLowerCase() === "hidden") continue;
-      return true;
-    }
-    return false;
-  }
-  function labelElOf(input) {
-    if (input.id) {
-      var lab = document.querySelector("label[for='" + input.id + "']");
-      if (lab) return lab;
-    }
-    return input.closest ? input.closest("label") : null;
-  }
-  function textOf(e) {
-    var parts = [];
-    (function walk(node) {
-      var kids = node.childNodes;
-      for (var i = 0; i &lt; kids.length; i++) {
-        var n = kids[i];
-        if (n.nodeType === 3) { var t = norm(n.textContent); if (t) parts.push(t); }
-        else if (n.nodeType === 1 &amp;&amp; n.tagName !== "BR") walk(n);
-        else if (n.nodeType === 1) parts.push(" ");
-      }
-    })(e);
-    return parts.join(" ");
-  }
-  /* disabled の有無と、要素〜親・親の親にかけての disabled 系クラスの有無を必ず出す */
-  function disInfo(e) {
-    var parts = [];
-    if (e.tagName === "INPUT") parts.push("disabled=" + (e.disabled ? "あり" : "なし"));
-    var hit = [];
-    var p = e;
-    for (var i = 0; i &lt; 3 &amp;&amp; p; i++) {
-      var cn = (typeof p.className === "string") ? p.className : "";
-      if (/disabled|disable|unselect|unavailable|gray|grey|muted/i.test(cn)) hit.push(desc(p));
-      p = p.parentElement;
-    }
-    parts.push("disabled系クラス=" + (hit.length ? hit.join(",") : "なし"));
-    return parts.join(" / ");
-  }
-  var lines = [];
-  lines.push("");
-  lines.push("ページのパス: " + location.pathname);
-  (function () {
-    var f = document.querySelector("[name='strChoiceDetail']");
-    var vd = document.querySelector("[name='visitDate']");
-    var parts = [];
-    if (f) parts.push("strChoiceDetail=" + ((f.value || "").trim() ? "入力あり" : "空"));
-    if (vd) parts.push("visitDate=" + ((vd.value || "").trim() ? "入力あり" : "空"));
-    if (parts.length) {
-      var note = (f &amp;&amp; !(f.value || "").trim()) ? "（会場が未選択の状態とみられます）" : "";
-      lines.push("ページの状態: " + parts.join(" / ") + note);
-    }
-  })();
-  var forms = document.querySelectorAll("form");
-  lines.push("フォーム数: " + forms.length);
-  forms.forEach(function (f, i) {
-    var names = [];
-    f.querySelectorAll("input, select, textarea").forEach(function (fld) {
-      if (fld.name &amp;&amp; names.indexOf(fld.name) &lt; 0) names.push(fld.name);
-    });
-    lines.push("フォーム" + (i + 1) + ": method=" + (f.getAttribute("method") || "get") + " / action=" + pathOf(f.getAttribute("action")) + " / フィールド名=" + (names.length ? names.join(", ") : "(なし)"));
-  });
-  forms.forEach(function (f, i) {
-    var ctls = f.querySelectorAll("input, select, textarea, button");
-    lines.push("フォーム" + (i + 1) + " の全コントロール（" + ctls.length + "件）:");
-    var shown = 0;
-    ctls.forEach(function (c) {
-      if (shown &gt;= 100) return;
-      shown++;
-      var parts = [];
-      parts.push("タグ=" + c.tagName.toLowerCase());
-      parts.push("type=" + (c.getAttribute("type") || "-"));
-      parts.push("name=" + (c.getAttribute("name") || "-"));
-      if (c.tagName === "BUTTON") parts.push("表示=" + norm(c.textContent || "").slice(0, 30));
-      parts.push("value=" + maskFor(c.getAttribute("name"), c.value != null ? c.value : c.getAttribute("value")));
-      if (c.getAttribute("onclick")) parts.push("onclick=あり");
-      lines.push("- " + parts.join(" / "));
-    });
-    if (ctls.length &gt; shown) lines.push("（ほか " + (ctls.length - shown) + " 件は省略）");
-  });
-  lines.push("会場名を含む要素:");
-  var count = 0;
-  var els = document.querySelectorAll("a, button, input, select, [onclick]");
-  els.forEach(function (e) {
-    var label = e.tagName === "INPUT" ? String(e.value || "") : norm(e.textContent || "");
-    var valAttr = e.getAttribute("value") || "";
-    if (!VENUE_WORD.test(label) &amp;&amp; !VENUE_WORD.test(valAttr)) return;
-    count++;
-    var form = e.form || (e.closest ? e.closest("form") : null);
-    var fi = form ? Array.prototype.indexOf.call(forms, form) + 1 : 0;
-    var parts = [];
-    parts.push("タグ=" + e.tagName.toLowerCase());
-    parts.push("type=" + (e.getAttribute("type") || "-"));
-    parts.push("表示=" + (label ? label.slice(0, 30) : "-"));
-    parts.push("name=" + (e.getAttribute("name") || "-"));
-    parts.push("value=" + mask(e.getAttribute("value")));
-    if (e.tagName === "A") parts.push("hrefパス=" + pathOf(e.getAttribute("href")));
-    if (e.getAttribute("onclick")) parts.push("onclick=あり");
-    parts.push(fi ? "フォーム" + fi + "内" : "フォーム外");
-    lines.push("- " + parts.join(" / "));
-  });
-  if (!count) lines.push("（会場名を含む要素は見つかりませんでした）");
-  lines.push("送信・次へ系の要素:");
-  var ncount = 0;
-  var navs = document.querySelectorAll("input[type='submit'], input[type='image'], input[type='button'], button, a");
-  navs.forEach(function (e) {
-    if (ncount &gt;= 40) return;
-    var label = e.tagName === "INPUT" ? String(e.value || "") : norm(e.textContent || "");
-    if (e.tagName === "A" &amp;&amp; !/(次|進|決定|表示|検索|確認|空き|カレンダー|へ)/.test(label)) return;
-    ncount++;
-    var parts = [];
-    parts.push("タグ=" + e.tagName.toLowerCase());
-    parts.push("type=" + (e.getAttribute("type") || "-"));
-    parts.push("表示=" + (label ? label.slice(0, 30) : "-"));
-    parts.push("name=" + (e.getAttribute("name") || "-"));
-    parts.push("value=" + maskFor(e.getAttribute("name"), e.getAttribute("value")));
-    parts.push("onclick=" + (e.getAttribute("onclick") ? "あり" : "なし"));
-    if (e.tagName === "A") parts.push("hrefパス=" + pathOf(e.getAttribute("href")));
-    lines.push("- " + parts.join(" / "));
-  });
-  if (!ncount) lines.push("（送信・次へ系の要素は見つかりませんでした）");
-  lines.push("カレンダーの見出し（年月）:");
-  (function () {
-    var hc = 0;
-    document.querySelectorAll("h1, h2, h3, h4, h5, h6, caption, .ui-datepicker-title").forEach(function (h) {
-      if (hc &gt;= 5) return;
-      var tx = norm(h.textContent || "");
-      if (/(\d{4})年\s*(\d{1,2})月/.test(tx) &amp;&amp; tx.length &lt;= 40) { lines.push("- " + tx); hc++; }
-    });
-    if (!hc) lines.push("（年月を含む見出しは見つかりませんでした）");
-  })();
-  lines.push("日付ラジオボタンの構造:");
-  (function () {
-    var groups = {};
-    var order = [];
-    document.querySelectorAll("input[type='radio']").forEach(function (r) {
-      var lab = labelElOf(r);
-      var tx = lab ? norm(textOf(lab)) : "";
-      var m = tx.match(/^(\d{1,2})(?!\d)/);
-      var day = null;
-      var src = "";
-      if (m) { day = parseInt(m[1], 10); src = "label"; }
-      if (day == null) {
-        var vm = String(r.value == null ? "" : r.value).match(/(\d{4})[\/-](\d{1,2})[\/-](\d{1,2})/);
-        if (vm) { day = parseInt(vm[3], 10); src = "ymd"; }
-        else if (/^\d{1,2}$/.test(String(r.value == null ? "" : r.value).trim())) { day = parseInt(r.value, 10); src = "bare"; }
-      }
-      if (day == null || day &lt; 1 || day &gt; 31) return;
-      var nm = r.name || "(名前なし)";
-      if (!groups[nm]) { groups[nm] = []; order.push(nm); }
-      groups[nm].push({ r: r, lab: lab, day: day, src: src });
-    });
-    /* 値が数字だけの小さなラジオグループ（講習区分など）は日付と誤認しないよう、
-       ラベル等から日が取れたグループか、15日分以上そろうグループだけを対象にする */
-    var shownGroups = order.filter(function (nm) {
-      var items = groups[nm];
-      var hasLabelDay = items.some(function (it) { return it.src !== "bare"; });
-      if (hasLabelDay) return true;
-      var distinct = {};
-      items.forEach(function (it) { distinct[it.day] = 1; });
-      return Object.keys(distinct).length &gt;= 15;
-    });
-    if (!shownGroups.length) { lines.push("（日付らしいラジオボタンは見つかりませんでした）"); return; }
-    shownGroups.forEach(function (nm) {
-      var items = groups[nm];
-      lines.push("グループ name=" + nm + " / " + items.length + "件");
-      items.slice(0, 60).forEach(function (it) {
-        var r = it.r;
-        var span = it.lab ? it.lab.parentElement : (r.parentElement ? r.parentElement.parentElement : null);
-        lines.push("- 日=" + it.day + " / value=" + mask(r.value) + " / " + disInfo(r) + " / 要素=" + desc(r) + " / ラベル=" + desc(it.lab) + " / 親の親（span等）=" + desc(span));
-      });
-      if (items.length &gt; 60) lines.push("（ほか " + (items.length - 60) + " 件は省略）");
-    });
-  })();
-  lines.push("datepicker の構造:");
-  (function () {
-    var aCnt = document.querySelectorAll("a.ui-state-default").length;
-    var sCnt = document.querySelectorAll("span.ui-state-default").length;
-    var tdData = document.querySelectorAll("td[data-month]").length;
-    lines.push("a.ui-state-default: " + aCnt + "件 / span.ui-state-default: " + sCnt + "件 / data-month を持つ td: " + tdData + "件");
-    var titles = document.querySelectorAll(".ui-datepicker-title");
-    titles.forEach(function (t, i) {
-      if (i &lt; 3) lines.push("datepicker のタイトル: " + norm(t.textContent || "").slice(0, 30));
-    });
-    var samples = document.querySelectorAll("td .ui-state-default");
-    var shown = 0;
-    samples.forEach(function (n) {
-      if (shown &gt;= 10) return;
-      shown++;
-      var td = n.closest ? n.closest("td") : null;
-      lines.push("- 日=" + norm(n.textContent || "") + " / 要素=" + desc(n) + " / 親（td）=" + desc(td) + " / data-month=" + (td ? (td.getAttribute("data-month") || "-") : "-") + " / data-year=" + (td ? (td.getAttribute("data-year") || "-") : "-"));
-    });
-  })();
-  lines.push("script 内の日付らしい文字列:");
-  (function () {
-    var sc = document.querySelectorAll("script");
-    var allText = "";
-    sc.forEach(function (s) { allText += "\n" + (s.textContent || ""); });
-    var dm = allText.match(/\d{4}[\/-]\d{1,2}[\/-]\d{1,2}/g);
-    lines.push("script の数: " + sc.length + " / 日付らしい文字列（YYYY/MM/DD 形式）の出現: " + (dm ? dm.length : 0) + "件（内容は出力しません）");
-  })();
-  lines.push("カレンダー部分の構造:");
-  (function () {
-    function dayStart(text) {
-      var m = String(text || "").match(/^(\d{1,2})(?!\d)/);
-      if (!m) return null;
-      var rest = String(text).slice(m[0].length).trim();
-      if (/^[:：]/.test(rest) || /^(人|枠|名|円|時|分|秒)/.test(rest)) return null;
-      return parseInt(m[1], 10);
-    }
-    var all = document.body ? document.body.querySelectorAll("*") : [];
-    var mins = [];
-    all.forEach(function (e) {
-      var tag = e.tagName;
-      if (tag === "SCRIPT" || tag === "STYLE" || tag === "NOSCRIPT" || tag === "SELECT" || tag === "TEXTAREA" || tag === "OPTION") return;
-      if (tag === "INPUT" &amp;&amp; (e.getAttribute("type") || "").toLowerCase() === "hidden") return;
-      if (e.closest &amp;&amp; e.closest("select, textarea")) return;
-      var tx = e.tagName === "INPUT" ? String(e.value || "") : textOf(e);
-      var d = dayStart(tx);
-      if (d == null || d &lt; 1 || d &gt; 31) return;
-      var desc2 = e.querySelectorAll("*");
-      for (var i = 0; i &lt; desc2.length; i++) {
-        var dt = desc2[i].tagName === "INPUT" ? String(desc2[i].value || "") : textOf(desc2[i]);
-        if (dayStart(dt) === d) return;
-      }
-      mins.push({ el: e, day: d, text: tx });
-    });
-    if (!mins.length) {
-      lines.push("（日付らしい要素は見つかりませんでした）");
-      return;
-    }
-    var daySet = {};
-    mins.forEach(function (m) { daySet[m.day] = 1; });
-    lines.push("日付らしい要素: " + mins.length + "個（" + Object.keys(daySet).length + "日分）");
-    mins.slice(0, 60).forEach(function (m) {
-      var e = m.el;
-      var p = e.parentElement;
-      var gp = p ? p.parentElement : null;
-      lines.push("- 日=" + m.day + " / 要素=" + desc(e) + " / " + disInfo(e) + " / 親=" + desc(p) + " / 親の親=" + desc(gp) + " / クリック可能=" + (clickable(e) ? "あり" : "なし") + " / テキスト=" + norm(m.text).slice(0, 20));
-    });
-    if (mins.length &gt; 60) lines.push("（ほか " + (mins.length - 60) + " 件は省略）");
-  })();
-  lines.push("表（table）の数: " + document.querySelectorAll("table").length);
-  /* ---- 表示（公式サイトの CSP で弾かれないよう、style 属性を使わずプレゼンテーション属性だけで組む） ---- */
-  var old = document.getElementById("mk-diag-root");
-  if (old) old.remove();
-  var root = document.createElement("div");
-  root.id = "mk-diag-root";
-  var outer = document.createElement("table");
-  outer.setAttribute("width", "100%");
-  outer.setAttribute("border", "2");
-  outer.setAttribute("cellspacing", "0");
-  outer.setAttribute("cellpadding", "10");
-  outer.setAttribute("bgcolor", "#ffffff");
-  var ob = document.createElement("tbody");
-  var otr = document.createElement("tr");
-  var otd = document.createElement("td");
-  var ht = document.createElement("table");
-  ht.setAttribute("width", "100%");
-  ht.setAttribute("cellspacing", "0");
-  ht.setAttribute("cellpadding", "6");
-  var hb = document.createElement("tbody");
-  var hr = document.createElement("tr");
-  var htd1 = document.createElement("td");
-  htd1.setAttribute("bgcolor", "#12283f");
-  var fnt = document.createElement("font");
-  fnt.setAttribute("color", "#ffffff");
-  var strong = document.createElement("strong");
-  strong.textContent = "構造チェック";
-  fnt.appendChild(strong);
-  htd1.appendChild(fnt);
-  var htd2 = document.createElement("td");
-  htd2.setAttribute("align", "right");
-  htd2.setAttribute("width", "80");
-  var close = document.createElement("button");
-  close.textContent = "閉じる";
-  close.addEventListener("click", function () { root.remove(); });
-  htd2.appendChild(close);
-  hr.appendChild(htd1);
-  hr.appendChild(htd2);
-  hb.appendChild(hr);
-  ht.appendChild(hb);
-  otd.appendChild(ht);
-  var p = document.createElement("p");
-  p.textContent = "下の内容をコピーして送ってください。個人情報やセッションIDが含まれないよう、値は伏せ字にし、URLはパスの部分だけにしています。";
-  otd.appendChild(p);
-  var ta = document.createElement("textarea");
-  ta.value = lines.join("\n");
-  ta.setAttribute("readonly", "");
-  ta.setAttribute("cols", "72");
-  ta.setAttribute("rows", "16");
-  otd.appendChild(ta);
-  otd.appendChild(document.createElement("br"));
-  var btn = document.createElement("button");
-  btn.textContent = "コピーする";
-  btn.addEventListener("click", function () {
-    ta.focus();
-    ta.select();
-    if (navigator.clipboard &amp;&amp; navigator.clipboard.writeText) navigator.clipboard.writeText(ta.value);
-    else { try { document.execCommand("copy"); } catch (e) { /* 手動コピーに任せる */ } }
-  });
-  otd.appendChild(btn);
-  otr.appendChild(otd);
-  ob.appendChild(otr);
-  outer.appendChild(ob);
-  root.appendChild(outer);
-  if (document.body) {
-    document.body.insertBefore(root, document.body.firstChild);
-    try { window.scrollTo(0, 0); } catch (e) { /* スクロールできなくても表示はする */ }
-  }
-})();
-</pre>
-</details>
-</section>
-<script>
-(function () {
-  var btn = document.getElementById("bm-diag-copy-btn");
-  var done = document.getElementById("bm-diag-copy-done");
-  var area = document.getElementById("bm-diag-code");
-  var link = document.querySelector("a.bm-diag-btn");
-  if (!area || !link) return;
-  var code = link.getAttribute("href") || "";
-  area.value = code;
-  function showDone() {
-    if (!done) return;
-    done.style.display = "inline";
-    setTimeout(function () { done.style.display = "none"; }, 3000);
-  }
-  function fallbackCopy() {
-    area.focus();
-    area.select();
-    try { document.execCommand("copy"); showDone(); } catch (e) { /* 選択状態のままにして手動コピーを促す */ }
-  }
-  if (btn) {
-    btn.addEventListener("click", function () {
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(code).then(showDone, fallbackCopy);
-      } else {
-        fallbackCopy();
-      }
-    });
-  }
-})();
-</script>
 </main>
  <p class="pp-footer"><button type="button" class="pp-link" data-pp-open>プライバシーポリシー</button></p>
 <footer class="ido-site-footer">
