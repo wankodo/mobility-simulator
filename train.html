@@ -126,16 +126,12 @@
       .farebar .route{ font-size:12.5px; color:var(--ink2); flex:1 1 180px; line-height:1.45; }
       .farebar .total{ font-size:25px; font-weight:800; font-variant-numeric:tabular-nums; white-space:nowrap; }
       .farebar .per{ font-size:12.5px; color:var(--ink2); white-space:nowrap; }
-      .cattabs{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin:0 0 8px; }
-      .cattab{ border:2px solid var(--line); background:var(--panel); color:var(--ink2); border-radius:11px;
-        padding:10px 6px 9px; cursor:pointer; font-size:16px; font-weight:700; line-height:1.3; min-height:3.4rem; }
-      .cattab small{ display:block; font-size:11px; font-weight:600; margin-top:2px; }
-      .cattab[data-cat="local"].on{ background:#2f7fc4; border-color:#2f7fc4; color:#fff; box-shadow:0 2px 9px rgba(47,127,196,.4); }
-      .cattab[data-cat="limited"].on{ background:#4458b8; border-color:#4458b8; color:#fff; box-shadow:0 2px 9px rgba(68,88,184,.4); }
-      .cattab[data-cat="shinkansen"].on{ background:#0277bd; border-color:#0277bd; color:#fff; box-shadow:0 2px 9px rgba(2,119,189,.4); }
-      html[data-theme="andy"] .cattab[data-cat="local"].on{ background:#5ea3dd; border-color:#5ea3dd; color:#0a1a29; }
-      html[data-theme="andy"] .cattab[data-cat="limited"].on{ background:#8296e8; border-color:#8296e8; color:#0d1230; }
-      html[data-theme="andy"] .cattab[data-cat="shinkansen"].on{ background:#4fc3e8; border-color:#4fc3e8; color:#06222f; }
+      .usechecks{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:0 0 8px; }
+      .usecheck{ display:flex; align-items:center; gap:9px; border:2px solid var(--line); background:var(--panel); color:var(--ink); border-radius:11px;
+        padding:10px 12px; cursor:pointer; font-size:15px; font-weight:700; line-height:1.3; min-height:3.4rem; }
+      .usecheck input{ width:20px; height:20px; accent-color:var(--accent); flex:0 0 auto; margin:0; }
+      .usecheck small{ display:block; font-size:11px; font-weight:600; color:var(--ink2); margin-top:2px; }
+      .usecheck:has(input:checked){ border-color:var(--accent); background:var(--chip); }
       .catdesc{ font-size:12.5px; color:var(--ink2); line-height:1.6; margin:0 0 12px; }
       .catdesc strong{ color:var(--ink); }
       .src{ font-size:12px; color:var(--ink2); line-height:1.7; }
@@ -154,9 +150,9 @@
         .clock{ font-size:29px; }
         .t-big{ font-size:20px; }
         .clockbar{ margin:4px 0 8px; }
-        .cattabs{ gap:6px; margin-bottom:6px; }
-        .cattab{ min-height:2.7rem; padding:7px 4px 6px; font-size:15px; }
-        .cattab small{ font-size:10.5px; }
+        .usechecks{ gap:6px; margin-bottom:6px; }
+        .usecheck{ min-height:2.7rem; padding:7px 9px; font-size:14px; }
+        .usecheck small{ font-size:10.5px; }
         .catdesc{ font-size:12px; line-height:1.5; margin-bottom:8px; }
         .farebar{ padding:7px 14px calc(7px + env(safe-area-inset-bottom)); }
         .farebar .total{ font-size:21px; }
@@ -167,8 +163,8 @@
         h1{ font-size:18px; margin:0 0 2px; }
         .sub{ font-size:12px; line-height:1.45; margin-bottom:6px; }
         .clock{ font-size:25px; }
-        .cattab{ padding:6px 4px 5px; }
-        .cattab small{ font-size:10px; line-height:1.2; }
+        .usecheck{ padding:6px 8px 5px; }
+        .usecheck small{ font-size:10px; line-height:1.2; }
         .catdesc{ font-size:11.5px; line-height:1.45; margin-bottom:6px; }
         .georow{ margin-top:8px; }
         .farebar-in{ flex-wrap:nowrap; gap:8px; }
@@ -384,12 +380,11 @@
         <div class="dateline" id="dateline">—</div>
       </div>
 
-      <div class="cattabs" id="catTabs" role="tablist" aria-label="列車の種類">
-        <button type="button" class="cattab on" data-cat="local" role="tab" aria-selected="true">在来線<small>普通・快速・急行など</small></button>
-        <button type="button" class="cattab" data-cat="limited" role="tab" aria-selected="false">有料特急<small>特急料金が別に必要</small></button>
-        <button type="button" class="cattab" data-cat="shinkansen" role="tab" aria-selected="false">新幹線<small>運賃＋特急料金</small></button>
+      <div class="usechecks" role="group" aria-label="使う列車の種類">
+        <label class="usecheck"><input type="checkbox" id="useLimited" /><span>有料特急を使用する<small>特急料金が別に必要</small></span></label>
+        <label class="usecheck"><input type="checkbox" id="useShinkansen" /><span>新幹線を使用する<small>運賃＋特急料金</small></span></label>
       </div>
-      <p class="catdesc" id="catDesc"></p>
+      <p class="catdesc" id="catDesc"><strong>在来線</strong>（普通・快速・急行など、運賃のみで乗れる列車）は常に対象です。有料特急や新幹線も使う場合はチェックを入れてください。在来線と新幹線を組み合わせた経路など、混在したルートも表示します。乗換3回までの経路を優先して探し、見つからない場合は乗換の多い長距離経路（乗換最大50回まで）も自動で検索します。会社をまたぐ乗換では運賃を会社ごとに計算して合算し、JR区間は全区間を通算して計算します。一部の路線は主要駅中心の収録です。</p>
 
       <div class="panel" role="search">
         <div class="grid2">
@@ -493,7 +488,7 @@
       <details class="foldsec" id="ttFold">
         <summary>駅時刻表</summary>
         <div class="foldbody">
-          <p class="sub">上のタブ（在来線／有料特急／新幹線）で選んだ種類の路線だけを表示します。路線・駅・方向を選ぶと、その駅の発車時刻表（標準パターン）を表示します。次の発車は色付きです。</p>
+          <p class="sub">全路線から選べます。有料特急・新幹線の列車は、上のチェックを入れた場合に表示します。路線・駅・方向を選ぶと、その駅の発車時刻表（標準パターン）を表示します。次の発車は色付きです。</p>
           <div class="linechips" id="ttLineChips"></div>
           <div class="row" style="margin-top:0">
             <div>
@@ -519,7 +514,7 @@
           <p class="sub">収録している全路線の一覧です。長距離路線は<strong>主要駅中心の収録</strong>で、途中駅の一部を省略しています。省略した駅は検索対象外です。発車時刻は各路線の標準パターンの目安です。</p>
           <div id="allLineList"></div>
           <h3>駅データ</h3>
-          <p class="sub">路線を選ぶと、その路線の収録駅と起点からの営業キロを表示します。候補に出る路線は、上のタブ（在来線／有料特急／新幹線）で選んだ種類だけです。</p>
+          <p class="sub">路線を選ぶと、その路線の収録駅と起点からの営業キロを表示します。全路線が対象です。</p>
           <div class="linechips" id="dataLineChips"></div>
           <div class="stationlist" id="stationList"></div>
           <h3>データの出典</h3>
@@ -2899,30 +2894,28 @@ function limitedExpressFare(cls, km){
 <script>
 /* ================= 検索エンジン ================= */
 const $ = id => document.getElementById(id);
-const state = { cat:"local", seat:"reserved", trip:"oneway", persons:1, lastResults:null, lastQuery:null, ttLine:"tk", ttDir:1, dataLine:"tk", sort:"xfer", mode:"normal", via:"", allCandidates:[], listAll:[], context:"upcoming", page:0, anchorAbs:0, pageSize:5 };
+const state = { useLimited:false, useShinkansen:false, seat:"reserved", trip:"oneway", persons:1, lastResults:null, lastQuery:null, ttLine:"tk", ttDir:1, dataLine:"tk", sort:"xfer", mode:"normal", via:"", allCandidates:[], listAll:[], context:"upcoming", page:0, anchorAbs:0, pageSize:5 };
 const CAT_LABEL = { local:"在来線", limited:"有料特急", shinkansen:"新幹線" };
-const CAT_DESC = {
-  local: "<strong>在来線タブ</strong>：全国のJR在来線と私鉄・地下鉄の普通・快速・急行など、運賃のみで乗れる列車を表示します。会社をまたぐ乗換では運賃を会社ごとに計算して合算します。乗換3回までの経路を優先して探し、見つからない場合は乗換の多い長距離経路（本州から鹿児島まで在来線のみ、など。乗換最大50回まで）も自動で検索します。一部の路線は主要駅中心の収録です。",
-  limited: "<strong>有料特急タブ</strong>：特急料金が別に必要な列車（高崎線「特急スワローあかぎ」／小田急「ロマンスカー」）と、その特急に乗り換えて行ける経路を表示します。どちらも全車指定席のため、特急料金は指定席で計算します。",
-  shinkansen: "<strong>新幹線タブ</strong>：全国の新幹線各線の列車と、新幹線に乗り換えて行ける経路を表示します。運賃＋特急料金で計算します。"
-};
-function lineKeysForCat(cat){
-  if (cat === "shinkansen") return Object.keys(LINES).filter(k => LINES[k].type === "shinkansen");
-  if (cat === "limited") return Object.keys(LINES).filter(k => LINES[k].services.some(s => s.paidLimited));
-  return Object.keys(LINES).filter(k => LINES[k].type === "local");
-}
 function serviceCat(lineKey, svc){
   if (LINES[lineKey].type === "shinkansen") return "shinkansen";
   return svc && svc.paidLimited ? "limited" : "local";
 }
-function itinCat(itin){
-  let cat = "local";
-  for (const leg of itin.legs){
-    const c = serviceCat(leg.line, leg.svcObj || { paidLimited: leg.paidLimited });
-    if (c === "shinkansen") return "shinkansen";
-    if (c === "limited") cat = "limited";
-  }
-  return cat;
+function legAllowed(lineKey, svc){
+  const c = serviceCat(lineKey, svc);
+  if (c === "shinkansen") return state.useShinkansen;
+  if (c === "limited") return state.useLimited;
+  return true;
+}
+function itinAllowed(itin){
+  return itin.legs.every(l => legAllowed(l.line, l.svcObj || { paidLimited: l.paidLimited }));
+}
+function itinLabel(itin){
+  const cats = new Set(itin.legs.map(l => serviceCat(l.line, l.svcObj || { paidLimited: l.paidLimited })));
+  const parts = [];
+  if (cats.has("local")) parts.push(CAT_LABEL.local);
+  if (cats.has("limited")) parts.push(CAT_LABEL.limited);
+  if (cats.has("shinkansen")) parts.push(CAT_LABEL.shinkansen);
+  return parts.join("＋");
 }
 
 const STATION_LINES = {}; /* 駅名 → [{line, idx}] */
@@ -3695,7 +3688,7 @@ function dijkstraLinePath(fromName, toName, lineOk){
 }
 function searchLongRoutes(fromName, toName, startAbs){
   if (!STATION_LINES[fromName] || !STATION_LINES[toName] || fromName === toName) return [];
-  const lineOk = state.cat === "local" ? (k => LINES[k].type === "local") : (() => true);
+  const lineOk = k => LINES[k].type !== "shinkansen" || state.useShinkansen;
   const path = dijkstraLinePath(fromName, toName, lineOk);
   if (!path) return [];
   const results = []; const seen = new Set();
@@ -3845,7 +3838,7 @@ function dijkstraFarePath(fromName, toName, lineOk, banned){
 }
 function searchDeepRoutes(fromName, toName, startAbs){
   if (!STATION_LINES[fromName] || !STATION_LINES[toName] || fromName === toName) return [];
-  const lineOk = state.cat === "local" ? (k => LINES[k].type === "local") : (() => true);
+  const lineOk = k => LINES[k].type !== "shinkansen" || state.useShinkansen;
   const banned = new Set();
   for (let attempt = 0; attempt < 5; attempt++){
     const path = dijkstraFarePath(fromName, toName, lineOk, banned);
@@ -3904,7 +3897,7 @@ function sortItins(list, mode){
 
 /* ================= UI ================= */
 function fillStationSelects(){
-  const keys = lineKeysForCat(state.cat);
+  const keys = Object.keys(LINES);
   const prevFrom = $("fromSel").value, prevTo = $("toSel").value, prevVia = $("viaSel").value;
   const build = (sel, firstLabel) => {
     sel.innerHTML = "";
@@ -3925,16 +3918,16 @@ function fillStationSelects(){
   $("fromSel").value = has($("fromSel"), prevFrom) ? prevFrom : "";
   $("toSel").value = has($("toSel"), prevTo) ? prevTo : "";
   $("viaSel").value = has($("viaSel"), prevVia) ? prevVia : "";
-  /* タブ切替時は駅名検索欄をリセットする */
+  /* 駅プールを再構築する時は駅名検索欄をリセットする */
   for (const id of ["fromSearch","toSearch","viaSearch"]){ const el = $(id); if (el) el.value = ""; }
   for (const id of ["fromResults","toResults","viaResults"]){ const el = $(id); if (el){ el.hidden = true; el.innerHTML = ""; } }
 }
 
 /* ================= 駅名入力検索 ================= */
-/* いまのタブに含まれる路線の駅を、駅名で重複なく一覧化する */
+/* 全路線の駅を、駅名で重複なく一覧化する */
 function stationPool(){
   const map = new Map();
-  for (const key of lineKeysForCat(state.cat)){
+  for (const key of Object.keys(LINES)){
     for (const s of LINES[key].stations){
       if (!map.has(s[0])) map.set(s[0], []);
       map.get(s[0]).push(LINES[key].name);
@@ -3969,7 +3962,7 @@ function attachStationSearch(inputId, resultsId, selId, opts){
     if (!hits.length){
       const p = document.createElement("p");
       p.className = "stnone";
-      p.textContent = "「" + q + "」に一致する収録駅はありません（いまのタブの路線が対象です）";
+      p.textContent = "「" + q + "」に一致する収録駅はありません";
       box.appendChild(p);
       return;
     }
@@ -4063,7 +4056,7 @@ function renderResults(){
   if (!state.listAll.length){
     if (state.context === "prev") box.innerHTML = '<p class="empty">これより前の便はありません（その日の始発より前です）。</p>';
     else if (state.context === "last") box.innerHTML = '<p class="empty">終電が見つかりませんでした。収録路線の範囲外の区間の可能性があります。</p>';
-    else box.innerHTML = '<p class="empty">「' + CAT_LABEL[state.cat] + '」タブでは該当する電車が見つかりませんでした。この区間は別のタブ（在来線／有料特急／新幹線）で見つかる場合があります。収録路線の範囲外の区間か、本日の運行が終了している可能性もあります。「← 前の便」で直前の便、「終電」モードで最終列車を確認できます。</p>';
+    else box.innerHTML = '<p class="empty">該当する電車が見つかりませんでした。有料特急・新幹線のチェックを入れると見つかる場合があります。収録路線の範囲外の区間か、本日の運行が終了している可能性もあります。「← 前の便」で直前の便、「終電」モードで最終列車を確認できます。</p>';
     $("farebar").hidden = true; updatePageNav(); return;
   }
   const nowAbs = state.nowAbs;
@@ -4087,7 +4080,7 @@ function renderResults(){
     if (isNext) head += '<span class="badge-next">次の電車</span>';
     if (isLast) head += '<span class="badge-last">終電</span>';
     head += '<span class="countdown" data-depms="' + depMs + '"></span>';
-    head += '<span class="t-meta">' + CAT_LABEL[itinCat(itin)] + " ／ " + (itin.transfers === 0 ? "乗換なし" : "乗換" + itin.transfers + "回（" + (itin.vias ? itin.vias.join("・") : itin.via) + "）") + " ／ " + durTxt + " ／ " + itin.fare.km.toFixed(1) + 'km</span></div>';
+    head += '<span class="t-meta">' + itinLabel(itin) + " ／ " + (itin.transfers === 0 ? "乗換なし" : "乗換" + itin.transfers + "回（" + (itin.vias ? itin.vias.join("・") : itin.via) + "）") + " ／ " + durTxt + " ／ " + itin.fare.km.toFixed(1) + 'km</span></div>';
     let times = '<div class="times"><span class="t-big">' + fmtDay(itin.dep) + '</span><span class="t-arrow">→</span><span class="t-big">' + fmtDay(itin.arr) + '</span></div>';
     let legs = "";
     itin.legs.forEach((leg, li) => {
@@ -4199,8 +4192,8 @@ function doSearch(){
         if (!merged.has(key)) merged.set(key, c);
       }
     }
-    let cands = [...merged.values()].filter(c => c.dep < 1560 && itinCat(c) === state.cat && itinGeoOk(c));
-    /* 乗換3回までで該当タブの結果が無い場合は、長距離フォールバック（乗換4回以上）も探す */
+    let cands = [...merged.values()].filter(c => c.dep < 1560 && itinAllowed(c) && itinGeoOk(c));
+    /* 乗換3回までで結果が無い場合は、長距離フォールバック（乗換4回以上）も探す */
     if (!cands.length){
       for (const a of [startAbs, 0, 720]){
         for (const c of searchLongRoutes(from, to, a)){
@@ -4209,7 +4202,7 @@ function doSearch(){
           if (!merged.has(key)) merged.set(key, c);
         }
       }
-      cands = [...merged.values()].filter(c => c.dep < 1560 && itinCat(c) === state.cat && itinGeoOk(c));
+      cands = [...merged.values()].filter(c => c.dep < 1560 && itinAllowed(c) && itinGeoOk(c));
     }
     /* それでも無い場合は、深部フォールバック（運賃ベースのグラフ探索・乗換最大50回）も探す */
     if (!cands.length){
@@ -4222,7 +4215,7 @@ function doSearch(){
         }
         if (deepFound) break;
       }
-      cands = [...merged.values()].filter(c => c.dep < 1560 && itinCat(c) === state.cat && itinGeoOk(c));
+      cands = [...merged.values()].filter(c => c.dep < 1560 && itinAllowed(c) && itinGeoOk(c));
     }
     state.allCandidates = cands.sort((a,b) => a.dep - b.dep || a.arr - b.arr);
   }
@@ -4245,7 +4238,7 @@ function updateCountdowns(){
 /* ================= 駅時刻表 ================= */
 function renderLineChips(container, current, cb){
   container.innerHTML = "";
-  for (const key of lineKeysForCat(state.cat)){
+  for (const key of Object.keys(LINES)){
     const b = document.createElement("button");
     b.type = "button"; b.className = "lchip" + (key === current ? " on" : "");
     b.innerHTML = '<span class="dot" style="background:' + LINES[key].color + '"></span>' + LINES[key].name + (key === current ? ' ✓' : '');
@@ -4281,7 +4274,7 @@ function renderTimetable(){
   const deps = [];
   for (const svc of line.services){
     if (svc.dir !== dir) continue;
-    if (serviceCat(state.ttLine, svc) !== state.cat) continue;
+    if (!legAllowed(state.ttLine, svc)) continue;
     if (svc.stops[idx] === undefined) continue;
     for (const pat of svc.patterns){
       let counter = 0;
@@ -4303,7 +4296,7 @@ function renderTimetable(){
     (byHour[h] = byHour[h] || []).push(d);
   }
   const hours = Object.keys(byHour).map(Number).sort((a,b) => a-b);
-  if (!hours.length){ $("ttBody").innerHTML = '<p class="empty">「' + CAT_LABEL[state.cat] + '」タブでは、この駅・方向に停車する列車はありません。</p>'; return; }
+  if (!hours.length){ $("ttBody").innerHTML = '<p class="empty">この駅・方向に停車する列車はありません。有料特急・新幹線のチェックも確認してください。</p>'; return; }
   let html = '<table class="tt">';
   for (const h of hours){
     html += '<tr' + (h === now.getHours() ? ' class="nowhour"' : '') + '><th>' + h + '時</th><td>';
@@ -4444,11 +4437,6 @@ function findNearestStation(){
       b.type = "button"; b.className = "geoitem";
       b.innerHTML = (i === 0 ? "📍 " : "") + st.name + '駅 <span class="goline">' + st.lines + '</span><span class="dist">' + fmtDist(st.dist) + "</span>";
       b.addEventListener("click", () => {
-        if (![...$("fromSel").options].some(o => o.value === st.name)){
-          const entries = STATION_LINES[st.name] || [];
-          const alt = entries.some(e => LINES[e.line].type === "local") ? "local" : "shinkansen";
-          setCat(alt, true);
-        }
         $("fromSel").value = st.name;
         if ($("toSel").value === st.name) $("toSel").value = st.name === "東京" ? "前橋" : "東京";
         list.innerHTML = "";
@@ -4475,31 +4463,17 @@ function tickClock(){
   $("dateline").textContent = now.getFullYear() + "年" + (now.getMonth()+1) + "月" + now.getDate() + "日（" + wd + "） 現在時刻";
 }
 
-/* ================= カテゴリタブ ================= */
-function setCat(cat, skipSearch){
-  state.cat = cat;
-  $("catTabs").querySelectorAll("button").forEach(b => {
-    const on = b.dataset.cat === cat;
-    b.classList.toggle("on", on); b.setAttribute("aria-selected", on ? "true" : "false");
-  });
-  $("catDesc").innerHTML = CAT_DESC[cat];
-  fillStationSelects();
-  const keys = lineKeysForCat(cat);
-  if (!keys.includes(state.ttLine)) state.ttLine = keys[0];
-  if (!keys.includes(state.dataLine)) state.dataLine = keys[0];
-  renderLineChips($("ttLineChips"), state.ttLine, onTtLine);
-  fillTtStations();
+/* ================= 有料特急・新幹線の使用チェック ================= */
+function onUseFlagsChanged(){
+  state.useLimited = $("useLimited").checked;
+  state.useShinkansen = $("useShinkansen").checked;
   renderTimetable();
-  renderStationData();
-  if (!skipSearch) doSearch();
+  doSearch();
 }
-$("catTabs").addEventListener("click", e => {
-  const b = e.target.closest("button"); if (!b || b.dataset.cat === state.cat) return;
-  setCat(b.dataset.cat, false);
-});
+$("useLimited").addEventListener("change", onUseFlagsChanged);
+$("useShinkansen").addEventListener("change", onUseFlagsChanged);
 
 /* ================= 初期化・イベント ================= */
-$("catDesc").innerHTML = CAT_DESC[state.cat];
 fillStationSelects();
 /* 日付・時刻は開いた時点で現在時刻が入った状態にする（andy の指定） */
 function onTtLine(k){ state.ttLine = k; renderLineChips($("ttLineChips"), k, onTtLine); fillTtStations(); renderTimetable(); }
