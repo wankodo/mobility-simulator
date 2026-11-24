@@ -243,6 +243,7 @@
   .ts-badge-money { background:#f2a81d; color:#231a00; }
   .ts-badge-uranai { background:#6d28d9; color:#fff; }
   .ts-badge-ins { background:#0f766e; color:#fff; }
+  .ts-badge-hist { background:#92400e; color:#fff; }
   /* Andyモード：プルダウンの面と文字が闇に沈まないように */
   html[data-theme="andy"] .ts-suggest { background:#081625; border-color:rgba(110,205,230,.42);
     box-shadow:0 0 0 1px rgba(110,205,230,.08), 0 18px 38px -12px rgba(0,0,0,.85); }
@@ -625,6 +626,7 @@ gtag('config', 'G-QQ4435VBMK');
   var MONEY = "https://wankodo.github.io/money-tools/";
   var URN = "https://wankodo.github.io/uranai/";
   var INSURL = "https://wankodo.github.io/insurance/";
+  var HIST = "https://wankodo.github.io/history/";
   var TOOLS = [
     { site: "mob", name: "タイムズカー料金シミュレーター", cat: "車", url: "timescar.html",
       desc: "カーシェアの利用料金を、利用時間と走行距離から試算します。",
@@ -760,8 +762,16 @@ gtag('config', 'G-QQ4435VBMK');
       keywords: "社会保険料 健康保険 厚生年金 雇用保険" },
   { site: "ins", name: "フリーランスの社会保険料計算", cat: "社会保険", url: INSURL + "freelance.html",
     desc: "フリーランス・個人事業主向けに、国民年金と国民健康保険の保険料をあわせて計算します。",
-    keywords: "フリーランス 個人事業主 国民年金 国民健康保険 国保 社会保険料 計算" }
-
+    keywords: "フリーランス 個人事業主 国民年金 国民健康保険 国保 社会保険料 計算" },
+    { site: "hist", name: "美術家名簿", cat: "美術家", url: HIST + "art.html",
+      desc: "世界各地の画家・彫刻家など美術家2,353人の名簿です。名前・会派・出生地で検索でき、生没年や代表作（若い頃と晩年／近作）を表示します。出生地の地図つき。",
+      keywords: "美術家 画家 彫刻家 芸術家 絵画 会派 代表作 美術史 歴史 人物 名簿" },
+    { site: "hist", name: "宗教家名簿", cat: "宗教家", url: HIST + "religion.html",
+      desc: "世界の宗教家4,935人の名簿です。宗教・宗派・階位や布教の足跡、生没年などを表示します。出生地の地図つき。",
+      keywords: "宗教家 宗教 宗派 教祖 聖人 僧侶 神父 牧師 仏教 キリスト教 歴史 人物 名簿" },
+    { site: "hist", name: "家系図", cat: "家系図", url: HIST + "genealogy.html",
+      desc: "源氏・平家など日本の氏族と、古事記・ギリシア神話の神々の家系図です。拡大縮小・移動しながら系図をたどれ、名前検索でその人の場所をハイライトします。",
+      keywords: "家系図 系図 源氏 平家 氏族 豪族 神話 古事記 ギリシア神話 歴史 人物" }
   ];
 
   var boxEl = document.getElementById("toolSearchBox");
@@ -773,6 +783,7 @@ gtag('config', 'G-QQ4435VBMK');
     if (site === "mob") return '<span class="ts-badge ts-badge-mob">移動</span>';
     if (site === "uranai") return '<span class="ts-badge ts-badge-uranai">占い</span>';
     if (site === "ins") return '<span class="ts-badge ts-badge-ins">保険</span>';
+    if (site === "hist") return '<span class="ts-badge ts-badge-hist">歴史</span>';
     return '<span class="ts-badge ts-badge-money">お金</span>';
   }
 
